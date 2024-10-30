@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Perfil from '../views/PerfilCandidato.vue';
+import Home from '../views/Home.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,19 +8,19 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: Home,
       meta: {
         title: 'Home'
       }
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      path: '/perfil',
+      name: 'perfil',
+      component: Perfil,
       meta: {
-        title: 'About'
+        title: 'Perfil'
       }
-    }
+    },
   ]
 })
 
@@ -28,4 +29,4 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-export default router
+export default router;
