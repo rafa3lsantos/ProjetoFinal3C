@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('applications_histories', function (Blueprint $table) {
             $table->id();
+            $table->enum('status', ['pending', 'finished']);
+            $table->date('status_date');
             $table->timestamps();
         });
     }

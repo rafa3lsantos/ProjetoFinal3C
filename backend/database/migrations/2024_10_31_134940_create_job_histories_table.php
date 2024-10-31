@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('job_histories', function (Blueprint $table) {
             $table->id();
+            $table->string('status');
+            $table->date('status_date');
+            $table->unsignedBigInteger('job_id');
+            $table->foreignId('job_id')->references('id')->on('jobs');
             $table->timestamps();
         });
     }
