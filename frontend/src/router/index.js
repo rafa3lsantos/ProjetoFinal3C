@@ -1,26 +1,64 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Perfil from '../views/PerfilCandidato.vue';
-import Home from '../views/Home.vue';
+import Curriculo from '../views/CurriculoCandidato.vue';
+import HomeCandidato from '../views/HomeCandidato.vue';
+import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
+import RegisterEmpresa from '../views/RegisterEmpresa.vue';
+import DadosPessoais from '../views/DadosPessoais.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: Home,
+      path: '/home-candidato',
+      name: 'home-candidato',
+      component: HomeCandidato,
       meta: {
         title: 'Home'
       }
     },
     {
-      path: '/perfil',
-      name: 'perfil',
-      component: Perfil,
+      path: '/curriculo',
+      name: 'curriculo',
+      component: Curriculo,
       meta: {
-        title: 'Perfil'
+        title: 'curriculo'
       }
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      meta: {
+        title: 'login'
+      }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register,
+      meta: {
+        title: 'register'
+      }
+    },
+    {
+      path: '/register-empresa',
+      name: 'register-empresa',
+      component: RegisterEmpresa,
+      meta: {
+        title: 'register-empresa'
+      }
+    },
+    {
+      path: '/dados-pessoais',
+      name: 'dados pessoais',
+      component: DadosPessoais,
+      meta: {
+        title: 'Dados Pessoais'
+      }
+    }
+
+
   ]
 })
 

@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -51,7 +50,7 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <router-link to="/" class="nav-link active" aria-current="page">Home</router-link>
+                            <router-link to="/home-candidato" class="nav-link active" aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
                             <router-link to="/jobs" class="nav-link">Vagas</router-link>
@@ -64,14 +63,16 @@
                         <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40"
                             height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
-                            <router-link to="/perfil" class="dropdown-item">Perfil</router-link> <!-- Link para o perfil -->
-                            <a class="dropdown-item" href="#">Meu Currículo</a>
+                            <router-link to="/perfil" class="dropdown-item">Perfil</router-link>
+                            <router-link to="/curriculo" class="dropdown-item">Meu Currículo</router-link>
                             <a class="dropdown-item" href="#">Minhas Candidaturas</a>
-                            <a class="dropdown-item exit-color" href="#">Sair <img width="15px"
-                                    src="../../public/logout.png" alt="exit"></a>
+                            <router-link to="/login" class="dropdown-item exit-color">
+                                Sair <img width="15px" src="../../public/logout.png" alt="exit">
+                            </router-link>
                         </div>
                     </div>
                 </div>
+                
             </div>
         </nav>
     </div>
