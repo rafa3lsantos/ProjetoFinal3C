@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('formations', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_formation');
+            $table->string('name');
+            $table->string('institution');
+            $table->string('degree');
+            $table->string('status');
+            $table->string('course');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->foreignId('candidate_id')->constrained('candidates');
             $table->timestamps();
         });
     }

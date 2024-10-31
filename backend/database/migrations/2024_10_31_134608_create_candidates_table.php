@@ -12,8 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('candidates', function (Blueprint $table) {
-            $table->id_candidate();
-            $table->email();
+                $table->id('id_candidate'); 
+                $table->string('name');
+                $table->string('cpf');
+                $table->string('email')->unique();
+                $table->string('password');
+                $table->string('phone');
+                $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro']);
+                $table->string('cep');
+                $table->text('address');
+                $table->string('state');
+                $table->string('city');
+                $table->string('language');
+                $table->text('curriculum');
+
             $table->timestamps();
         });
     }
