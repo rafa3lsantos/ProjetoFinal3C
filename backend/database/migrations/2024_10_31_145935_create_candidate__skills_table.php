@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('experiences', function (Blueprint $table) {
-            $table->id('id_experience');
-            $table->string('company');
-            $table->string('role');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->text('description');
+        Schema::create('candidate__skills', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('candidate_id')->constrained('candidates');
+            $table->foreignId('skill_id')->constrained('skills');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('experiences');
+        Schema::dropIfExists('candidate__skills');
     }
 };
