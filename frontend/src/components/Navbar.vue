@@ -64,7 +64,7 @@
                             height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/perfil" class="dropdown-item">Perfil</router-link>
-                            <router-link to="/curriculo" class="dropdown-item">Meu Currículo</router-link>
+                            <router-link to="/Curriculo" class="dropdown-item">Meu Currículo</router-link>
                             <a class="dropdown-item" href="#">Minhas Candidaturas</a>
                             <router-link to="/login" class="dropdown-item exit-color">
                                 Sair <img width="15px" src="../../public/logout.png" alt="exit">
