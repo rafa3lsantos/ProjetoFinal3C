@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('status');
             $table->date('status_date');
-            $table->unsignedBigInteger('job_id');
-            $table->foreignId('job_id')->references('id')->on('jobs');
+            $table->foreignId('job_id')->constrained('jobs');
             $table->timestamps();
         });
     }

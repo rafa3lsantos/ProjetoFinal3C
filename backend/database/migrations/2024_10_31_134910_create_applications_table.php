@@ -17,8 +17,8 @@ return new class extends Migration
             $table->date('application_date');
             $table->unsignedBigInteger('job_id');
             $table->foreignId('job_id')->references('id')->on('jobs');  
-            $table->unsignedBigInteger('candidate_id');
-            $table->foreignId('candidate_id')->references('id_candidate')->on('candidates');
+            $table->foreignId('candidate_id')->constrained('candidates');
+            $table->foreignId('job_id')->constrained('jobs');
             $table->timestamps();
         });
     }

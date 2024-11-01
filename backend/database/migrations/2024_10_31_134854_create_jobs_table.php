@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('city');
             $table->string('status');
-            $table->unsignedBigInteger('company_id');
-            $table->foreignId('company_id')->references('id')->on('companies');
+            $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });
     }

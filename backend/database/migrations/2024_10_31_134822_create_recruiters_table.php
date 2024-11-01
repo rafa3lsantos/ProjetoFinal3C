@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('birthdate');
             $table->string('email');
             $table->string('password');
-            $table->unsignedBigInteger('company_id');
-            $table->foreignId('company_id')->references('id')->on('companies');
+            $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });
     }

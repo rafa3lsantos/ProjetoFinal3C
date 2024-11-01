@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->enum('status', ['pending', 'finished']);
             $table->date('status_date');
+            $table->foreignId('application_id')->constrained('applications');
             $table->timestamps();
         });
     }
