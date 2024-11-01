@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->string('status');
-            $table->date('application_date');
-            $table->unsignedBigInteger('job_id');
-            $table->foreignId('job_id')->references('id')->on('jobs');  
+            $table->date('application_date'); 
             $table->foreignId('candidate_id')->constrained('candidates');
             $table->foreignId('job_id')->constrained('jobs');
             $table->timestamps();
