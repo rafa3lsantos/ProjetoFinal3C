@@ -4,12 +4,7 @@ import HomeCandidato from '../views/HomeCandidato.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import RegisterEmpresa from '../views/RegisterEmpresa.vue';
-import DadosPessoais from '../views/CurriculoCandidato.vue';
-import ExperienciaProfissional from '../views/ExperienciaProfissional.vue';
-import Formacao from '../views/Formacao.vue';
-import Certificados from '../views/Certificados.vue';
-import Skills from '../views/Skills.vue';
-import AnexarCurriculo from '../views/AnexarCurriculo.vue';
+import PerfilCandidato from '../views/PerfilCandidato.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +47,14 @@ const router = createRouter({
       component: RegisterEmpresa,
       meta: {
         title: 'register-empresa'
+      }
+    },
+    {
+      path: '/meu-perfil',
+      name: 'perfil-candidato',
+      component: PerfilCandidato,
+      meta: {
+        title: 'Meu Perfil'
       }
     },
 

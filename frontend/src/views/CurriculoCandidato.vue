@@ -264,21 +264,161 @@
               </div>
             </div>
           </div>
+
+
+
           <div v-if="currentSection === 'certificados'">
-            <h2>Conquistas ou certificados</h2>
-            <!-- conteúdo de Certificados -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Conquistas ou Certificados</h5>
+              </div>
+              <div class="card-body">
+                <form>
+                  <div v-for="(item, index) in conquistasCertificados" :key="index">
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label :for="'tipo' + index">Tipo</label>
+                        <select class="form-control" :id="'tipo' + index" v-model="item.tipo">
+                          <option value="">Selecione...</option>
+                          <option value="Conquista">Conquista</option>
+                          <option value="Certificado">Certificado</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label :for="'titulo' + index">Título</label>
+                        <input type="text" class="form-control" :id="'titulo' + index" v-model="item.titulo"
+                          placeholder="Digite o título">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label :for="'descricao' + index">Descrição</label>
+                        <textarea class="form-control" :id="'descricao' + index" v-model="item.descricao" rows="4"
+                          placeholder="Descreva..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <a href="#" @click.prevent="adicionarConquistaCertificado" class="disabled-link">
+                      <img width="20" src="../../public/add.png" alt="">
+                      Adicionar Conquista ou Certificado
+                    </a>
+                  </div>
+
+
+                  <button type="submit" class="save btn btn-primary">Salvar Informações</button>
+                </form>
+              </div>
+            </div>
           </div>
+
           <div v-if="currentSection === 'skills'">
-            <h2>Skills</h2>
-            <!-- conteúdo de Skills -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Skills</h5>
+              </div>
+              <div class="card-body">
+                <form>
+                  <div class="form-group">
+                    <label for="softSkills">Soft Skills</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" v-model="newSoftSkill"
+                        placeholder="Adicione uma soft skill">
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" @click="addSoftSkill">Adicionar</button>
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <span v-for="(skill, index) in softSkills" :key="index" class="badge skill-badge mr-1">
+                        {{ skill }} <button type="button" class="close" @click="removeSoftSkill(index)">&times;</button>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="hardSkills">Hard Skills</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" v-model="newHardSkill"
+                        placeholder="Adicione uma hard skill">
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" @click="addHardSkill">Adicionar</button>
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <span v-for="(skill, index) in hardSkills" :key="index" class="badge skill-badge mr-1">
+                        {{ skill }} <button type="button" class="close" @click="removeHardSkill(index)">&times;</button>
+                      </span>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="save btn btn-primary">Salvar Informações</button>
+                </form>
+              </div>
+            </div>
           </div>
+
+
           <div v-if="currentSection === 'idioma'">
-            <h2>Idioma</h2>
-            <!-- conteúdo de Idioma -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Idiomas</h5>
+              </div>
+              <div class="card-body">
+                <form @submit.prevent="salvarIdiomas">
+                  <div v-for="(idioma, index) in idiomas" :key="index" class="form-row mb-3">
+                    <div class="form-group col-md-6">
+                      <label :for="'idioma' + index">Idioma</label>
+                      <input type="text" class="form-control" :id="'idioma' + index" v-model="idioma.nome"
+                        placeholder="Digite o idioma">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label :for="'nivel' + index">Nível</label>
+                      <select :id="'nivel' + index" class="form-control" v-model="idioma.nivel">
+                        <option value="" disabled>Selecione o nível</option>
+                        <option>Iniciante</option>
+                        <option>Intermediário</option>
+                        <option>Avançado</option>
+                        <option>Fluente</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <a href="#" @click.prevent="adicionarIdioma" class="disabled-link">
+                      <img width="20" src="../../public/add.png" alt="">
+                      Adicionar outro idioma.
+                    </a>
+                  </div>
+
+                  <button type="submit" class="save btn btn-primary mt-3">Salvar Informações</button>
+                </form>
+              </div>
+            </div>
           </div>
+
+
           <div v-if="currentSection === 'anexarCurriculo'">
-            <h2>Anexar Currículo</h2>
-            <!-- conteúdo de Anexar Currículo -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Anexar Currículo</h5>
+              </div>
+              <div class="card-body">
+                <form>
+                  <div class="form-group">
+                    <label for="curriculo">Por favor, escolha um arquivo de currículo para anexar. O formato deve ser
+                      PDF ou DOCX.</label>
+                    <div class="input-group mb-4">
+                      <input type="file" class="form-control" id="inputGroupFile02">
+                    </div>
+                  </div>
+
+                  <button type="submit" class="save btn btn-primary">Salvar Informações</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -287,11 +427,10 @@
 </template>
 
 <script>
-
-  import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
-  name: 'CurriculoCandato',
+  name: 'CurriculoCandidato',
   data() {
     return {
       currentSection: 'dadosPessoais',
@@ -314,6 +453,19 @@ export default {
           instituicao: '',
           inicio: '',
           fim: ''
+        }
+      ],
+      conquistasCertificados: [
+        { tipo: '', titulo: '', descricao: '' }
+      ],
+      hardSkills: [],
+      softSkills: [],
+      newHardSkill: '',
+      newSoftSkill: '',
+      idiomas: [
+        {
+          nome: '',
+          nivel: ''
         }
       ]
     };
@@ -342,14 +494,49 @@ export default {
         inicio: '',
         fim: ''
       });
+    },
+    adicionarConquistaCertificado() {
+      this.conquistasCertificados.push({
+        tipo: '',
+        titulo: '',
+        descricao: ''
+      });
+    },
+    addHardSkill() {
+      if (this.newHardSkill) {
+        this.hardSkills.push(this.newHardSkill);
+        this.newHardSkill = '';
+      }
+    },
+    removeHardSkill(index) {
+      this.hardSkills.splice(index, 1);
+    },
+    addSoftSkill() {
+      if (this.newSoftSkill) {
+        this.softSkills.push(this.newSoftSkill);
+        this.newSoftSkill = '';
+      }
+    },
+    removeSoftSkill(index) {
+      this.softSkills.splice(index, 1);
+    },
+    adicionarIdioma() {
+      this.idiomas.push({
+        nome: '',
+        nivel: ''
+      });
+    },
+    salvarIdiomas() {
+      console.log(this.idiomas);
     }
   },
   components: {
     Navbar,
   },
-
 };
 </script>
+
+
 
 <style scoped>
 body {
@@ -414,5 +601,16 @@ body {
 .disabled-link {
   color: inherit;
   text-decoration: none;
+}
+
+.skill-badge {
+  color: #504e4e;
+  background-color: transparent;
+  border: 1px solid 
+  #cfcccc;
+}
+
+.upload {
+  margin-bottom: 20px;
 }
 </style>

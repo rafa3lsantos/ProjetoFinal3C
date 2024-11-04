@@ -19,33 +19,33 @@
                                             </h5>
 
                                             <div data-mdb-input-init class="form-outline mb-2">
+                                                <label class="form-label" for="form2Example17">Nome da Empresa</label>
                                                 <input type="email" id="form2Example17"
                                                     class="form-control form-control" />
-                                                <label class="form-label" for="form2Example17">Nome da Empresa</label>
                                             </div>
 
                                             <div data-mdb-input-init class="form-outline mb-2">
+                                                <label class="form-label" for="form2Example17">CNPJ</label>
                                                 <input type="email" id="form2Example17"
                                                     class="form-control form-control" />
-                                                <label class="form-label" for="form2Example17">CNPJ</label>
                                             </div>  
 
                                             <div data-mdb-input-init class="form-outline mb-2">
+                                                <label class="form-label" for="form2Example17">Email</label>
                                                 <input type="email" id="form2Example17"
                                                     class="form-control form-control" />
-                                                <label class="form-label" for="form2Example17">Email</label>
                                             </div>
 
                                             <div data-mdb-input-init class="form-outline mb-2">
+                                                <label class="form-label" for="form2Example27">Senha</label>
                                                 <input type="password" id="form2Example27"
                                                     class="form-control form-control" />
-                                                <label class="form-label" for="form2Example27">Senha</label>
                                             </div>
 
                                             <div data-mdb-input-init class="form-outline mb-2">
+                                                <label class="form-label" for="form2Example17">Repetir Senha</label>
                                                 <input type="email" id="form2Example17"
                                                     class="form-control form-control" />
-                                                <label class="form-label" for="form2Example17">Repetir Senha</label>
                                             </div>
 
                                             <div class="form-check d-flex justify-content-center mb-3">
