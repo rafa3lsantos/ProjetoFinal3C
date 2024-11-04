@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\candidate;
 use Illuminate\Http\Request;
 use Symfony\Contracts\Service\Attribute\Required;
-use Illuminate\Support\Facades\Hash;
 
 class CandidateController extends Controller
 {
@@ -16,21 +15,21 @@ class CandidateController extends Controller
             'cpf' => 'required|string|min:11|max:14',
             'email' => 'required|string|email|min:3|max:255',
             'password' => 'required|string|min:6|max:255',
-            'phone'=> 'required|string|min:11|max:14',
-            'gender' => 'required|string|in:masculino,feminino,nao-binario,outro',
-            'cep' => 'required|string|min:8|max:9',
-            'address' => 'required|string|min:3|max:255',
-            'state' => 'required|string|min:2|max:255',
-            'city' => 'required|string|min:3|max:255',
-            'language' => 'required|string|min:3|max:255',
-            'curriculum' => 'required|string|min:3|max:255',
+            'phone'=> 'string|min:11|max:14',
+            'gender' => 'string|in:masculino,feminino,nao-binario,outro',
+            'cep' => 'string|min:8|max:9',
+            'address' => 'string|min:3|max:255',
+            'state' => 'string|min:2|max:255',
+            'city' => 'string|min:3|max:255',
+            'language' => 'string|min:3|max:255',
+            'curriculum' => 'string|min:3|max:255',
 
         ]);
 
         $candidate = Candidate::create($arrayRequest);
 
         return response()->json([
-            'message' => "Candiatdo adicionado!",
+            'message' => "cadastrado com sucesso!",
             'candidate'=> $candidate
         ]);
 
@@ -48,7 +47,7 @@ class CandidateController extends Controller
 
         if(!$candidate || !$password){
             return response()->json([
-                'message' => 'Credenciais inválidas'
+                'message' => 'Email ou senha inválidos, Tente novamente'
             ], 401);
         }
 
