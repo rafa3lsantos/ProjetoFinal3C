@@ -56,7 +56,7 @@
                             <router-link to="/jobs" class="nav-link">Vagas</router-link>
                         </li>
                     </ul>
-                </div>
+                </div> 
                 <div class="user">
                     <div class="dropdown ms-auto" @click="toggleDropdown">
                         <img :src="arrowUser" alt="Foto do Usuário" class="rounded-circle user-icon arrow" width="15" />
