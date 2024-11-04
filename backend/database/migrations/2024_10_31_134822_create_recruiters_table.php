@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('cpf');
-            $table->string('birthdate');
+            $table->date('birthdate');
             $table->string('email');
             $table->string('password');
             $table->foreignId('company_id')->constrained('companies');
