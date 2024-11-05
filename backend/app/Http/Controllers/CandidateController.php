@@ -13,22 +13,24 @@ class CandidateController extends Controller
     {
         $arrayRequest = $request->validate([
             'name' => 'required|string|min:3|max:255',
-            'cpf' => 'required|string|min:11|max:14|unique',
-            'email' => 'required|string|email|min:3|max:255|unique',
+            'cpf' => 'required|string|min:11|max:14|unique:candidates',
+            'email' => 'required|string|email|min:3|max:255|unique:candidates',
             'password' => 'required|string|min:6|max:255',
-            'phone'=> 'string|min:11|max:14|unique',
-            'gender' => 'string|in:masculino,feminino,nao-binario,outro',
-            'cep' => 'string|min:8|max:9',
-            'address' => 'string|min:3|max:255',
-            'state' => 'string|min:2|max:255',
-            'city' => 'string|min:3|max:255',
-            'language' => 'string|min:3|max:255',
-            'curriculum' => 'string|min:3|max:255',
-
+            'phone' => 'nullable|string|min:11|max:14|unique:candidates',
+            'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
+            'cep' => 'nullable|string|min:8|max:9',
+            'address' => 'nullable|string|min:3|max:255',
+            'state' => 'nullable|string|min:2|max:255',
+            'city' => 'nullable|string|min:3|max:255',
+            'language' => 'nullable|string|min:3|max:255',
+            'curriculum' => 'nullable|string|min:3|max:255',
         ]);
 
         $candidate = Candidate::create($arrayRequest);
 
+
+
+        
         return response()->json([
             'message' => "cadastrado com sucesso!",
             'candidate'=> $candidate
