@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->enum('work_model', ['presential', 'remote', 'hybrid']);
-            $table->string('job_type');
-            $table->string('location');
+            $table->enum('job_type', ['effective', 'freelancer', 'temporary', 'internship']);
             $table->string('state');
             $table->string('city');
-            $table->string('status');
+            $table->enum('status', ['in_progress', 'under_review', 'finshed']);
+            $table->text('description');
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });
