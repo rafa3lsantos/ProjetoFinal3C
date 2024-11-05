@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('work_model');
+            $table->enum('work_model', ['presential', 'remote', 'hybrid']);
             $table->string('job_type');
             $table->string('location');
             $table->string('state');
