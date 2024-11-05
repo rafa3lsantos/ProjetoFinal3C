@@ -20,11 +20,11 @@ class JobsController extends Controller
             'company_id' => 'required|exists:companies,id',
         ]);
 
-        $job = Jobs::create($arrayRequest);
+        $jobs = Jobs::create($arrayRequest);
 
         return response()->json([
             'message' => 'Emprego criado com sucesso!',
-            'job' => $job,
+            'jobs' => $jobs,
         ], 201);
     }
 }
