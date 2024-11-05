@@ -28,6 +28,9 @@ class CandidateController extends Controller
 
         $candidate = Candidate::create($arrayRequest);
 
+
+
+        
         return response()->json([
             'message' => "cadastrado com sucesso!",
             'candidate'=> $candidate
