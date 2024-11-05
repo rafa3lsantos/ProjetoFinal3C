@@ -2,10 +2,7 @@
 
 use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\CandidateController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\JobsController;
->>>>>>> main
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -21,35 +18,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-<<<<<<< HEAD
-Route::prefix('candidate')->group(function () {
-    Route::post('/register', [CandidateController::class, 'store']);
-    Route::post('/login', [CandidateController::class, 'login']);
-});
-
-Route::prefix('recruiter')->group(function () {
-    Route::post('/register', [RecruiterController::class, 'store']);
-    Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
-});
-
-=======
->>>>>>> main
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-<<<<<<< HEAD
-=======
-Route::prefix('recruiter')->group(function () {
-    Route::post('/register', [RecruiterController::class, 'store']);
-    Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
-}); 
-
 Route::prefix('candidate')->group(function () {
     Route::post('/register', [CandidateController::class, 'store']);
     Route::post('/login', [CandidateController::class, 'loginCandidate']);
 });
->>>>>>> main
+
+Route::prefix('recruiter')->group(function () {
+    Route::post('/register', [RecruiterController::class, 'store']);
+    Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
+});
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 Route::post('/registerjobs', [JobsController::class, 'store']);
 
