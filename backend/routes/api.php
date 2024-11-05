@@ -24,7 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/candidate', 'App\Http\Controllers\CandidateController@store');
-Route::post('/candidate/login', 'App\Http\Controllers\CandidateController@login');
+Route::prefix('candidate')->group(function () {
+    Route::post('/register', 'App\Http\Controllers\CandidateController@store');
+    Route::post('/login', 'App\Http\Controllers\CandidateController@login');
+});
 
 Route::post('/skill', 'App\Http\Controllers\SkillController@store');
