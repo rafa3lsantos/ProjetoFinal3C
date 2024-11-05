@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\candidate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,11 +27,10 @@ class CandidateController extends Controller
             'curriculum' => 'nullable|string|min:3|max:255',
         ]);
 
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+
         $candidate = Candidate::create($arrayRequest);
 
-
-
-        
         return response()->json([
             'message' => "cadastrado com sucesso!",
             'candidate'=> $candidate
@@ -46,12 +46,21 @@ class CandidateController extends Controller
             $token = $candidate->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                'message' => 'candidato autenticado com sucesso!',
+                'message' => 'Candidato autenticado com sucesso!',
                 'token' => $token,
             ]);
         }
 
-        return response()->json(['message' => 'Falha na autenticação do candidatio'], 401);
+        return response()->json(['message' => 'Falha na autenticação do candidato'], 401);
     }
+
+    public function logoutCandidate(Request $request)
+{
+    $request->user()->tokens()->delete();
+
+    return response()->json([
+        'message' => 'Logout realizado com sucesso!',
+    ]);
+}
 
 }
