@@ -5,6 +5,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import RegisterEmpresa from '../views/RegisterEmpresa.vue';
 import PerfilCandidato from '../views/PerfilCandidato.vue';
+import Vagas from '../views/Vagas.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,14 @@ const router = createRouter({
       component: PerfilCandidato,
       meta: {
         title: 'Meu Perfil'
+      }
+    },
+    {
+      path: '/Vagas',
+      name: 'vagas',
+      component: Vagas,
+      meta: {
+        title: 'Vagas'
       }
     },
 
