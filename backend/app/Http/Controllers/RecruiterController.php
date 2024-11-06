@@ -14,13 +14,12 @@ class RecruiterController extends Controller
         $arrayRequest = $request->validate([
             'name' => 'required|string|max:255',
             'cpf' => 'required|string|max:14|unique:recruiters',
-            'birthdate' => 'required|date',
+            'birthdate' => 'sometimes|date',
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
             'company_id' => 'required|exists:companies,id',
         ]);
 
-        // Hash a senha antes de salvar
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
         $recruiter = Recruiter::create($arrayRequest);

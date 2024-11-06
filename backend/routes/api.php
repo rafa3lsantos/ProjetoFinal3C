@@ -28,6 +28,11 @@ Route::prefix('recruiter')->group(function () {
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
 });
 
+Route::prefix('company')->group(function () {
+    Route::post('/register', [RecruiterController::class, 'store']);
+    Route::post('/login', [RecruiterController::class, 'loginCompany']);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

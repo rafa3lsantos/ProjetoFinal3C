@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('cnpj');
             $table->string('email');
             $table->string('password');
-            $table->string('company_sector');
-            $table->string('about_company');
+            $table->string('company_sector')->nullable();
+            $table->string('about_company')->nullable();
             $table->timestamps();
         });
     }
