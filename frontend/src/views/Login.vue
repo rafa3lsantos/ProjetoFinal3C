@@ -13,7 +13,8 @@
                                 <div class="col-md-6 col-lg-7 d-flex align-items-center">
                                     <div class="card-body p-4 p-lg-5 text-black">
 
-                                        <form @submit.prevent="loginCandidate">
+
+                                        <form @submit.prevent="login">
 
                                             <div class="d-flex align-items-center mb-3 pb-1">
                                                 <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
@@ -62,6 +63,7 @@
     </div>
 </template>
 
+
 <script>
 import HttpService from '../services/HttpService';
 
@@ -73,39 +75,60 @@ export default {
         };
     },
     methods: {
-        async loginCandidate() {
-
+        async login() {
             if (!this.email || !this.password) {
                 alert('Por favor, preencha ambos os campos de email e senha.');
                 return;
             }
 
             try {
+
+                console.log('Tentando login como candidato...');
                 const response = await HttpService.post('candidate/login', {
                     email: this.email,
                     password: this.password,
                 });
 
 
-                console.log(response.data);
-
-
+                console.log('Login como candidato bem-sucedido:', response.data);
                 this.$store.dispatch('login', response.data.token);
-
                 alert('Login realizado com sucesso!');
                 this.$router.push('/home-candidato');
             } catch (error) {
-                if (error.response && error.response.data) {
-                    console.error('Erro ao fazer login:', error.response.data);
-                    alert(`Erro: ${error.response.data.message || 'Verifique seus dados e tente novamente.'}`);
-                } else {
+
+                console.error('Erro ao fazer login:', error);
+                if (error.response) {
+                    console.log('Erro response:', error.response);
+                    console.log('Erro response data:', error.response.data);
+                    console.log('Erro response status:', error.response.status);
+                }
+
+                try {
+                    console.log('Tentando login como empresa...');
+                    const response = await HttpService.post('company/login', {
+                        email: this.email,
+                        password: this.password,
+                    });
+
+                    console.log('Login como empresa bem-sucedido:', response.data);
+                    this.$store.dispatch('login', response.data.token);
+                    alert('Login realizado com sucesso!');
+                    this.$router.push('/home-empresa');
+                } catch (error) {
                     console.error('Erro ao fazer login:', error);
-                    alert('Erro ao tentar realizar o login. Tente novamente.');
+                    if (error.response) {
+                        console.log('Erro response:', error.response);
+                        console.log('Erro response data:', error.response.data);
+                        console.log('Erro response status:', error.response.status);
+                    }
+                    alert(`Erro: ${error.response ? error.response.data.message : 'Erro ao tentar realizar o login. Tente novamente.'}`);
                 }
             }
         }
     }
 };
 </script>
+
+
 
 <style></style>
