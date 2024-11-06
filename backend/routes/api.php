@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\JobsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -29,8 +30,8 @@ Route::prefix('recruiter')->group(function () {
 });
 
 Route::prefix('company')->group(function () {
-    Route::post('/register', [RecruiterController::class, 'store']);
-    Route::post('/login', [RecruiterController::class, 'loginCompany']);
+    Route::post('/register', [CompanyController::class, 'store']);
+    Route::post('/login', [CompanyController::class, 'loginCompany']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

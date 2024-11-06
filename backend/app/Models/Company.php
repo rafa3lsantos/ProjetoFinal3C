@@ -14,7 +14,7 @@ class Company extends Authenticatable
     use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'nome',
+        'name',
         'cnpj',
         'email',
         'password',
