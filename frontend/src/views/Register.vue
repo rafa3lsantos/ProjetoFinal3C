@@ -20,28 +20,30 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Nome Completo</label>
-                                                <input type="text" v-model="name" class="form-control" />
+                                                <input type="text" v-model="name" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">CPF</label>
-                                                <input type="text" v-model="cpf" class="form-control" />
+                                                <input type="text" v-model="cpf" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="email" class="form-control" />
+                                                <input type="email" v-model="email" class="form-control" required />
+                                            </div>
+
+
+                                            <div class="form-outline mb-2">
+                                                <label class="form-label">Telefone</label>
+                                                <input type="text" v-model="phone"
+                                                    class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Senha</label>
-                                                <input type="password" v-model="password" class="form-control" />
-                                            </div>
-
-                                            <div class="form-outline mb-2">
-                                                <label class="form-label">Repetir Senha</label>
-                                                <input type="password" v-model="password_confirmation"
-                                                    class="form-control" />
+                                                <input type="password" v-model="password" class="form-control"
+                                                    required />
                                             </div>
 
                                             <div class="form-check d-flex justify-content-center mb-3">
@@ -82,7 +84,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import HttpService from '../services/HttpService';
 
 export default {
     data() {
@@ -91,7 +93,8 @@ export default {
             cpf: '',
             email: '',
             password: '',
-            password_confirmation: '',
+            phone: '',
+            // password_confirmation: '',
             termsAccepted: false,
         };
     },
@@ -102,18 +105,25 @@ export default {
                 return;
             }
 
+            // if (this.password !== this.password_confirmation) {
+            //     alert('As senhas não coincidem.');
+            //     return;
+            // }
+
             try {
-                const response = await axios.post('/candidate/register', {
+                const response = await HttpService.post('candidate/register', {
                     name: this.name,
                     cpf: this.cpf,
                     email: this.email,
                     password: this.password,
-                    password_confirmation: this.password_confirmation,
+                    phone: this.phone,
+                    // password_confirmation: this.password_confirmation,
                 });
+                console.log(response);
 
+                alert('Registro concluído com sucesso!');
                 this.$router.push('/home-candidato');
             } catch (error) {
-
                 if (error.response && error.response.data) {
                     console.error("Erro ao registrar o candidato:", error.response.data);
                     alert(`Erro: ${error.response.data.message || 'Verifique os dados e tente novamente.'}`);
@@ -124,6 +134,11 @@ export default {
             }
         }
     }
-
 };
 </script>
+
+<style scoped>
+.vh-100 {
+    background-color: #cfcccc;
+}
+</style>
