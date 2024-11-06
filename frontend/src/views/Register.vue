@@ -41,7 +41,7 @@
                                             </div> -->
 
                                             <div class="form-outline mb-2">
-                                                <label class="form-label">Senha</label>
+                                                <label class="form-label">Crie sua senha</label>
                                                 <input type="password" v-model="password" class="form-control"
                                                     required />
                                             </div>

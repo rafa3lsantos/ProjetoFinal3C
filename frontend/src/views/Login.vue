@@ -13,7 +13,7 @@
                                 <div class="col-md-6 col-lg-7 d-flex align-items-center">
                                     <div class="card-body p-4 p-lg-5 text-black">
 
-                                        <form>
+                                        <form @submit.prevent="loginCandidate">
 
                                             <div class="d-flex align-items-center mb-3 pb-1">
                                                 <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
@@ -24,24 +24,23 @@
                                                 conta:</h5>
 
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="email" id="form2Example17"
-                                                    class="form-control form-control" />
+                                                <input type="email" id="form2Example17" v-model="email"
+                                                    class="form-control form-control" required />
                                                 <label class="form-label" for="form2Example17">Email</label>
                                             </div>
 
                                             <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="password" id="form2Example27"
-                                                    class="form-control form-control" />
+                                                <input type="password" id="form2Example27" v-model="password"
+                                                    class="form-control form-control" required />
                                                 <label class="form-label" for="form2Example27">Senha</label>
                                             </div>
 
                                             <div class="pt-1 mb-4">
-                                                <router-link to="/home-candidato" class="btn btn-dark btn-lg btn-block"
+                                                <button type="submit" class="btn btn-dark btn-lg btn-block"
                                                     data-mdb-button-init data-mdb-ripple-init>
                                                     Login
-                                                </router-link>
+                                                </button>
                                             </div>
-
 
                                             <a class="small text-muted" href="#!">Esqueceu sua senha?</a>
                                             <p class="mb-5 pb-lg-2" style="color: #393f81;">Não tem uma conta?
@@ -61,13 +60,52 @@
             </div>
         </section>
     </div>
-
 </template>
 
 <script>
-export default {
+import HttpService from '../services/HttpService';
 
-}
+export default {
+    data() {
+        return {
+            email: '',
+            password: '',
+        };
+    },
+    methods: {
+        async loginCandidate() {
+
+            if (!this.email || !this.password) {
+                alert('Por favor, preencha ambos os campos de email e senha.');
+                return;
+            }
+
+            try {
+                const response = await HttpService.post('candidate/login', {
+                    email: this.email,
+                    password: this.password,
+                });
+
+
+                console.log(response.data);
+
+
+                this.$store.dispatch('login', response.data.token);
+
+                alert('Login realizado com sucesso!');
+                this.$router.push('/home-candidato');
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    console.error('Erro ao fazer login:', error.response.data);
+                    alert(`Erro: ${error.response.data.message || 'Verifique seus dados e tente novamente.'}`);
+                } else {
+                    console.error('Erro ao fazer login:', error);
+                    alert('Erro ao tentar realizar o login. Tente novamente.');
+                }
+            }
+        }
+    }
+};
 </script>
 
 <style></style>
