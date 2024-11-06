@@ -6,6 +6,7 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import RegisterEmpresa from '../views/RegisterEmpresa.vue';
 import PerfilCandidato from '../views/PerfilCandidato.vue';
+import HomeEmpresa from '../views/HomeEmpresa.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +60,15 @@ const router = createRouter({
       component: PerfilCandidato,
       meta: {
         title: 'Meu Perfil',
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/home-empresa',
+      name: 'home-empresa',
+      component: HomeEmpresa,
+      meta: {
+        title: 'Empresa',
         requiresAuth: true,
       },
     },
