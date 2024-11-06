@@ -33,12 +33,12 @@
                                                 <input type="email" v-model="email" class="form-control" required />
                                             </div>
 
-
+<!-- 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Telefone</label>
                                                 <input type="text" v-model="phone"
                                                     class="form-control" required />
-                                            </div>
+                                            </div> -->
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Senha</label>
@@ -93,7 +93,7 @@ export default {
             cpf: '',
             email: '',
             password: '',
-            phone: '',
+            // phone: '',
             // password_confirmation: '',
             termsAccepted: false,
         };
@@ -116,7 +116,7 @@ export default {
                     cpf: this.cpf,
                     email: this.email,
                     password: this.password,
-                    phone: this.phone,
+                    // phone: this.phone,
                     // password_confirmation: this.password_confirmation,
                 });
                 console.log(response);
