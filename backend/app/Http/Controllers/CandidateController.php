@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\candidate;
+use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Symfony\Contracts\Service\Attribute\Required;
 use Illuminate\Support\Facades\Auth;
 
 class CandidateController extends Controller
@@ -24,7 +23,7 @@ class CandidateController extends Controller
             'state' => 'nullable|string|min:2|max:255',
             'city' => 'nullable|string|min:3|max:255',
             'language' => 'nullable|string|min:3|max:255',
-            'curriculum' => 'nullable|string|min:3|max:255',
+            'curriculum' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Aceita arquivos PDF, DOC, DOCX
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
@@ -32,15 +31,18 @@ class CandidateController extends Controller
         $candidate = Candidate::create($arrayRequest);
 
         return response()->json([
-            'message' => "cadastrado com sucesso!",
-            'candidate'=> $candidate
-        ]);
-
+            'message' => 'Cadastrado com sucesso!',
+            'candidate'=> $candidate,
+        ], 201);
     }
 
     public function loginCandidate(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
         if (Auth::guard('candidate')->attempt($credentials)) {
             $candidate = Auth::guard('candidate')->user();
             $token = $candidate->createToken('auth_token')->plainTextToken;
@@ -48,19 +50,18 @@ class CandidateController extends Controller
             return response()->json([
                 'message' => 'Candidato autenticado com sucesso!',
                 'token' => $token,
-            ]);
+            ], 200);
         }
 
         return response()->json(['message' => 'Falha na autenticação do candidato'], 401);
     }
 
     public function logoutCandidate(Request $request)
-{
-    $request->user()->tokens()->delete();
+    {
+        $request->user()->tokens()->delete();
 
-    return response()->json([
-        'message' => 'Logout realizado com sucesso!',
-    ]);
-}
-
+        return response()->json([
+            'message' => 'Logout realizado com sucesso!',
+        ], 200);
+    }
 }
