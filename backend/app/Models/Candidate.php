@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+
 class Candidate extends Authenticatable
 {
     use HasFactory, HasApiTokens;
@@ -26,7 +25,5 @@ class Candidate extends Authenticatable
         'curriculum',
     ];
 
-    public function candidate() {
-        return $this->hasMany(Candidate::class);
-    }
+    // Relacionamentos adicionais podem ser adicionados aqui conforme necessário
 }
