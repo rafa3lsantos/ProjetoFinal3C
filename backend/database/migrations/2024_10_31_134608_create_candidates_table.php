@@ -17,14 +17,14 @@ return new class extends Migration
             $table->string('cpf')->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('phone')->unique();
-            $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro']);
-            $table->string('cep');
-            $table->text('address');
-            $table->string('state');
-            $table->string('city');
-            $table->string('language');
-            $table->text('curriculum');
+            $table->string('phone')->unique()->nullable(); // Campo opcional
+            $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable(); // Campo opcional
+            $table->string('cep')->nullable();
+            $table->text('address')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
+            $table->string('language')->nullable(); // Campo opcional
+            $table->text('curriculum')->nullable(); // Campo opcional
             $table->timestamps();
         });
     }

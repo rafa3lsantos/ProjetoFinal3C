@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('candidate')->group(function () {
     Route::post('/register', [CandidateController::class, 'store']);
-    Route::post('/login', [CandidateController::class, 'login']);
+    Route::post('/login', [CandidateController::class, 'loginCandidate']);
 });
 
 Route::prefix('recruiter')->group(function () {
@@ -36,7 +36,6 @@ Route::prefix('company')->group(function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 
 Route::post('/registerjobs', [JobsController::class, 'store']);
 
