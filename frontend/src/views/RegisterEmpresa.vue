@@ -20,7 +20,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Nome da Empresa</label>
-                                                <input type="text" v-model="nome" class="form-control"
+                                                <input type="text" v-model="name" class="form-control"
                                                     required />
                                             </div>
 
@@ -89,7 +89,7 @@ import HttpService from '../services/HttpService';
 export default {
     data() {
         return {
-            nome: '',
+            name: '',
             cnpj: '',
             email: '',
             password: '',
@@ -111,7 +111,7 @@ export default {
 
             try {
                 const response = await HttpService.post('company/register', {
-                    nome: this.nome,
+                    name: this.name,
                     cnpj: this.cnpj,
                     email: this.email,
                     password: this.password,
