@@ -12,7 +12,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $arrayRequest = $request->validate([
-            'nome' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'cnpj' => 'required|string|max:14|unique:companies',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
