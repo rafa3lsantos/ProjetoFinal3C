@@ -8,6 +8,7 @@ import RegisterEmpresa from '../views/RegisterEmpresa.vue';
 import PerfilCandidato from '../views/PerfilCandidato.vue';
 import HomeEmpresa from '../views/HomeEmpresa.vue';
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -64,6 +65,8 @@ const router = createRouter({
       },
     },
     {
+
+
       path: '/home-empresa',
       name: 'home-empresa',
       component: HomeEmpresa,

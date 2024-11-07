@@ -20,7 +20,7 @@
                                 aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/jobs" class="nav-link">Vagas</router-link>
+                            <router-link to="/Vagas" class="nav-link">Vagas</router-link>
                         </li>
                     </ul>
                 </div>
