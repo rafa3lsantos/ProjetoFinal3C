@@ -14,6 +14,7 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name' => 'required|string|min:3|max:255',
             'cpf' => 'required|string|min:11|max:14|unique:candidates',
+            'birth_date' => 'nullable|date',
             'email' => 'required|string|email|min:3|max:255|unique:candidates',
             'password' => 'required|string|min:6|max:255',
             'phone' => 'nullable|string|min:11|max:14|unique:candidates',
@@ -54,6 +55,26 @@ class CandidateController extends Controller
         }
 
         return response()->json(['message' => 'Falha na autenticação do candidato'], 401);
+    }
+
+    public function updateCandidate(Request $request)
+    {
+        $candidate = $request->user();
+
+        $arrayRequest = $request->validate([
+            'name' => 'nullable|string|min:3|max:255',
+            'email' => 'nullable|string|email|min:3|max:255|unique:candidates,email,' . $candidate->id,
+            'password' => 'nullable|string|min:6|max:255',
+            'birth_date' => 'nullable|date',
+            'gender'=>  'nullable|string|in:masculino,feminino,nao-binario,outro',
+            'phone' => 'nullable|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
+            'cep' => 'nullable|string|min:8|max:9',
+            'address' => 'nullable|string|min:3|max:255',
+            'state' => 'nullable|string|min:2|max:255',
+            'city' => 'nullable|string|min:3|max:255',  
+            'about' => 'nullable|string|min:3|max:255',
+            'photo'
+        ]);
     }
 
     public function logoutCandidate(Request $request)
