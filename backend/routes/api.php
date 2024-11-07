@@ -1,7 +1,11 @@
 <?php
 
 use App\Http\Controllers\RecruiterController;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\JobsController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,18 +19,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('candidate')->group(function () {
+    Route::post('/register', [CandidateController::class, 'store']);
+    Route::post('/login', [CandidateController::class, 'loginCandidate']);
+});
+
 Route::prefix('recruiter')->group(function () {
     Route::post('/register', [RecruiterController::class, 'store']);
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
+});
+
+Route::prefix('company')->group(function () {
+    Route::post('/register', [CompanyController::class, 'store']);
+    Route::post('/login', [CompanyController::class, 'loginCompany']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('candidate')->group(function () {
-    Route::post('/register', 'App\Http\Controllers\CandidateController@store');
-    Route::post('/login', 'App\Http\Controllers\CandidateController@login');
-});
+Route::post('/registerjobs', [JobsController::class, 'store']);
 
-Route::post('/skill', 'App\Http\Controllers\SkillController@store');
+// Route::post('/skill', 'App\Http\Controllers\SkillController@store');

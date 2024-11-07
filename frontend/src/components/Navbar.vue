@@ -1,45 +1,11 @@
 <template>
     <div>
+
         <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-            <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme"
-                type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
-                    <use href="#circle-half"></use>
-                </svg>
-                <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-                <li>
-                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-                        aria-pressed="false">
-                        <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                            <use href="#sun-fill"></use>
-                        </svg>
-                        Light
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-                        aria-pressed="false">
-                        <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                            <use href="#moon-stars-fill"></use>
-                        </svg>
-                        Dark
-                    </button>
-                </li>
-                <li>
-                    <button type="button" class="dropdown-item d-flex align-items-center active"
-                        data-bs-theme-value="auto" aria-pressed="true">
-                        <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                            <use href="#circle-half"></use>
-                        </svg>
-                        Auto
-                    </button>
-                </li>
-            </ul>
+
         </div>
 
-        <!-- Navbar -->
+        
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">3Cvagas</a>
@@ -50,36 +16,39 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <router-link to="/home-candidato" class="nav-link active" aria-current="page">Home</router-link>
+                            <router-link to="/home-candidato" class="nav-link active"
+                                aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
                             <router-link to="/Vagas" class="nav-link">Vagas</router-link>
                         </li>
                     </ul>
-                </div> 
-                <div class="user">
-                    <div class="dropdown ms-auto" @click="toggleDropdown">
-                        <img :src="arrowUser" alt="Foto do Usuário" class="rounded-circle user-icon arrow" width="15" />
+                </div>
+
+               
+                <div class="user ms-auto">
+                    <div class="dropdown" @click="toggleDropdown">
+                        <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
                         <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40"
                             height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/meu-perfil" class="dropdown-item">Perfil</router-link>
                             <router-link to="/Curriculo" class="dropdown-item">Meu Currículo</router-link>
                             <a class="dropdown-item" href="#">Minhas Candidaturas</a>
-                            <router-link to="/login" class="dropdown-item exit-color">
-                                Sair <img width="15px" src="../../public/logout.png" alt="exit">
-                            </router-link>
+                            <a @click.prevent="handleLogout" class="dropdown-item exit-color">
+                                Sair <img width="15px" src="../../public/logout.png" alt="Sair">
+                            </a>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </nav>
     </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { mapActions } from 'vuex';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -96,6 +65,10 @@ export default {
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
+        async handleLogout() {
+            await this.$store.dispatch('logout');
+            this.$router.push({ name: 'login' });
+        }
     },
 };
 </script>

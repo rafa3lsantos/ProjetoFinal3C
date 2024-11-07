@@ -13,10 +13,10 @@ class Jobs extends Model
         'title',
         'work_model',
         'job_type',
-        'location',
         'state',
         'city',
         'status',
+        'description',
         'company_id',
     ];
 

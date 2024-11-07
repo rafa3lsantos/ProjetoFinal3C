@@ -18,5 +18,9 @@ class Recruiter extends Authenticatable
         'password',
         'company_id',
     ];
+
+    public function candidate() { 
+        return $this->hasMany(Candidate::class);
+    }
 }
 
