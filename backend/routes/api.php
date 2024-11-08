@@ -40,6 +40,8 @@ Route::middleware('auth:recruiter')->group(function () {
 Route::prefix('company')->group(function () {
     Route::post('/register', [CompanyController::class, 'store']);
     Route::post('/login', [CompanyController::class, 'loginCompany']);
+    Route::put('/update', [CompanyController::class, 'update']);
+    Route::get('/show', [CompanyController::class, 'show']);
 });
 
 Route::middleware('auth:company')->group(function () {
