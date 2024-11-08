@@ -20,6 +20,7 @@
                 </div>
 
                 <div class="col-md-7 col-xl-8">
+                    <!-- Seção da Empresa -->
                     <div v-if="currentSection === 'empresa'">
                         <div class="card">
                             <div class="card-header">
@@ -47,7 +48,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="text-center">
-                                                <img alt="João da Silva" src="../../public/user.png"
+                                                <img alt="Imagem da Empresa" src="../../public/user.png"
                                                     class="rounded-circle img-responsive mt-2" width="128" height="128">
                                                 <div class="mt-2">
                                                     <span class="btn btn-primary"><i class="fa fa-upload"></i></span>
@@ -57,14 +58,13 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <button type="submit" class="btn btn-primary">Salvar Informações</button>
                                 </form>
-
                             </div>
                         </div>
                     </div>
 
+                    <!-- Seção para Adicionar Recrutador -->
                     <div v-if="currentSection === 'addRecrutador'">
                         <div class="card">
                             <div class="card-header">
@@ -91,20 +91,33 @@
                                                 <input type="text" v-model="cpf" class="form-control" required
                                                     placeholder="CPF do Recrutador">
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="email">Email</label>
                                                 <input type="email" v-model="email" class="form-control" required
                                                     placeholder="Email para o login">
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="password">Crie uma Senha</label>
                                                 <input type="password" v-model="password" class="form-control" required
                                                     placeholder="Senha para o login">
                                             </div>
+
                                             <div class="form-group">
                                                 <label for="password_confirmation">Confirme a senha</label>
                                                 <input type="password" v-model="password_confirmation"
                                                     class="form-control" required placeholder="Confirme a senha">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="company_id">Selecione a Empresa</label>
+                                                <select v-model="companyId" class="form-control" required>
+                                                    <option v-for="company in companies" :value="company.id"
+                                                        :key="company.id">
+                                                        {{ company.name }}
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
 
@@ -144,7 +157,7 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
-            currentSection: 'addRecrutador',
+            currentSection: 'empresa', // Começa na seção "empresa"
             name: '',
             cpf: '',
             email: '',
@@ -152,11 +165,13 @@ export default {
             password: '',
             password_confirmation: '',
             profileImage: null,
-            profileImagePreview: null
+            profileImagePreview: null,
+            companyId: null,
+            companies: [] // Lista de empresas
         };
     },
     computed: {
-        ...mapState(['user']) // Assume que o Vuex armazena o `user` com as informações da empresa
+        ...mapState(['user'])
     },
     methods: {
         showSection(section) {
@@ -167,58 +182,84 @@ export default {
             this.profileImage = file;
             this.profileImagePreview = URL.createObjectURL(file);
         },
+        async fetchCompanies() {
+            try {
+                const response = await HttpService.get('company/show');
+                this.companies = response.data;
+            } catch (error) {
+                console.error("Erro ao carregar empresas:", error);
+                alert('Erro ao carregar empresas.');
+            }
+        },
         async registerRecruiter() {
-            // Verificação de senhas
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
                 return;
             }
 
-            // Verificação de dados obrigatórios
-            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate) {
+            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate || !this.companyId) {
                 alert('Por favor, preencha todos os campos obrigatórios!');
                 return;
             }
 
-            // Obtendo o ID da empresa do Vuex (presumindo que o Vuex armazena essa informação)
-            const companyId = this.user.company_id;
-
-            // Preparando o FormData para o envio
             const formData = new FormData();
             formData.append('name', this.name);
             formData.append('cpf', this.cpf);
             formData.append('email', this.email);
             formData.append('password', this.password);
             formData.append('birthdate', this.birthdate);
-            formData.append('company_id', companyId);  // Adiciona o ID da empresa
+            formData.append('company_id', this.companyId);
+
             if (this.profileImage) {
-                formData.append('photo', this.profileImage);  // Envia a foto, se houver
+                formData.append('profile_image', this.profileImage);
             }
 
             try {
-                // Envio do FormData via HttpService
-                const response = await HttpService.post('recruiter/register', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-
-                // Verificando a resposta
-                if (response.data.success) {
-                    alert('Recrutador adicionado com sucesso!');
-                    this.$router.push('/perfil-empresa'); // Redireciona para a página da empresa após o cadastro
-                } else {
-                    alert('Erro ao cadastrar recrutador, tente novamente.');
-                }
+                const response = await HttpService.post('recruiter/register', formData);
+                alert('Recrutador registrado com sucesso!');
             } catch (error) {
-                console.error("Erro ao registrar o recrutador:", error);
-                alert('Erro ao cadastrar recrutador, tente novamente.');
+                console.error("Erro ao registrar recrutador:", error);
+                alert('Erro ao registrar recrutador.');
             }
         }
+    },
+    mounted() {
+        this.fetchCompanies();
     },
     components: {
         NavbarEmpresa
     }
 };
 </script>
+
+<style scoped>
+body {
+    margin-top: 20px;
+    background: #F0F8FF;
+}
+
+.card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
+}
+
+.card-header {
+    padding: .75rem 1.25rem;
+    margin-bottom: 0;
+    color: #fff;
+    background: #4e73df;
+    border-bottom: 1px solid rgba(0, 0, 0, .125);
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+</style>
+
 
 
 <style scoped>
