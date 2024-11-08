@@ -60,6 +60,7 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Salvar Informações</button>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -91,19 +92,16 @@
                                                 <input type="text" v-model="cpf" class="form-control" required
                                                     placeholder="CPF do Recrutador">
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="email">Email</label>
                                                 <input type="email" v-model="email" class="form-control" required
                                                     placeholder="Email para o login">
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="password">Crie uma Senha</label>
                                                 <input type="password" v-model="password" class="form-control" required
                                                     placeholder="Senha para o login">
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="password_confirmation">Confirme a senha</label>
                                                 <input type="password" v-model="password_confirmation"
@@ -188,48 +186,51 @@ export default {
                 this.companies = response.data;
             } catch (error) {
                 console.error("Erro ao carregar empresas:", error);
-                alert('Erro ao carregar empresas.');
             }
         },
         async registerRecruiter() {
+            // Verificação de senhas
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
                 return;
-            }
+                if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate || !this.companyId) {
+                    alert('Por favor, preencha todos os campos obrigatórios!');
+                    return;
+                }
 
-            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate || !this.companyId) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
-                return;
-            }
+                // Obtendo o ID da empresa do Vuex (presumindo que o Vuex armazena essa informação)
+                const companyId = this.user.company_id;
 
-            const formData = new FormData();
-            formData.append('name', this.name);
-            formData.append('cpf', this.cpf);
-            formData.append('email', this.email);
-            formData.append('password', this.password);
-            formData.append('birthdate', this.birthdate);
-            formData.append('company_id', this.companyId);
+                // Preparando o FormData para o envio
+                const formData = new FormData();
+                formData.append('name', this.name);
+                formData.append('cpf', this.cpf);
+                formData.append('email', this.email);
+                formData.append('password', this.password);
+                formData.append('birthdate', this.birthdate);
+                formData.append('company_id', this.companyId);
 
-            if (this.profileImage) {
-                formData.append('profile_image', this.profileImage);
-            }
+                if (this.profileImage) {
+                    formData.append('profile_image', this.profileImage);
+                }
 
-            try {
-                const response = await HttpService.post('recruiter/register', formData);
-                alert('Recrutador registrado com sucesso!');
-            } catch (error) {
-                console.error("Erro ao registrar recrutador:", error);
-                alert('Erro ao registrar recrutador.');
+                try {
+                    const response = await HttpService.post('recruiter/register', formData);
+                    alert('Recrutador registrado com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao registrar recrutador:", error);
+                    alert('Erro ao registrar recrutador.');
+                }
             }
+        },
+        mounted() {
+            this.fetchCompanies();
+        },
+        components: {
+            NavbarEmpresa
         }
-    },
-    mounted() {
-        this.fetchCompanies();
-    },
-    components: {
-        NavbarEmpresa
     }
-};
+}
 </script>
 
 <style scoped>
