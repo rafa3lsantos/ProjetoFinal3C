@@ -26,23 +26,22 @@
                                 <h5 class="card-title mb-0">Empresa</h5>
                             </div>
                             <div class="card-body">
-                                <form @submit.prevent="registerCompany">
+                                <form>
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="name">Nome da Empresa</label>
-                                                <input type="text" v-model="companyName" class="form-control" id="name"
+                                                <input type="text" class="form-control" id="name"
                                                     placeholder="Nome da sua empresa">
                                             </div>
                                             <div class="form-group">
                                                 <label for="setor">Setor da empresa</label>
-                                                <input type="text" v-model="companySector" class="form-control"
-                                                    id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
+                                                <input type="text" class="form-control" id="setor"
+                                                    placeholder="Ex: vendas, marketing, tecnologia, etc.">
                                             </div>
                                             <div class="form-group">
-                                                <label for="inputBio">Sobre</label>
-                                                <textarea rows="2" v-model="aboutCompany" class="form-control"
-                                                    id="inputBio"
+                                                <label for="inputUsername">Sobre</label>
+                                                <textarea rows="2" class="form-control" id="inputBio"
                                                     placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                             </div>
                                         </div>
@@ -61,13 +60,76 @@
 
                                     <button type="submit" class="btn btn-primary">Salvar Informações</button>
                                 </form>
+
                             </div>
                         </div>
                     </div>
 
                     <div v-if="currentSection === 'addRecrutador'">
-                        <!-- Conteúdo para adicionar recrutador, sem alterações -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Adicionar Recrutador</h5>
+                            </div>
+                            <div class="card-body">
+                                <form @submit.prevent="registerRecruiter" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="name">Nome do Recrutador</label>
+                                                <input type="text" v-model="name" class="form-control" required
+                                                    placeholder="Nome do Recrutador">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="birthdate">Data de Nascimento</label>
+                                                <input type="date" class="form-control" id="dataNascimento" required
+                                                    v-model="birthdate">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="cpf">CPF</label>
+                                                <input type="text" v-model="cpf" class="form-control" required
+                                                    placeholder="CPF do Recrutador">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" v-model="email" class="form-control" required
+                                                    placeholder="Email para o login">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password">Crie uma Senha</label>
+                                                <input type="password" v-model="password" class="form-control" required
+                                                    placeholder="Senha para o login">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password_confirmation">Confirme a senha</label>
+                                                <input type="password" v-model="password_confirmation"
+                                                    class="form-control" required placeholder="Confirme a senha">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="text-center">
+                                                <img :src="profileImagePreview || '../../public/user.png'"
+                                                    alt="Foto do Recrutador" class="rounded-circle img-responsive mt-2"
+                                                    width="128" height="128">
+                                                <div class="mt-2">
+                                                    <label class="btn btn-primary">
+                                                        <i class="fa fa-upload"></i>
+                                                        <input type="file" @change="handleFileUpload" hidden>
+                                                    </label>
+                                                </div>
+                                                <small>Adicione uma foto de perfil para seu recrutador. Se não
+                                                    selecionar, será usada a imagem padrão.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Adicionar Recrutador</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -77,73 +139,78 @@
 <script>
 import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
 import HttpService from '../services/HttpService';
+import { mapState } from 'vuex';
 
 export default {
     data() {
         return {
-            currentSection: 'empresa',
-            // Dados da empresa
-            companyName: '',
-            companySector: '',
-            aboutCompany: '',
-            // Dados do recrutador (sem alterações)
+            currentSection: 'addRecrutador',
             name: '',
             cpf: '',
             email: '',
             birthdate: '',
             password: '',
             password_confirmation: '',
+            profileImage: null,
+            profileImagePreview: null
         };
+    },
+    computed: {
+        ...mapState(['user']) // Assume que o Vuex armazena o `user` com as informações da empresa
     },
     methods: {
         showSection(section) {
             this.currentSection = section;
         },
-        async registerCompany() {
-            const formData = new FormData();
-            formData.append('name', this.companyName);
-            formData.append('company_sector', this.companySector);
-            formData.append('about_company', this.aboutCompany);
-
-            try {
-                const response = await HttpService.post('company/register', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-                alert('Informações da empresa salvas com sucesso!');
-                this.$router.push('/perfil-empresa');
-            } catch (error) {
-                console.error("Erro ao salvar informações da empresa:", error);
-                if (error.response && error.response.data) {
-                    console.error("Detalhes do erro:", error.response.data);
-                }
-                alert('Erro ao salvar as informações. Verifique os dados e tente novamente.');
-            }
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            this.profileImage = file;
+            this.profileImagePreview = URL.createObjectURL(file);
         },
         async registerRecruiter() {
+            // Verificação de senhas
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
                 return;
             }
 
+            // Verificação de dados obrigatórios
+            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            // Obtendo o ID da empresa do Vuex (presumindo que o Vuex armazena essa informação)
+            const companyId = this.user.company_id;
+
+            // Preparando o FormData para o envio
             const formData = new FormData();
             formData.append('name', this.name);
             formData.append('cpf', this.cpf);
             formData.append('email', this.email);
             formData.append('password', this.password);
             formData.append('birthdate', this.birthdate);
+            formData.append('company_id', companyId);  // Adiciona o ID da empresa
+            if (this.profileImage) {
+                formData.append('photo', this.profileImage);  // Envia a foto, se houver
+            }
 
             try {
+                // Envio do FormData via HttpService
                 const response = await HttpService.post('recruiter/register', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                alert('Recrutador adicionado com sucesso!');
-                this.$router.push('/perfil-empresa');
+
+                // Verificando a resposta
+                if (response.data.success) {
+                    alert('Recrutador adicionado com sucesso!');
+                    this.$router.push('/perfil-empresa'); // Redireciona para a página da empresa após o cadastro
+                } else {
+                    alert('Erro ao cadastrar recrutador, tente novamente.');
+                }
             } catch (error) {
                 console.error("Erro ao registrar o recrutador:", error);
-                if (error.response && error.response.data) {
-                    console.error("Detalhes do erro:", error.response.data);
-                }
-                alert('Erro ao registrar. Verifique os dados e tente novamente.');
+                alert('Erro ao cadastrar recrutador, tente novamente.');
             }
         }
     },
