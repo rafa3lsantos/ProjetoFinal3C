@@ -17,6 +17,7 @@ class RecruiterController extends Controller
             'birthdate' => 'sometimes|date',
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
+            'photo' => 'sometimes|string|max:255',
             'company_id' => 'required|exists:companies,id',
         ]);
 

@@ -18,6 +18,7 @@ class Company extends Authenticatable
         'cnpj',
         'email',
         'password',
+        'photo',
         'company_sector',
         'about_company',
     ];

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('password');
+            $table->string('photo')->nullable();
             $table->string('company_sector')->nullable();
             $table->string('about_company')->nullable();
             $table->timestamps();

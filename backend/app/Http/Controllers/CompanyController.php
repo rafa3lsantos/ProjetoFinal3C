@@ -16,8 +16,10 @@ class CompanyController extends Controller
             'cnpj' => 'required|string|max:14|unique:companies',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
+            'photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
+
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
