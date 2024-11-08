@@ -1,12 +1,18 @@
 <template>
     <div>
-        <h1>HomeEmpresa</h1>
+        <NavbarEmpresa />
     </div>
 </template>
 
 <script>
-export default {
+    import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
 
+
+export default {
+    name: 'HomeEmpresa',
+    components: {
+        NavbarEmpresa,
+    },
 }
 </script>
 
