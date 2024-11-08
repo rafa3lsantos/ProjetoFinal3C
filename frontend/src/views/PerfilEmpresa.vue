@@ -232,6 +232,8 @@ body {
     box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
 }
 
+
+
 .card {
     position: relative;
     display: flex;
