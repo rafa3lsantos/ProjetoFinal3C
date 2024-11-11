@@ -11,15 +11,14 @@ class Candidate extends Authenticatable
     use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'name',
+        'name_candidate',
         'cpf',
-        'about',
+        'about_candidate',
         'birthdate',
         'cpf',
-        'email',
+        'email_candidate',
         'password',
-        'new_password',
-        'confirm_new_password'
+        'new_password'
     ];
 
 }

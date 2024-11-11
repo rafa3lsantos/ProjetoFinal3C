@@ -15,11 +15,13 @@ return new class extends Migration
         Schema::create('curriculum', function (Blueprint $table) {
             $table->id();
             $table->foreignId('candidate_id')->constrained('candidates');
-            $table->string('name')->nullable();
-            $table->string('email')->unique()->nullable();
+            $table->string('name_candidate')->nullable();
+            $table->string('email_candidate')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->string('cep')->nullable();
             $table->string('address')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
             $table->string('experience')->nullable();
             $table->enum('formation', ['graduação', 'pos-graduação', 'mestrado', 'doutorado'])->nullable();
             $table->string('institution')->nullable();

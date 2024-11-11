@@ -22,9 +22,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('candidate')->group(function () {
     Route::post('/register', [CandidateController::class, 'store']);
     Route::post('/login', [CandidateController::class, 'loginCandidate']);
+    Route::post('/update', [CandidateController::class, 'updateCandidate']);
 });
 
-Route::middleware('auth:candidate')->group(function () {    
+Route::middleware('auth:candidate')->group(function () {
     //
 });
 
