@@ -27,4 +27,20 @@ class JobsController extends Controller
             'jobs' => $jobs,
         ], 201);
     }
+
+    public function show($id)
+    {
+        $jobs = Jobs::find($id);
+
+        if (!$jobs) {
+            return response()->json([
+                'message' => 'Não foi possível encontrar o emprego!',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Emprego encontrado com sucesso!',
+            'jobs' => $jobs,
+        ], 200);
+    }
 }
