@@ -20,7 +20,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Nome da Empresa</label>
-                                                <input type="text" v-model="name" class="form-control"
+                                                <input type="text" v-model="company_name" class="form-control"
                                                     required />
                                             </div>
 
@@ -31,7 +31,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="email" class="form-control" required />
+                                                <input type="email" v-model="company_email" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
@@ -89,9 +89,9 @@ import HttpService from '../services/HttpService';
 export default {
     data() {
         return {
-            name: '',
+            company_name: '',
             cnpj: '',
-            email: '',
+            company_email: '',
             password: '',
             // passwordConfirmation: '',
             termsAccepted: false,
@@ -111,9 +111,9 @@ export default {
 
             try {
                 const response = await HttpService.post('company/register', {
-                    name: this.name,
+                    name: this.company_name,
                     cnpj: this.cnpj,
-                    email: this.email,
+                    email: this.company_email,
                     password: this.password,
                 });
                 console.log(response);
