@@ -20,7 +20,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Nome Completo</label>
-                                                <input type="text" v-model="name" class="form-control" required />
+                                                <input type="text" v-model="name_candidate" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
@@ -30,7 +30,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="email" class="form-control" required />
+                                                <input type="email" v-model="email_candidate" class="form-control" required />
                                             </div>
 
 <!-- 
@@ -89,9 +89,9 @@ import HttpService from '../services/HttpService';
 export default {
     data() {
         return {
-            name: '',
+            name_candidate: '',
             cpf: '',
-            email: '',
+            email_candidate: '',
             password: '',
             // phone: '',
             // password_confirmation: '',
@@ -112,9 +112,9 @@ export default {
 
             try {
                 const response = await HttpService.post('candidate/register', {
-                    name: this.name,
+                    name: this.name_candidate,
                     cpf: this.cpf,
-                    email: this.email,
+                    email: this.email_candidate,
                     password: this.password,
                     // phone: this.phone,
                     // password_confirmation: this.password_confirmation,
