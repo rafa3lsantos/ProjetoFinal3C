@@ -31,6 +31,8 @@ Route::middleware('auth:candidate')->group(function () {
 Route::prefix('recruiter')->group(function () {
     Route::post('/register', [RecruiterController::class, 'store']);
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
+    Route::put('/update/{id}', [RecruiterController::class, 'update']);
+    Route::get('/show/{id}', [RecruiterController::class, 'show']);
 });
 
 Route::middleware('auth:recruiter')->group(function () {
@@ -40,8 +42,8 @@ Route::middleware('auth:recruiter')->group(function () {
 Route::prefix('company')->group(function () {
     Route::post('/register', [CompanyController::class, 'store']);
     Route::post('/login', [CompanyController::class, 'loginCompany']);
-    Route::put('/update', [CompanyController::class, 'update']);
-    Route::get('/show', [CompanyController::class, 'show']);
+    Route::put('/update/{id}', [CompanyController::class, 'update']);
+    Route::get('/show/{id}', [CompanyController::class, 'show']);
 });
 
 Route::middleware('auth:company')->group(function () {
