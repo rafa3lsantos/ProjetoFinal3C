@@ -61,4 +61,28 @@ class RecruiterController extends Controller
         // Retorno caso a autenticação falhe
         return response()->json(['message' => 'Falha na autenticação do recrutador'], 401);
     }
+
+
+    public function update(Request $request, $id){
+        $arrayRequest = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'cpf' => 'nullable|string|max:14',
+            'birthdate' => 'nullable|date',
+            'email' => 'nullable|email',
+            'password' => 'nullable|string|min:8',
+            'photo' => 'nullable|string|max:255',
+            'company_id' => 'nullable|exists:companies,id',
+        ]);
+
+        $recruiter = Recruiter::find($id);
+
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+
+        $recruiter->update($arrayRequest);
+
+        return response()->json([
+            'message' => 'Recrutador atualizado com sucesso!',
+            'recruiter' => $recruiter,
+        ], 201);
+    }
 }
