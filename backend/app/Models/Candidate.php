@@ -13,17 +13,13 @@ class Candidate extends Authenticatable
     protected $fillable = [
         'name',
         'cpf',
+        'about',
+        'birthdate',
+        'cpf',
         'email',
         'password',
-        'phone',
-        'gender',
-        'cep',
-        'address',
-        'state',
-        'city',
-        'language',
-        'curriculum',
+        'new_password',
+        'confirm_new_password'
     ];
 
-    // Relacionamentos adicionais podem ser adicionados aqui conforme necessário
 }

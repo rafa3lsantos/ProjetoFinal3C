@@ -16,8 +16,10 @@ class CompanyController extends Controller
             'cnpj' => 'required|string|max:14|unique:companies',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
+            'photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
+
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
@@ -45,5 +47,41 @@ class CompanyController extends Controller
         }
 
         return response()->json(['message' => 'Falha na autenticação da empresa'], 401);
+    }
+
+    public function update(Request $request, $id){
+        $arrayRequest = $request->validate([
+            'name' => 'nullable|string|max:255',
+            'cnpj' => 'nullable|string|max:14',
+            'email' => 'nullable|email',
+            'password' => 'nullable|string|min:8',
+            'photo' => 'nullable|string|max:255',
+            'company_sector' => 'nullable|string|max:255',
+            'about_company' => 'nullable|string|max:255',
+        ]);
+
+        $company = Company::find($id);
+
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+
+        $company->update($arrayRequest);
+
+        return response()->json([
+            'message' => 'Empresa atualizada com sucesso!',
+            'company' => $company,
+        ], 201);
+    }
+
+    public function show($id){
+        $company = Company::find($id);
+
+        if (!$company) {
+            return response()->json(['message' => 'Empresa não encontrada'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Empresa encontrada com sucesso!',
+            'company' => $company,
+        ], 200);
     }
 }

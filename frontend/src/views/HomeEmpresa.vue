@@ -1,12 +1,20 @@
 <template>
     <div>
-        <h1>HomeEmpresa</h1>
+        <NavbarEmpresa />
+        <SearchMain />
     </div>
 </template>
 
 <script>
-export default {
+    import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
+    import SearchMain from '@/components/SearchMain.vue';
 
+export default {
+    name: 'HomeEmpresa',
+    components: {
+        NavbarEmpresa,
+        SearchMain,
+    },
 }
 </script>
 

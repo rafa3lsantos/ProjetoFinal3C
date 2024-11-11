@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('cpf');
             $table->date('birthdate')->nullable();
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('password');
+            $table->string('photo')->nullable();
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });

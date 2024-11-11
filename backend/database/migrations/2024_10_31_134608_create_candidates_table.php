@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('candidates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('about')->nullable();
+            $table->date('birthdate')->nullable();
             $table->string('cpf')->unique();
             $table->date('birth_date')->nullable();
             $table->string('email')->unique();
@@ -22,6 +24,14 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('about')->nullable();
             $table->string('photo')->nullable();
+            $table->string('phone')->unique()->nullable(); // Campo opcional
+            $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable(); // Campo opcional
+            $table->string('cep')->nullable();
+            $table->text('address')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
+            $table->string('language')->nullable(); // Campo opcional
+            $table->text('curriculum')->nullable(); // Campo opcional
             $table->timestamps();
         });
     }

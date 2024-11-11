@@ -17,14 +17,6 @@ class CandidateController extends Controller
             'birth_date' => 'nullable|date',
             'email' => 'required|string|email|min:3|max:255|unique:candidates',
             'password' => 'required|string|min:6|max:255',
-            'phone' => 'nullable|string|min:11|max:14|unique:candidates',
-            'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
-            'cep' => 'nullable|string|min:8|max:9',
-            'address' => 'nullable|string|min:3|max:255',
-            'state' => 'nullable|string|min:2|max:255',
-            'city' => 'nullable|string|min:3|max:255',
-            'language' => 'nullable|string|min:3|max:255',
-            'curriculum' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Aceita arquivos PDF, DOC, DOCX
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);

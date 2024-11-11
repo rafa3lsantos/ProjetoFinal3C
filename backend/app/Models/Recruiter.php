@@ -16,6 +16,7 @@ class Recruiter extends Authenticatable
         'birthdate',
         'email',
         'password',
+        'photo',
         'company_id',
     ];
 
