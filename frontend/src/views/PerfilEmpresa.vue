@@ -108,6 +108,7 @@
                                                     class="form-control" required placeholder="Confirme a senha">
                                             </div>
 
+
                                             <div class="form-group">
                                                 <label for="company_id">Selecione a Empresa</label>
                                                 <select v-model="companyId" class="form-control" required>
@@ -117,6 +118,7 @@
                                                     </option>
                                                 </select>
                                             </div>
+
                                         </div>
 
                                         <div class="col-md-4">
@@ -155,7 +157,11 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
+
+            currentSection: 'addRecrutador',
+
             currentSection: 'empresa', // Começa na seção "empresa"
+
             name: '',
             cpf: '',
             email: '',
@@ -163,6 +169,13 @@ export default {
             password: '',
             password_confirmation: '',
             profileImage: null,
+
+            profileImagePreview: null
+        };
+    },
+    computed: {
+        ...mapState(['user']) // Assume que o Vuex armazena o `user` com as informações da empresa
+
             profileImagePreview: null,
             companyId: null,
             companies: [] // Lista de empresas
@@ -170,6 +183,7 @@ export default {
     },
     computed: {
         ...mapState(['user'])
+
     },
     methods: {
         showSection(section) {
@@ -179,6 +193,7 @@ export default {
             const file = event.target.files[0];
             this.profileImage = file;
             this.profileImagePreview = URL.createObjectURL(file);
+
         },
         async fetchCompanies() {
             try {
@@ -187,6 +202,7 @@ export default {
             } catch (error) {
                 console.error("Erro ao carregar empresas:", error);
             }
+
         },
         async registerRecruiter() {
             // Verificação de senhas
@@ -197,6 +213,45 @@ export default {
                     alert('Por favor, preencha todos os campos obrigatórios!');
                     return;
                 }
+
+
+            // Verificação de dados obrigatórios
+            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            // Obtendo o ID da empresa do Vuex (presumindo que o Vuex armazena essa informação)
+            const companyId = this.user.company_id;
+
+            // Preparando o FormData para o envio
+            const formData = new FormData();
+            formData.append('name', this.name);
+            formData.append('cpf', this.cpf);
+            formData.append('email', this.email);
+            formData.append('password', this.password);
+            formData.append('birthdate', this.birthdate);
+            formData.append('company_id', companyId);  // Adiciona o ID da empresa
+            if (this.profileImage) {
+                formData.append('photo', this.profileImage);  // Envia a foto, se houver
+            }
+
+            try {
+                // Envio do FormData via HttpService
+                const response = await HttpService.post('recruiter/register', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
+                // Verificando a resposta
+                if (response.data.success) {
+                    alert('Recrutador adicionado com sucesso!');
+                    this.$router.push('/perfil-empresa'); // Redireciona para a página da empresa após o cadastro
+                } else {
+                    alert('Erro ao cadastrar recrutador, tente novamente.');
+                }
+            } catch (error) {
+                console.error("Erro ao registrar o recrutador:", error);
+                alert('Erro ao cadastrar recrutador, tente novamente.');
 
                 // Obtendo o ID da empresa do Vuex (presumindo que o Vuex armazena essa informação)
                 const companyId = this.user.company_id;
@@ -221,6 +276,7 @@ export default {
                     console.error("Erro ao registrar recrutador:", error);
                     alert('Erro ao registrar recrutador.');
                 }
+
             }
         },
         mounted() {

@@ -62,6 +62,7 @@ class RecruiterController extends Controller
         return response()->json(['message' => 'Falha na autenticação do recrutador'], 401);
     }
 
+
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
             'name' => 'nullable|string|max:255',
