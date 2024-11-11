@@ -20,10 +20,6 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->unique()->nullable();
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
-            $table->string('cep')->nullable();
-            $table->text('address')->nullable();
-            $table->string('state')->nullable();
-            $table->string('city')->nullable();
             $table->string('about')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();
