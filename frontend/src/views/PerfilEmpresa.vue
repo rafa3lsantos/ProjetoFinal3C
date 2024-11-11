@@ -11,43 +11,51 @@
                             <h5 class="card-title mb-0">Configurações de Perfil Empresa</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <a class="list-group-item list-group-item-action" @click="showSection('empresa')">Empresa</a>
-                            <a class="list-group-item list-group-item-action" @click="showSection('addRecrutador')">Adicionar Recrutador</a>
+                            <a class="list-group-item list-group-item-action"
+                                @click="showSection('empresa')">Empresa</a>
+                            <a class="list-group-item list-group-item-action"
+                                @click="showSection('addRecrutador')">Adicionar Recrutador</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-                    <!-- Seção da Empresa -->
                     <div v-if="currentSection === 'empresa'">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">Empresa</h5>
                             </div>
                             <div class="card-body">
-                                <form>
+                                <form @submit.prevent="updateCompany">
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="name">Nome da Empresa</label>
-                                                <input type="text" class="form-control" id="name" placeholder="Nome da sua empresa">
+                                                <input type="text" class="form-control" id="name" v-model="name"
+                                                    placeholder="Nome da sua empresa">
                                             </div>
                                             <div class="form-group">
-                                                <label for="setor">Setor da empresa</label>
-                                                <input type="text" class="form-control" id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
+                                                <label for="company_sector">Setor</label>
+                                                <input type="text" class="form-control" id="company_sector"
+                                                    v-model="company_sector"
+                                                    placeholder="Ex: vendas, marketing, tecnologia, etc.">
                                             </div>
                                             <div class="form-group">
-                                                <label for="inputUsername">Sobre</label>
-                                                <textarea rows="2" class="form-control" id="inputBio" placeholder="Faça um breve resumo sobre sua empresa"></textarea>
+                                                <label for="about_company">Sobre</label>
+                                                <textarea rows="2" class="form-control" id="about_company"
+                                                    v-model="about_company"
+                                                    placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="text-center">
-                                                <img alt="Imagem da Empresa" src="../../public/user.png" class="rounded-circle img-responsive mt-2" width="128" height="128">
+                                                <img alt="Imagem da Empresa" src="../../public/user.png"
+                                                    class="rounded-circle img-responsive mt-2" width="128" height="128">
                                                 <div class="mt-2">
                                                     <span class="btn btn-primary"><i class="fa fa-upload"></i></span>
                                                 </div>
-                                                <small>Para melhores resultados, use uma imagem de pelo menos 128px por 128px em .jpg</small>
+                                                <small>Para melhores resultados, use uma imagem de pelo menos 128px por
+                                                    128px em .jpg</small>
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +65,6 @@
                         </div>
                     </div>
 
-                    <!-- Seção para Adicionar Recrutador -->
                     <div v-if="currentSection === 'addRecrutador'">
                         <div class="card">
                             <div class="card-header">
@@ -69,32 +76,39 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="name">Nome do Recrutador</label>
-                                                <input type="text" v-model="name" class="form-control" required placeholder="Nome do Recrutador">
+                                                <input type="text" v-model="name" class="form-control" required
+                                                    placeholder="Nome do Recrutador">
                                             </div>
                                             <div class="form-group">
                                                 <label for="birthdate">Data de Nascimento</label>
-                                                <input type="date" class="form-control" id="dataNascimento" required v-model="birthdate">
+                                                <input type="date" class="form-control" id="dataNascimento" required
+                                                    v-model="birthdate">
                                             </div>
                                             <div class="form-group">
                                                 <label for="cpf">CPF</label>
-                                                <input type="text" v-model="cpf" class="form-control" required placeholder="CPF do Recrutador">
+                                                <input type="text" v-model="cpf" class="form-control" required
+                                                    placeholder="CPF do Recrutador">
                                             </div>
                                             <div class="form-group">
                                                 <label for="email">Email</label>
-                                                <input type="email" v-model="email" class="form-control" required placeholder="Email para o login">
+                                                <input type="email" v-model="email" class="form-control" required
+                                                    placeholder="Email para o login">
                                             </div>
                                             <div class="form-group">
                                                 <label for="password">Crie uma Senha</label>
-                                                <input type="password" v-model="password" class="form-control" required placeholder="Senha para o login">
+                                                <input type="password" v-model="password" class="form-control" required
+                                                    placeholder="Senha para o login">
                                             </div>
                                             <div class="form-group">
                                                 <label for="password_confirmation">Confirme a senha</label>
-                                                <input type="password" v-model="password_confirmation" class="form-control" required placeholder="Confirme a senha">
+                                                <input type="password" v-model="password_confirmation"
+                                                    class="form-control" required placeholder="Confirme a senha">
                                             </div>
                                             <div class="form-group">
                                                 <label for="company_id">Selecione a Empresa</label>
                                                 <select v-model="companyId" class="form-control" required>
-                                                    <option v-for="company in companies" :value="company.id" :key="company.id">
+                                                    <option v-for="company in companies" :value="company.id"
+                                                        :key="company.id">
                                                         {{ company.name }}
                                                     </option>
                                                 </select>
@@ -102,14 +116,17 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="text-center">
-                                                <img :src="profileImagePreview || '../../public/user.png'" alt="Foto do Recrutador" class="rounded-circle img-responsive mt-2" width="128" height="128">
+                                                <img :src="profileImagePreview || '../../public/user.png'"
+                                                    alt="Foto do Recrutador" class="rounded-circle img-responsive mt-2"
+                                                    width="128" height="128">
                                                 <div class="mt-2">
                                                     <label class="btn btn-primary">
                                                         <i class="fa fa-upload"></i>
                                                         <input type="file" @change="handleFileUpload" hidden>
                                                     </label>
                                                 </div>
-                                                <small>Adicione uma foto de perfil para seu recrutador. Se não selecionar, será usada a imagem padrão.</small>
+                                                <small>Adicione uma foto de perfil para seu recrutador. Se não
+                                                    selecionar, será usada a imagem padrão.</small>
                                             </div>
                                         </div>
                                     </div>
@@ -135,7 +152,10 @@ export default {
     },
     data() {
         return {
-            currentSection: 'empresa', // Inicia na seção "empresa"
+            currentSection: 'empresa',
+            name: '',
+            company_sector: '',
+            about_company: '',
             name: '',
             cpf: '',
             email: '',
@@ -145,11 +165,11 @@ export default {
             profileImage: null,
             profileImagePreview: null,
             companyId: null,
-            companies: [] // Lista de empresas
+            companies: []
         };
     },
     computed: {
-        ...mapState(['user']) // Assume que o Vuex armazena o `user` com as informações da empresa
+        ...mapState(['user'])
     },
     methods: {
         showSection(section) {
@@ -160,6 +180,24 @@ export default {
             this.profileImage = file;
             this.profileImagePreview = URL.createObjectURL(file);
         },
+        async updateCompany() {
+            try {
+                const response = await HttpService.put('company/update', {
+                    name: this.company_name,
+                    company_sector: this.company_sector,
+                    about_company: this.about_company
+                });
+
+                if (response.data.success) {
+                    alert('Informações da empresa atualizadas com sucesso!');
+                } else {
+                    alert('Erro ao atualizar informações da empresa, tente novamente.');
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar empresa:", error);
+                alert('Erro ao atualizar informações da empresa, tente novamente.');
+            }
+        },
         async fetchCompanies() {
             try {
                 const response = await HttpService.get('company/show');
@@ -169,19 +207,16 @@ export default {
             }
         },
         async registerRecruiter() {
-            // Verificação de senhas
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
                 return;
             }
 
-            // Verificação de dados obrigatórios
             if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate || !this.companyId) {
                 alert('Por favor, preencha todos os campos obrigatórios!');
                 return;
             }
 
-            // Preparando o FormData para o envio
             const formData = new FormData();
             formData.append('name', this.name);
             formData.append('cpf', this.cpf);
