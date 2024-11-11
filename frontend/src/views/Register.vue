@@ -20,7 +20,8 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Nome Completo</label>
-                                                <input type="text" v-model="name_candidate" class="form-control" required />
+                                                <input type="text" v-model="name_candidate" class="form-control"
+                                                    required />
                                             </div>
 
                                             <div class="form-outline mb-2">
@@ -32,8 +33,7 @@
                                                 <label class="form-label">Email</label>
                                                 <input type="email" v-model="email" class="form-control" required />
                                             </div>
-
-<!-- 
+                                            <!-- 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Telefone</label>
                                                 <input type="text" v-model="phone"
@@ -44,6 +44,11 @@
                                                 <label class="form-label">Crie sua senha</label>
                                                 <input type="password" v-model="password" class="form-control"
                                                     required />
+                                            </div>
+                                            <div class="form-outline mb-2">
+                                                <label class="form-label">Confirme sua senha</label>
+                                                <input type="password" v-model="password_confirmation"
+                                                    class="form-control" required />
                                             </div>
 
                                             <div class="form-check d-flex justify-content-center mb-3">
@@ -93,9 +98,9 @@ export default {
             cpf: '',
             email: '',
             password: '',
-            // phone: '',
-            // password_confirmation: '',
+            password_confirmation: '',
             termsAccepted: false,
+            // phone: '',
         };
     },
     methods: {
@@ -105,19 +110,19 @@ export default {
                 return;
             }
 
-            // if (this.password !== this.password_confirmation) {
-            //     alert('As senhas não coincidem.');
-            //     return;
-            // }
+            if (this.password !== this.password_confirmation) {
+                alert('As senhas não coincidem.');
+                return;
+            }
 
             try {
                 const response = await HttpService.post('candidate/register', {
-                    name: this.name_candidate,
+                    name_candidate: this.name_candidate,
                     cpf: this.cpf,
                     email: this.email,
                     password: this.password,
+                    password_confirmation: this.password_confirmation,
                     // phone: this.phone,
-                    // password_confirmation: this.password_confirmation,
                 });
                 console.log(response);
 

@@ -15,7 +15,7 @@ class CandidateController extends Controller
             'name_candidate' => 'required|string|min:3|max:255',
             'cpf' => 'required|string|min:11|max:14|unique:candidates',
             'birth_date' => 'nullable|date',
-            'email_candidate' => 'required|string|string|min:3|max:255|unique:candidates',
+            'email' => 'required|string|string|min:3|max:255|unique:candidates',
             'password' => 'required|string|min:6|max:255|confirmed',
             'password_confirmation' => 'required|string|min:6|max:255',
         ]);
@@ -33,7 +33,7 @@ class CandidateController extends Controller
     public function loginCandidate(Request $request)
     {
         $credentials = $request->validate([
-            'email_candidate' => 'required|string',
+            'email' => 'required|string',
             'password' => 'required|string',
         ]);
 
@@ -57,7 +57,7 @@ class CandidateController extends Controller
 
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
-            'email_candidate' => 'sometimes|string|string|min:3|max:255|unique:candidates,string,' . $candidate->id,
+            'email' => 'sometimes|string|string|min:3|max:255|unique:candidates,string,' . $candidate->id,
             'password' => 'sometimes|string|min:6|max:255',
             'new_password' => 'sometimes|string|min:6|max:255|confirmed',
             'birth_date' => 'sometimes|date',
