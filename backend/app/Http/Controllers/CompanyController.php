@@ -12,17 +12,18 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $arrayRequest = $request->validate([
-            'name_company' => 'required|string|max:255',
-            'cnpj_company' => 'required|string|max:14|unique:companies',
-            'email_company' => 'required|email|unique:companies',
-            'password_company' => 'required|string|min:8',
-            'photo_company' => 'sometimes|string|max:255',
+            'company_name' => 'required|string|max:255',
+            'company_cnpj' => 'required|string|max:14|unique:companies',
+            'company_phone' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:companies',
+            'password' => 'required|string|min:8',
+            'company_photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
 
         ]);
 
-        $arrayRequest['password_company'] = Hash::make($arrayRequest['password_company']);
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
         $company = Company::create($arrayRequest);
 
@@ -34,7 +35,7 @@ class CompanyController extends Controller
 
     public function loginCompany(Request $request)
     {
-        $credentials = $request->only('email_company', 'password_company');
+        $credentials = $request->only('email', 'password');
         if (Auth::guard('company')->attempt($credentials)) {
             $company = Auth::guard('company')->user();
 
@@ -51,18 +52,19 @@ class CompanyController extends Controller
 
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
-            'name_company' => 'nullable|string|max:255',
-            'cnpj_company' => 'nullable|string|max:14',
-            'email_company' => 'nullable|email',
-            'password_company' => 'nullable|string|min:8',
-            'photo_company' => 'nullable|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'company_cnpj' => 'nullable|string|max:14',
+            'company_phone' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'password' => 'nullable|string|min:8',
+            'company_photo' => 'nullable|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
         ]);
 
         $company = Company::find($id);
 
-        $arrayRequest['password_company'] = Hash::make($arrayRequest['password_company']);
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
         $company->update($arrayRequest);
 

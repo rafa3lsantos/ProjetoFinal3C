@@ -12,20 +12,20 @@ class RecruiterController extends Controller
     public function store(Request $request)
     {
         $arrayRequest = $request->validate([
-            'name_recruiter' => 'required|string|max:255',
-            'cpf_recruiter' => 'required|string|max:14|unique:recruiters',
-            'birthdate_recruiter' => 'sometimes|date',
-            'email_recruiter' => 'required|email|unique:recruiters',
-            'password_recruiter' => 'required|string|min:8',
-            'photo_recruiter' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',  
+            'recruiter_name' => 'required|string|max:255',
+            'recruiter_cpf' => 'required|string|max:14|unique:recruiters',
+            'recruiter_birthdate' => 'sometimes|date',
+            'email' => 'required|email|unique:recruiters',
+            'password' => 'required|string|min:8',
+            'recruiter_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',  
             'company_id' => 'required|exists:companies,id', 
         ]);
 
-        $arrayRequest['password_recruiter'] = Hash::make($arrayRequest['password']);
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
-        if ($request->hasFile('photo_recruiter')) {
-            $path = $request->file('photo_recruiter')->store('photos', 'public');  
-            $arrayRequest['photo_recruiter'] = $path;  
+        if ($request->hasFile('recruiter_photo')) {
+            $path = $request->file('recruiter_photo')->store('photos', 'public');  
+            $arrayRequest['recruiter_photo'] = $path;  
         }
 
         $recruiter = Recruiter::create($arrayRequest);
@@ -38,10 +38,8 @@ class RecruiterController extends Controller
 
     public function loginRecruiter(Request $request)
     {
-        // Verificação das credenciais
-        $credentials = $request->only('email_recruiter', 'password_recruiter');
+        $credentials = $request->only('email', 'password');
 
-        // Tentativa de autenticação do recrutador
         if (Auth::guard('recruiter')->attempt($credentials)) {
             $recruiter = Auth::guard('recruiter')->user();
             $token = $recruiter->createToken('auth_token')->plainTextToken;
@@ -58,18 +56,18 @@ class RecruiterController extends Controller
 
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
-            'name_recruiter' => 'nullable|string|max:255',
-            'cpf_recruiter' => 'nullable|string|max:14',
-            'birthdate_recruiter' => 'nullable|date',
-            'email_recruiter' => 'nullable|email',
-            'password_recruiter' => 'nullable|string|min:8',
-            'photo_recruiter' => 'nullable|string|max:255',
+            'recruiter_name' => 'nullable|string|max:255',
+            'recruiter_cpf' => 'nullable|string|max:14',
+            'recruiter_birthdate' => 'nullable|date',
+            'email' => 'nullable|email',
+            'password' => 'nullable|string|min:8',
+            'recruiter_photo' => 'nullable|string|max:255',
             'company_id' => 'nullable|exists:companies,id',
         ]);
 
         $recruiter = Recruiter::find($id);
 
-        $arrayRequest['password_recruiter'] = Hash::make($arrayRequest['password_recruiter']);
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
         $recruiter->update($arrayRequest);
 

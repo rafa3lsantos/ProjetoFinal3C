@@ -13,10 +13,10 @@ class JobsController extends Controller
             'title' => 'required|string|max:255',
             'work_model' => 'required|string|in:presential,remote,hybrid',
             'job_type' => 'required|string|in:effective,freelancer,temporary,internship',
-            'state_jobs' => 'required|string|max:255',
-            'city_jobs' => 'required|string|max:255',
-            'status_jobs' => 'required|string|max:255',
-            'description_jobs' => 'required|string',
+            'jobs_state' => 'required|string|max:255',
+            'jobs_city' => 'required|string|max:255',
+            'jobs_status' => 'required|string|max:255',
+            'jobs_description' => 'required|string',
             'company_id' => 'required|exists:companies,id',
         ]);        
 

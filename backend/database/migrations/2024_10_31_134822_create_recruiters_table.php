@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('recruiters', function (Blueprint $table) {
             $table->id();
-            $table->string('name_recruiter');
-            $table->string('cpf_recruiter');
-            $table->date('birthdate_recruiter')->nullable();
-            $table->string('email_recruiter')->unique();
-            $table->string('password_recruiter');
-            $table->string('photo_recruiter')->nullable();
+            $table->string('recruiter_name');
+            $table->string('recruiter_cpf');
+            $table->date('recruiter_birthdate')->nullable();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('recruiter_photo')->nullable();
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });

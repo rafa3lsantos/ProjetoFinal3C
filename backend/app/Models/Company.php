@@ -14,11 +14,12 @@ class Company extends Authenticatable
     use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'name_company',
-        'cnpj_company',
-        'email_company',
-        'password_company',
-        'photo_company',
+        'company_name',
+        'company_cnpj',
+        'company_phone',
+        'email',
+        'password',
+        'company_photo',
         'company_sector',
         'about_company',
     ];
