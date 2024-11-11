@@ -35,7 +35,7 @@ class CompanyController extends Controller
 
     public function loginCompany(Request $request)
     {
-        $credentials = $request->only('company_email', 'company_password');
+        $credentials = $request->only('email', 'password');
         if (Auth::guard('company')->attempt($credentials)) {
             $company = Auth::guard('company')->user();
 
