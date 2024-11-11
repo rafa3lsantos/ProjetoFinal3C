@@ -12,11 +12,11 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         $arrayRequest = $request->validate([
-            'name' => 'required|string|max:255',
+            'company_name' => 'required|string|max:255',
             'cnpj' => 'required|string|max:14|unique:companies',
-            'email' => 'required|email|unique:companies',
+            'company_email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
-            'photo' => 'sometimes|string|max:255',
+            'company_photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
 
@@ -34,11 +34,11 @@ class CompanyController extends Controller
 
     public function loginCompany(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('company_email', 'company_password');
         if (Auth::guard('company')->attempt($credentials)) {
             $company = Auth::guard('company')->user();
 
-            $token = $company->createToken('auth_token')->plainTextToken; 
+            $token = $company->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'Empresa autenticada com sucesso!',
@@ -51,11 +51,11 @@ class CompanyController extends Controller
 
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
-            'name' => 'nullable|string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'cnpj' => 'nullable|string|max:14',
-            'email' => 'nullable|email',
+            'company_email' => 'nullable|email',
             'password' => 'nullable|string|min:8',
-            'photo' => 'nullable|string|max:255',
+            'company_photo' => 'nullable|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
         ]);

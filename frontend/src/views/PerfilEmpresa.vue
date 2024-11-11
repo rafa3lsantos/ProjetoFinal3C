@@ -31,20 +31,15 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="name">Nome da Empresa</label>
-                                                <input type="text" class="form-control" id="name" v-model="name"
-                                                    placeholder="Nome da sua empresa">
+                                                <input type="text" class="form-control" id="name" placeholder="Nome da sua empresa">
                                             </div>
                                             <div class="form-group">
-                                                <label for="company_sector">Setor</label>
-                                                <input type="text" class="form-control" id="company_sector"
-                                                    v-model="company_sector"
-                                                    placeholder="Ex: vendas, marketing, tecnologia, etc.">
+                                                <label for="setor">Setor da empresa</label>
+                                                <input type="text" class="form-control" id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
                                             </div>
                                             <div class="form-group">
-                                                <label for="about_company">Sobre</label>
-                                                <textarea rows="2" class="form-control" id="about_company"
-                                                    v-model="about_company"
-                                                    placeholder="Faça um breve resumo sobre sua empresa"></textarea>
+                                                <label for="inputUsername">Sobre</label>
+                                                <textarea rows="2" class="form-control" id="inputBio" placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -152,10 +147,7 @@ export default {
     },
     data() {
         return {
-            currentSection: 'empresa',
-            name: '',
-            company_sector: '',
-            about_company: '',
+            currentSection: 'empresa', // Inicia na seção "empresa"
             name: '',
             cpf: '',
             email: '',
@@ -179,24 +171,6 @@ export default {
             const file = event.target.files[0];
             this.profileImage = file;
             this.profileImagePreview = URL.createObjectURL(file);
-        },
-        async updateCompany() {
-            try {
-                const response = await HttpService.put('company/update', {
-                    name: this.company_name,
-                    company_sector: this.company_sector,
-                    about_company: this.about_company
-                });
-
-                if (response.data.success) {
-                    alert('Informações da empresa atualizadas com sucesso!');
-                } else {
-                    alert('Erro ao atualizar informações da empresa, tente novamente.');
-                }
-            } catch (error) {
-                console.error("Erro ao atualizar empresa:", error);
-                alert('Erro ao atualizar informações da empresa, tente novamente.');
-            }
         },
         async fetchCompanies() {
             try {
@@ -249,6 +223,7 @@ export default {
     }
 }
 </script>
+
 
 <style scoped>
 body {
