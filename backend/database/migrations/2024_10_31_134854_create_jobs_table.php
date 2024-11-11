@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->enum('work_model', ['presential', 'remote', 'hybrid']);
             $table->enum('job_type', ['effective', 'freelancer', 'temporary', 'internship']);
-            $table->string('state');
-            $table->string('city');
-            $table->enum('status', ['in_progress', 'under_review', 'finshed']);
-            $table->text('description');
+            $table->string('jobs_state');
+            $table->string('jobs_city');
+            $table->enum('jobs_status', ['in_progress', 'under_review', 'finshed']);
+            $table->text('jobs_description');
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });

@@ -12,20 +12,20 @@ class RecruiterController extends Controller
     public function store(Request $request)
     {
         $arrayRequest = $request->validate([
-            'name' => 'required|string|max:255',
-            'cpf' => 'required|string|max:14|unique:recruiters',
-            'birthdate' => 'sometimes|date',
+            'recruiter_name' => 'required|string|max:255',
+            'recruiter_cpf' => 'required|string|max:14|unique:recruiters',
+            'recruiter_birthdate' => 'sometimes|date',
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
-            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',  
+            'recruiter_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',  
             'company_id' => 'required|exists:companies,id', 
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('photos', 'public');  
-            $arrayRequest['photo'] = $path;  
+        if ($request->hasFile('recruiter_photo')) {
+            $path = $request->file('recruiter_photo')->store('photos', 'public');  
+            $arrayRequest['recruiter_photo'] = $path;  
         }
 
         $recruiter = Recruiter::create($arrayRequest);
@@ -38,10 +38,8 @@ class RecruiterController extends Controller
 
     public function loginRecruiter(Request $request)
     {
-        // Verificação das credenciais
         $credentials = $request->only('email', 'password');
 
-        // Tentativa de autenticação do recrutador
         if (Auth::guard('recruiter')->attempt($credentials)) {
             $recruiter = Auth::guard('recruiter')->user();
             $token = $recruiter->createToken('auth_token')->plainTextToken;
@@ -58,12 +56,12 @@ class RecruiterController extends Controller
 
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'cpf' => 'nullable|string|max:14',
-            'birthdate' => 'nullable|date',
+            'recruiter_name' => 'nullable|string|max:255',
+            'recruiter_cpf' => 'nullable|string|max:14',
+            'recruiter_birthdate' => 'nullable|date',
             'email' => 'nullable|email',
             'password' => 'nullable|string|min:8',
-            'photo' => 'nullable|string|max:255',
+            'recruiter_photo' => 'nullable|string|max:255',
             'company_id' => 'nullable|exists:companies,id',
         ]);
 

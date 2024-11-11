@@ -13,8 +13,9 @@ class CompanyController extends Controller
     {
         $arrayRequest = $request->validate([
             'company_name' => 'required|string|max:255',
-            'cnpj' => 'required|string|max:14|unique:companies',
-            'company_email' => 'required|email|unique:companies',
+            'company_cnpj' => 'required|string|max:14|unique:companies',
+            'company_phone' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
             'company_photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
@@ -52,8 +53,9 @@ class CompanyController extends Controller
     public function update(Request $request, $id){
         $arrayRequest = $request->validate([
             'company_name' => 'nullable|string|max:255',
-            'cnpj' => 'nullable|string|max:14',
-            'company_email' => 'nullable|email',
+            'company_cnpj' => 'nullable|string|max:14',
+            'company_phone' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
             'password' => 'nullable|string|min:8',
             'company_photo' => 'nullable|string|max:255',
             'company_sector' => 'nullable|string|max:255',
