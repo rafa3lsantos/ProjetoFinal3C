@@ -29,14 +29,12 @@ Route::middleware('auth:candidate')->group(function () {
 });
 
 Route::prefix('recruiter')->group(function () {
-    Route::post('/register', [RecruiterController::class, 'store']);
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
     Route::put('/update/{id}', [RecruiterController::class, 'update']);
     Route::get('/show/{id}', [RecruiterController::class, 'show']);
-});
-
-Route::middleware('auth:recruiter')->group(function () {
-    //
+    Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
+        Route::post('/register', [RecruiterController::class, 'store']);
+    });
 });
 
 Route::prefix('company')->group(function () {
