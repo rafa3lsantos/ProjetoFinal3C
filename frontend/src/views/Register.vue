@@ -30,7 +30,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="email_candidate" class="form-control" required />
+                                                <input type="email" v-model="email" class="form-control" required />
                                             </div>
 
 <!-- 
@@ -91,7 +91,7 @@ export default {
         return {
             name_candidate: '',
             cpf: '',
-            email_candidate: '',
+            email: '',
             password: '',
             // phone: '',
             // password_confirmation: '',
@@ -114,7 +114,7 @@ export default {
                 const response = await HttpService.post('candidate/register', {
                     name: this.name_candidate,
                     cpf: this.cpf,
-                    email: this.email_candidate,
+                    email: this.email,
                     password: this.password,
                     // phone: this.phone,
                     // password_confirmation: this.password_confirmation,
