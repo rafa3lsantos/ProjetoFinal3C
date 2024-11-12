@@ -26,10 +26,9 @@ class CandidateController extends Controller
 
         return response()->json([
             'message' => 'Cadastrado com sucesso!',
-            'candidate'=> $candidate,
+            'candidate' => $candidate,
         ], 201);
     }
-
     public function loginCandidate(Request $request)
     {
         $credentials = $request->validate([
@@ -44,42 +43,43 @@ class CandidateController extends Controller
             return response()->json([
                 'message' => 'Candidato autenticado com sucesso!',
                 'token' => $token,
+                'candidate_id' => $candidate->id,
             ], 200);
         }
 
         return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
-
     }
+
 
     public function updateCandidate(Request $request)
-{
-    $candidate = Auth::guard('candidate')->user();
+    {
+        $candidate = Auth::guard('candidate')->user();
 
-    dd($candidate);
-    if (!$candidate) {
-        return response()->json(['message' => 'Candidato não autenticado'], 401);
+        dd($candidate);
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não autenticado'], 401);
 
-        $arrayRequest = $request->validate([
-            'name_candidate' => 'sometimes|string|min:3|max:255',
-            'email' => 'sometimes|string|string|min:3|max:255|unique:candidates,string,' . $candidate->id,
-            'password' => 'sometimes|string|min:6|max:255',
-            'new_password' => 'sometimes|string|min:6|max:255|confirmed',
-            'birth_date' => 'sometimes|date',
-            'gender'=>  'sometimes|string|in:masculino,feminino,nao-binario,outro',
-            'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
-            'cep' => 'sometimes|string|min:8|max:9',
-            'address' => 'sometimes|string|min:3|max:255',
-            'state' => 'sometimes|string|min:2|max:255',
-            'city' => 'sometimes|string|min:3|max:255',
-            'about_candidate' => 'sometimes|string|min:3|max:255',
-            'photo'=> 'sometimes|image|min:3|max:255',
-        ]);
+            $arrayRequest = $request->validate([
+                'name_candidate' => 'sometimes|string|min:3|max:255',
+                'email' => 'sometimes|string|string|min:3|max:255|unique:candidates,string,' . $candidate->id,
+                'password' => 'sometimes|string|min:6|max:255',
+                'new_password' => 'sometimes|string|min:6|max:255|confirmed',
+                'birth_date' => 'sometimes|date',
+                'gender' =>  'sometimes|string|in:masculino,feminino,nao-binario,outro',
+                'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
+                'cep' => 'sometimes|string|min:8|max:9',
+                'address' => 'sometimes|string|min:3|max:255',
+                'state' => 'sometimes|string|min:2|max:255',
+                'city' => 'sometimes|string|min:3|max:255',
+                'about_candidate' => 'sometimes|string|min:3|max:255',
+                'photo' => 'sometimes|image|min:3|max:255',
+            ]);
+        }
+
+        $candidate->update($arrayRequest);
+
+        return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
     }
-
-    $candidate->update($arrayRequest);
-
-    return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
-}
 
     public function logoutCandidate(Request $request)
     {
