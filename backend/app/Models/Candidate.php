@@ -17,7 +17,7 @@ class Candidate extends Authenticatable
         'about_candidate',
         'birthdate',
         'cpf',
-        'email_candidate',
+        'email',
         'password',
         'new_password'
     ];

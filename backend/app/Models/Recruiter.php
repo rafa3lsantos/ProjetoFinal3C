@@ -11,12 +11,12 @@ class Recruiter extends Authenticatable
     use HasFactory, HasApiTokens; 
 
     protected $fillable = [
-        'name',
-        'cpf',
-        'birthdate',
+        'recruiter_name',
+        'recruiter_cpf',
+        'recruiter_birthdate',
         'email',
         'password',
-        'photo',
+        'recruiter_photo',
         'company_id',
     ];
 

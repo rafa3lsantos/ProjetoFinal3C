@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jobs;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Hash;
 class JobsController extends Controller
 {
     public function store(Request $request)
@@ -13,10 +13,10 @@ class JobsController extends Controller
             'title' => 'required|string|max:255',
             'work_model' => 'required|string|in:presential,remote,hybrid',
             'job_type' => 'required|string|in:effective,freelancer,temporary,internship',
-            'state' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'status' => 'required|string|max:255',
-            'description' => 'required|string', 
+            'jobs_state' => 'required|string|max:255',
+            'jobs_city' => 'required|string|max:255',
+            'jobs_status' => 'required|string|max:255',
+            'jobs_description' => 'required|string',
             'company_id' => 'required|exists:companies,id',
         ]);        
 
@@ -24,6 +24,28 @@ class JobsController extends Controller
 
         return response()->json([
             'message' => 'Emprego criado com sucesso!',
+            'jobs' => $jobs,
+        ], 201);
+    }
+
+    public function update(Request $request, $id){
+        $arrayRequest = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'work_model' => 'nullable|string|in:presential,remote,hybrid',
+            'job_type' => 'nullable|string|in:effective,freelancer,temporary,internship',
+            'jobs_state' => 'nullable|string|max:255',
+            'jobs_city' => 'nullable|string|max:255',
+            'jobs_status' => 'nullable|string|max:255',
+            'jobs_description' => 'nullable|string',
+            'company_id' => 'nullable|exists:companies,id',
+        ]);
+
+        $jobs = Jobs::find($id);
+
+        $jobs->update($arrayRequest);
+
+        return response()->json([
+            'message' => 'Emprego atualizado com sucesso!',
             'jobs' => $jobs,
         ], 201);
     }

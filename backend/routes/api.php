@@ -52,6 +52,7 @@ Route::middleware('auth:company')->group(function () {
 
 Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
     Route::post('/register', [JobsController::class, 'store']);
+    Route::put('/update/{id}', [JobsController::class, 'update']);
 });
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

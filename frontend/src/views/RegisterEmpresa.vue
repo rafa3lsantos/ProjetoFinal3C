@@ -26,12 +26,13 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">CNPJ</label>
-                                                <input type="text" v-model="cnpj" class="form-control" required />
+                                                <input type="text" v-model="company_cnpj" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="company_email" class="form-control" required />
+                                                <input type="email" v-model="email" class="form-control"
+                                                    required />
                                             </div>
 
                                             <div class="form-outline mb-2">
@@ -40,11 +41,11 @@
                                                     required />
                                             </div>
 
-                                            <!-- <div class="form-outline mb-2">
+                                            <div class="form-outline mb-2">
                                                 <label class="form-label">Repita a senha</label>
-                                                <input type="password" v-model="passwordConfirmation"
+                                                <input type="password" v-model="password_confirmation"
                                                     class="form-control" required />
-                                            </div> -->
+                                            </div>
 
                                             <div class="form-check d-flex justify-content-center mb-3">
                                                 <input class="form-check-input me-2" type="checkbox"
@@ -90,10 +91,10 @@ export default {
     data() {
         return {
             company_name: '',
-            cnpj: '',
-            company_email: '',
+            company_cnpj: '',
+            email: '',
             password: '',
-            // passwordConfirmation: '',
+            password_confirmation: '',
             termsAccepted: false,
         };
     },
@@ -104,16 +105,16 @@ export default {
                 return;
             }
 
-            // if (this.password !== this.passwordConfirmation) {
-            //     alert('As senhas não coincidem.');
-            //     return;
-            // }
+            if (this.password !== this.password_confirmation) {
+                alert('As senhas não coincidem.');
+                return;
+            }
 
             try {
                 const response = await HttpService.post('company/register', {
-                    name: this.company_name,
-                    cnpj: this.cnpj,
-                    email: this.company_email,
+                    company_name: this.company_name,
+                    company_cnpj: this.company_cnpj,
+                    email: this.email,
                     password: this.password,
                 });
                 console.log(response);

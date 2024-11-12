@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('company_name');
-            $table->string('cnpj')->unique();
-            $table->string('company_email');
+            $table->string('company_cnpj');
             $table->string('company_phone')->nullable();
-            $table->string('password', 255);
+            $table->string('email');
+            $table->string('password');
             $table->string('company_photo')->nullable();
             $table->string('company_sector')->nullable();
             $table->string('about_company')->nullable();

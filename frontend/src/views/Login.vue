@@ -79,6 +79,7 @@ export default {
 
                 this.$store.dispatch('login', { token: response.data.token, role: 'candidato' });
                 alert('Login realizado com sucesso!');
+                
                 this.$router.push('/home-candidato');
             } catch (error) {
                 try {
