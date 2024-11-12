@@ -1,11 +1,7 @@
 <template>
     <div>
+        <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle"></div>
 
-        <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-
-        </div>
-
-        
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">3Cvagas</a>
@@ -16,8 +12,7 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <router-link to="/home-empresa" class="nav-link active"
-                                aria-current="page">Home</router-link>
+                            <router-link to="/home-empresa" class="nav-link active" aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
                             <router-link to="/recrutadores" class="nav-link">Recrutadores</router-link>
@@ -25,12 +20,10 @@
                     </ul>
                 </div>
 
-               
                 <div class="user ms-auto">
                     <div class="dropdown" @click="toggleDropdown">
                         <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
-                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40"
-                            height="40" />
+                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40" height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/perfil-empresa" class="dropdown-item">Perfil Empresa</router-link>
                             <router-link to="/recrutadores" class="dropdown-item">Meus Recrutadores</router-link>
@@ -40,14 +33,13 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </nav>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -56,9 +48,16 @@ export default {
     data() {
         return {
             isDropdownOpen: false,
-            arrowUser: '../../public/down.png',
-            userImage: '../../public/user.png',
         };
+    },
+    computed: {
+        ...mapGetters(['getUserImage', 'getArrowIcon']),
+        userImage() {
+            return this.getUserImage || '../../public/user.png'; // Imagem de fallback
+        },
+        arrowUser() {
+            return this.getArrowIcon || '../../public/down.png'; // Ícone de seta de fallback
+        },
     },
     methods: {
         toggleDropdown() {
@@ -67,7 +66,7 @@ export default {
         async handleLogout() {
             await this.$store.dispatch('logout');
             this.$router.push({ name: 'login' });
-        }
+        },
     },
 };
 </script>
@@ -103,7 +102,7 @@ export default {
 .custom-dropdown {
     background-color: #f8f9fa;
     margin-top: 5px;
-    left: -90px;
+    left: auto;
     right: 0;
     width: 100%;
 }

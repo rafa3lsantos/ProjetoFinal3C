@@ -21,7 +21,7 @@ export default createStore({
       localStorage.setItem('candidateId', candidateId);
     },
     logout(state) {
-      state.isAuthenticated = false;
+      state.isAuthenticated = false;a
       state.authToken = null;
       state.userRole = null;
       state.companyId = null;
