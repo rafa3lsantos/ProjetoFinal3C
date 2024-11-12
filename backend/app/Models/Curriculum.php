@@ -14,7 +14,7 @@ class Curriculum extends Model
     protected $fillable = [
         'candidate_id',
         'name_candidate',
-        'email_candidate',
+        'email',
         'phone',
         'cep',
         'address',

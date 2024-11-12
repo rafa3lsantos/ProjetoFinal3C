@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('candidate_id')->constrained('candidates');
             $table->string('name_candidate')->nullable();
-            $table->string('email_candidate')->unique()->nullable();
+            $table->string('email')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->string('cep')->nullable();
             $table->string('address')->nullable();

@@ -22,7 +22,6 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
-            $table->string('language')->nullable();
             $table->string('curriculum')->nullable();
             $table->timestamps();
         });

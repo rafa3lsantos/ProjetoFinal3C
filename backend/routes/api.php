@@ -20,14 +20,12 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
 
-Route::prefix('candidate')->group(function () {
-    Route::post('/register', [CandidateController::class, 'store']);
+Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+    Route::prefix('candidate')->group(function () {
+        Route::post('/register', [CandidateController::class, 'store']);
+        Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
+    });
 
-    Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
-});
-
-Route::middleware('auth:candidate')->group(function () {
-    //
 });
 
 Route::prefix('recruiter')->group(function () {

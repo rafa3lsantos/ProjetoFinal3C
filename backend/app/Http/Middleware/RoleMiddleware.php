@@ -19,6 +19,7 @@ class RoleMiddleware
      */
     public function handle($request, Closure $next, $role)
     {
+
         if (strtolower(class_basename(Auth::user())) !== $role) {
             return response()->json(['message' => 'Você não tem permissão para realizar esta ação'], 401);
         }
