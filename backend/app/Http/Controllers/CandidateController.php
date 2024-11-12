@@ -52,8 +52,12 @@ class CandidateController extends Controller
     }
 
     public function updateCandidate(Request $request)
-    {
-        $candidate = $request->user();
+{
+    $candidate = Auth::guard('candidate')->user();
+
+    dd($candidate);
+    if (!$candidate) {
+        return response()->json(['message' => 'Candidato não autenticado'], 401);
 
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
@@ -71,6 +75,11 @@ class CandidateController extends Controller
             'photo'=> 'sometimes|image|min:3|max:255',
         ]);
     }
+
+    $candidate->update($arrayRequest);
+
+    return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
+}
 
     public function logoutCandidate(Request $request)
     {
