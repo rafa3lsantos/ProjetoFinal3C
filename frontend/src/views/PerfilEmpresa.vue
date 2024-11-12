@@ -31,23 +31,31 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="name">Nome da Empresa</label>
-                                                <input type="text" class="form-control" id="name" placeholder="Nome da sua empresa">
+                                                <input type="text" v-model="company_name" class="form-control" id="name"
+                                                    placeholder="Nome da sua empresa" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="setor">Setor da empresa</label>
-                                                <input type="text" class="form-control" id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
+                                                <input type="text" v-model="company_sector" class="form-control"
+                                                    id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
                                             </div>
                                             <div class="form-group">
-                                                <label for="inputUsername">Sobre</label>
-                                                <textarea rows="2" class="form-control" id="inputBio" placeholder="Faça um breve resumo sobre sua empresa"></textarea>
+                                                <label for="inputBio">Sobre</label>
+                                                <textarea rows="2" v-model="about_company" class="form-control"
+                                                    id="inputBio"
+                                                    placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="text-center">
-                                                <img alt="Imagem da Empresa" src="../../public/user.png"
-                                                    class="rounded-circle img-responsive mt-2" width="128" height="128">
+                                                <img :src="company_photoPreview || company_photoUrl || '../../public/user.png'"
+                                                    alt="Imagem da Empresa" class="rounded-circle img-responsive mt-2"
+                                                    width="128" height="128">
                                                 <div class="mt-2">
-                                                    <span class="btn btn-primary"><i class="fa fa-upload"></i></span>
+                                                    <label class="btn btn-primary">
+                                                        <i class="fa fa-upload"></i>
+                                                        <input type="file" @change="handleCompanyPhotoUpload" hidden>
+                                                    </label>
                                                 </div>
                                                 <small>Para melhores resultados, use uma imagem de pelo menos 128px por
                                                     128px em .jpg</small>
@@ -102,9 +110,10 @@
                                             <div class="form-group">
                                                 <label for="company_id">Selecione a Empresa</label>
                                                 <select v-model="companyId" class="form-control" required>
+                                                    <option value="" disabled selected>Selecione uma empresa</option>
                                                     <option v-for="company in companies" :value="company.id"
                                                         :key="company.id">
-                                                        {{ company.name }}
+                                                        {{ company.company_name }}
                                                     </option>
                                                 </select>
                                             </div>
@@ -139,7 +148,7 @@
 <script>
 import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
 import HttpService from '../services/HttpService';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
     components: {
@@ -147,7 +156,14 @@ export default {
     },
     data() {
         return {
-            currentSection: 'empresa', // Inicia na seção "empresa"
+            currentSection: 'empresa',
+            company_name: '',
+            company_sector: '',
+            about_company: '',
+            company_photo: null,
+            company_photoPreview: '',
+            company_photoUrl: '',
+
             name: '',
             cpf: '',
             email: '',
@@ -155,13 +171,13 @@ export default {
             password: '',
             password_confirmation: '',
             profileImage: null,
-            profileImagePreview: null,
-            companyId: null,
+            profileImagePreview: '',
+            companyId: '',
             companies: []
         };
     },
     computed: {
-        ...mapState(['user'])
+        ...mapGetters(['getCompanyId']),
     },
     methods: {
         showSection(section) {
@@ -172,12 +188,57 @@ export default {
             this.profileImage = file;
             this.profileImagePreview = URL.createObjectURL(file);
         },
+        handleCompanyPhotoUpload(event) {
+            const file = event.target.files[0];
+            this.company_photo = file;
+            this.company_photoPreview = URL.createObjectURL(file);
+        },
         async fetchCompanies() {
             try {
                 const response = await HttpService.get('company/show');
                 this.companies = response.data;
             } catch (error) {
                 console.error("Erro ao carregar empresas:", error);
+            }
+        },
+        async fetchCompanyDetails() {
+            try {
+                const response = await HttpService.get(`company/show/${this.getCompanyId}`);
+                const company = response.data;
+                this.company_name = company.company_name;
+                this.company_sector = company.company_sector;
+                this.about_company = company.about_company;
+                this.company_photoUrl = company.company_photo;
+            } catch (error) {
+                console.error("Erro ao carregar detalhes da empresa:", error);
+            }
+        },
+        async updateCompany() {
+            if (!this.getCompanyId) {
+                alert("Erro: ID da empresa não está disponível.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('company_name', this.company_name);
+            formData.append('company_sector', this.company_sector);
+            formData.append('about_company', this.about_company);
+            if (this.company_photo) {
+                formData.append('company_photo', this.company_photo);
+            }
+
+            try {
+                const response = await HttpService.put(`company/update/${this.getCompanyId}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                if (response.data.success) {
+                    alert('Informações da empresa atualizadas com sucesso!');
+                } else {
+                    alert('Erro ao atualizar as informações da empresa.');
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar informações da empresa:", error);
+                alert('Erro ao atualizar informações da empresa.');
             }
         },
         async registerRecruiter() {
@@ -208,6 +269,15 @@ export default {
                 });
                 if (response.data.success) {
                     alert('Recrutador adicionado com sucesso!');
+                    this.name = '';
+                    this.cpf = '';
+                    this.email = '';
+                    this.password = '';
+                    this.password_confirmation = '';
+                    this.birthdate = '';
+                    this.companyId = '';
+                    this.profileImage = null;
+                    this.profileImagePreview = '';
                     this.$router.push('/perfil-empresa');
                 } else {
                     alert('Erro ao cadastrar recrutador, tente novamente.');
@@ -220,9 +290,13 @@ export default {
     },
     mounted() {
         this.fetchCompanies();
+        this.fetchCompanyDetails();
     }
 }
 </script>
+
+
+
 
 
 <style scoped>
