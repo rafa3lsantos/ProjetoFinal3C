@@ -18,16 +18,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
 
-Route::prefix('candidate')->middleware('auth:sanctum')->group(function () {
-    Route::post('/register', [CandidateController::class, 'store']);
-    Route::post('/login', [CandidateController::class, 'loginCandidate']);
-    Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
-});
-
-
-Route::middleware('auth:candidate')->group(function () {
-    //
+Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+    Route::prefix('candidate')->group(function () {
+        Route::post('/register', [CandidateController::class, 'store']);
+        Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
+    });
 });
 
 Route::prefix('recruiter')->group(function () {

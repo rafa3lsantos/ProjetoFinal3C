@@ -11,7 +11,6 @@ class Candidate extends Authenticatable
     use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'id',
         'name_candidate',
         'cpf',
         'about_candidate',
