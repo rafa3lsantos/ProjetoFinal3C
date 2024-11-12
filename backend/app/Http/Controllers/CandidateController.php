@@ -26,10 +26,9 @@ class CandidateController extends Controller
 
         return response()->json([
             'message' => 'Cadastrado com sucesso!',
-            'candidate'=> $candidate,
+            'candidate' => $candidate,
         ], 201);
     }
-
     public function loginCandidate(Request $request)
     {
         $credentials = $request->validate([
@@ -45,13 +44,14 @@ class CandidateController extends Controller
             return response()->json([
                 'message' => 'Candidato autenticado com sucesso!',
                 'token' => $token,
+                'candidate_id' => $candidate->id,
             ], 200);
         }
 
 
         return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
-
     }
+  
     public function updateCandidate(Request $request)
     {
 
@@ -86,6 +86,7 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
     }
+
 
 
     public function logoutCandidate(Request $request)

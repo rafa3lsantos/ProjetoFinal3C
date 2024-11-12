@@ -25,22 +25,27 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
         Route::post('/register', [CandidateController::class, 'store']);
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
     });
+
 });
 
 Route::prefix('recruiter')->group(function () {
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
-    Route::put('/update/{id}', [RecruiterController::class, 'update']);
     Route::get('/show/{id}', [RecruiterController::class, 'show']);
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::post('/register', [RecruiterController::class, 'store']);
+    });
+    Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
+        Route::put('/update/{id}', [RecruiterController::class, 'update']);
     });
 });
 
 Route::prefix('company')->group(function () {
     Route::post('/register', [CompanyController::class, 'store']);
     Route::post('/login', [CompanyController::class, 'loginCompany']);
-    Route::put('/update/{id}', [CompanyController::class, 'update']);
     Route::get('/show/{id}', [CompanyController::class, 'show']);
+    Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
+        Route::put('/update/{id}', [CompanyController::class, 'update']);
+    });
 });
 
 Route::middleware('auth:company')->group(function () {

@@ -20,7 +20,6 @@ class CompanyController extends Controller
             'company_photo' => 'sometimes|string|max:255',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
-
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
@@ -36,6 +35,7 @@ class CompanyController extends Controller
     public function loginCompany(Request $request)
     {
         $credentials = $request->only('email', 'password');
+
         if (Auth::guard('company')->attempt($credentials)) {
             $company = Auth::guard('company')->user();
 
@@ -44,13 +44,15 @@ class CompanyController extends Controller
             return response()->json([
                 'message' => 'Empresa autenticada com sucesso!',
                 'token' => $token,
+                'company_id' => $company->id,
             ]);
         }
 
         return response()->json(['message' => 'Falha na autenticação da empresa'], 401);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $arrayRequest = $request->validate([
             'company_name' => 'nullable|string|max:255',
             'company_cnpj' => 'nullable|string|max:14',
@@ -64,17 +66,26 @@ class CompanyController extends Controller
 
         $company = Company::find($id);
 
-        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        if (!$company) {
+            return response()->json(['message' => 'Empresa não encontrada'], 404);
+        }
+
+
+        if (isset($arrayRequest['password'])) {
+            $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        }
+
 
         $company->update($arrayRequest);
 
         return response()->json([
             'message' => 'Empresa atualizada com sucesso!',
             'company' => $company,
-        ], 201);
+        ], 200);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $company = Company::find($id);
 
         if (!$company) {
