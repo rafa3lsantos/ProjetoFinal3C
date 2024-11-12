@@ -218,19 +218,50 @@ export default {
                 alert("Erro: ID da empresa não está disponível.");
                 return;
             }
-            
-            const formData = new FormData();
-            formData.append('company_name', this.company_name);
-            formData.append('company_sector', this.company_sector);
-            formData.append('about_company', this.about_company);
-            if (this.company_photo) {
-                formData.append('company_photo', this.company_photo);
-            }
+
+
+            let data = {
+                company_name: this.company_name,
+                company_sector: this.company_sector,
+                about_company: this.about_company,
+                company_photo: this.company_photo || null,
+            };
 
             try {
-                const response = await HttpService.put(`company/update/${this.getCompanyId}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Usuário não autenticado!');
+                    return;
+                }
+
+
+                if (this.company_photo) {
+                    const photoData = new FormData();
+                    photoData.append('company_photo', this.company_photo);
+
+
+                    const photoResponse = await HttpService.post('company/upload-photo', photoData, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data',
+                        }
+                    });
+
+                    if (photoResponse.data.success) {
+                        data.company_photo = photoResponse.data.photo_url;
+                    } else {
+                        alert('Erro ao fazer upload da foto');
+                        return;
+                    }
+                }
+
+                const response = await HttpService.put(`company/update/${this.getCompanyId}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
                 });
+
                 if (response.data.success) {
                     alert('Informações da empresa atualizadas com sucesso!');
                 } else {
@@ -241,6 +272,9 @@ export default {
                 alert('Erro ao atualizar informações da empresa.');
             }
         },
+
+
+
         async registerRecruiter() {
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
@@ -267,6 +301,7 @@ export default {
                 const response = await HttpService.post('recruiter/register', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
+
                 if (response.data.success) {
                     alert('Recrutador adicionado com sucesso!');
                     this.name = '';
@@ -294,6 +329,8 @@ export default {
     }
 }
 </script>
+
+
 
 
 
