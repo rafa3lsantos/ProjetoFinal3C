@@ -77,6 +77,8 @@ export default {
                     password: this.password,
                 });
 
+                console.log(response)
+
                 this.$store.dispatch('login', { token: response.data.token, role: 'candidato' });
                 alert('Login realizado com sucesso!');
                 
@@ -88,7 +90,7 @@ export default {
                         password: this.password,
                     });
 
-                    this.$store.dispatch('login', { token: response.data.token, role: 'empresa' });
+                    this.$store.dispatch('login', { token: response.data.token, role: 'empresa', companyId: response.data.company_id });
                     alert('Login realizado com sucesso!');
                     this.$router.push('/home-empresa');
                 } catch (error) {

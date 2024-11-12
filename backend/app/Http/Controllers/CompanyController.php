@@ -35,6 +35,7 @@ class CompanyController extends Controller
     public function loginCompany(Request $request)
     {
         $credentials = $request->only('email', 'password');
+
         if (Auth::guard('company')->attempt($credentials)) {
             $company = Auth::guard('company')->user();
 
@@ -43,6 +44,7 @@ class CompanyController extends Controller
             return response()->json([
                 'message' => 'Empresa autenticada com sucesso!',
                 'token' => $token,
+                'company_id' => $company->id,
             ]);
         }
 
