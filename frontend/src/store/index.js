@@ -6,25 +6,30 @@ export default createStore({
     authToken: localStorage.getItem('authToken') || null,
     userRole: localStorage.getItem('userRole') || null,
     companyId: localStorage.getItem('companyId') || null,
+    candidateId: localStorage.getItem('candidateId') || null,
   },
   mutations: {
-    login(state, { token, role, companyId }) {
+    login(state, { token, role, companyId,candidateId }) {
       state.isAuthenticated = true;
       state.authToken = token;
       state.userRole = role;
       state.companyId = companyId;
+      state.candidateId = candidateId;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
       localStorage.setItem('companyId', companyId);
+      localStorage.setItem('candidateId', candidateId);
     },
     logout(state) {
       state.isAuthenticated = false;
       state.authToken = null;
       state.userRole = null;
       state.companyId = null;
+      state.candidateId = null;
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
+      localStorage.removeItem('candidateId');
     },
   },
   actions: {
@@ -33,12 +38,14 @@ export default createStore({
       localStorage.setItem('authToken', payload.token);
       localStorage.setItem('userRole', payload.role);
       localStorage.setItem('companyId', payload.companyId);
+      localStorage.setItem('candidateId', payload.candidateId);
     },
     logout({ commit }) {
       commit('logout');
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
+      localStorage.removeItem('candidateId');
     },
   },
   getters: {
@@ -46,5 +53,6 @@ export default createStore({
     getAuthToken: (state) => state.authToken,
     userRole: (state) => state.userRole,
     getCompanyId: (state) => state.companyId,
+    getCandidateId: (state) => state.candidateId,
   },
 });

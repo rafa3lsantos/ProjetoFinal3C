@@ -218,7 +218,6 @@ export default {
                 alert("Erro: ID da empresa não está disponível.");
                 return;
             }
-            console.log(this.getCompanyId);
             
             const formData = new FormData();
             formData.append('company_name', this.company_name);

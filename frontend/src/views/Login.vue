@@ -77,13 +77,13 @@ export default {
                     password: this.password,
                 });
 
-                console.log(response)
-
-                this.$store.dispatch('login', { token: response.data.token, role: 'candidato' });
+                console.log(response);
+                this.$store.dispatch('login', { token: response.data.token, role: 'candidato', candidateId: response.data.candidate_id });
                 alert('Login realizado com sucesso!');
-                
                 this.$router.push('/home-candidato');
             } catch (error) {
+                console.error(error);
+
                 try {
                     const response = await HttpService.post('company/login', {
                         email: this.email,
@@ -94,9 +94,11 @@ export default {
                     alert('Login realizado com sucesso!');
                     this.$router.push('/home-empresa');
                 } catch (error) {
+                    console.error(error);
                     alert('Erro ao tentar realizar o login. Tente novamente.');
                 }
             }
+
         }
 
     }
