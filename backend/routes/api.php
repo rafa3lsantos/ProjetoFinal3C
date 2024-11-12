@@ -19,10 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
+Route::post('/candidate/register', [CandidateController::class, 'store']);
 
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
-        Route::post('/register', [CandidateController::class, 'store']);
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
     });
 });
