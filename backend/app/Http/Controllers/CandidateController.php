@@ -52,25 +52,36 @@ class CandidateController extends Controller
     }
 
     public function updateCandidate(Request $request)
-    {
-        $candidate = $request->user();
+{
+    $candidate = Auth::guard('candidate')->user();
 
-        $arrayRequest = $request->validate([
-            'name_candidate' => 'sometimes|string|min:3|max:255',
-            'email_candidate' => 'sometimes|string|string|min:3|max:255|unique:candidates,string,' . $candidate->id,
-            'password' => 'sometimes|string|min:6|max:255',
-            'new_password' => 'sometimes|string|min:6|max:255|confirmed',
-            'birth_date' => 'sometimes|date',
-            'gender'=>  'sometimes|string|in:masculino,feminino,nao-binario,outro',
-            'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
-            'cep' => 'sometimes|string|min:8|max:9',
-            'address' => 'sometimes|string|min:3|max:255',
-            'state' => 'sometimes|string|min:2|max:255',
-            'city' => 'sometimes|string|min:3|max:255',
-            'about_candidate' => 'sometimes|string|min:3|max:255',
-            'photo'=> 'sometimes|image|min:3|max:255',
-        ]);
+    dd($candidate);
+    if (!$candidate) {
+        return response()->json(['message' => 'Candidato não autenticado'], 401);
     }
+
+
+    $arrayRequest = $request->validate([
+        'name_candidate' => 'sometimes|string|min:3|max:255',
+        'email_candidate' => 'sometimes|string|min:3|max:255|unique:candidates,email,' . $candidate->id,
+        'password' => 'sometimes|string|min:6|max:255',
+        'new_password' => 'sometimes|string|min:6|max:255|confirmed',
+        'birth_date' => 'sometimes|date',
+        'gender'=>  'sometimes|string|in:masculino,feminino,nao-binario,outro',
+        'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
+        'cep' => 'sometimes|string|min:8|max:9',
+        'address' => 'sometimes|string|min:3|max:255',
+        'state' => 'sometimes|string|min:2|max:255',
+        'city' => 'sometimes|string|min:3|max:255',
+        'about_candidate' => 'sometimes|string|min:3|max:255',
+        'photo'=> 'sometimes|image|min:3|max:255',
+    ]);
+
+
+    $candidate->update($arrayRequest);
+
+    return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
+}
 
     public function logoutCandidate(Request $request)
     {
