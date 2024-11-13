@@ -24,66 +24,33 @@
                                 Senha
                             </router-link>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Conta</h5>
+                            <h5 class="card-title mb-0">Alterar Senha</h5>
                         </div>
                         <div class="card-body">
-                            <form @submit.prevent="updateConta">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="name">Nome Completo</label>
-                                            <input type="text" class="form-control" id="name"
-                                                v-model="usuario.name_candidate" placeholder="Nome Completo">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Gênero</label>
-                                            <div class="genero-options py-2">
-                                                <div class="form-check" v-for="(option, index) in genderOptions"
-                                                    :key="index">
-                                                    <input class="form-check-input" type="radio" :name="'gender'"
-                                                        :id="option.value" :value="option.value"
-                                                        v-model="usuario.gender">
-                                                    <label class="form-check-label" :for="option.value">{{
-                                                        option.label }}</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="about_candidate">Sobre você</label>
-                                            <textarea rows="2" class="form-control" id="about_candidate"
-                                                v-model="usuario.about_candidate"
-                                                placeholder="Faça um breve resumo sobre você"></textarea>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="phone">Telefone</label>
-                                            <input type="text" class="form-control" id="phone" v-model="usuario.phone"
-                                                placeholder="Informe seu Telefone" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="text-center">
-                                            <img :src="profileImagePreview || '../../public/user.png'"
-                                                alt="Foto do Recrutador" class="rounded-circle img-responsive mt-2"
-                                                width="128" height="128">
-                                            <div class="mt-2">
-                                                <label class="btn btn-primary">
-                                                    <i class="fa fa-upload"></i>
-                                                    <input type="file" @change="trocarFotoPerfil" hidden>
-                                                </label>
-                                            </div>
-                                            <small>Adicione uma foto de perfil para seu recrutador. Se não
-                                                selecionar, será usada a imagem padrão.</small>
-                                        </div>
-                                    </div>
+                            <form @submit.prevent="salvarSenha">
+                                <div class="form-group">
+                                    <label for="passwordCurrent">Senha Atual</label>
+                                    <input type="password" class="form-control" id="passwordCurrent"
+                                        v-model="senhaAtual" placeholder="Digite sua senha atual">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Salvar Informações</button>
+                                <div class="form-group">
+                                    <label for="passwordNew">Nova Senha</label>
+                                    <input type="password" class="form-control" id="passwordNew" v-model="passwordNew"
+                                        placeholder="Digite a nova senha">
+                                </div>
+                                <div class="form-group">
+                                    <label for="passwordConfirm">Confirmar Nova Senha</label>
+                                    <input type="password" class="form-control" id="passwordConfirm"
+                                        v-model="confirmarSenha" placeholder="Confirme a nova senha">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Alterar Senha</button>
                             </form>
                         </div>
                     </div>
@@ -108,12 +75,20 @@ export default {
             usuario: {
                 id: '',
                 name_candidate: '',
+                email: '',
+                password: '',
+                new_password: '',
                 about_candidate: '',
-                phone: '',
+                birthdate: '',
                 gender: '',
+                phone: '',
                 fotoPerfil: null,
+                curriculum: ''
             },
             profileImagePreview: '',
+            senhaAtual: '',
+            passwordNew: '',
+            confirmarSenha: '',
             genderOptions: [
                 { label: 'Masculino', value: 'masculino' },
                 { label: 'Feminino', value: 'feminino' },
@@ -121,8 +96,7 @@ export default {
                 { label: 'Outro', value: 'outro' },
                 { label: 'Prefiro não responder', value: 'sem-resposta' }
             ],
-            errors: {},
-            token: localStorage.getItem('authToken') || '',
+            errors: {}
         };
     },
     computed: {
@@ -145,37 +119,23 @@ export default {
             if (!this.usuario.name_candidate) {
                 this.errors.name_candidate = "O nome é obrigatório.";
             }
+            if (!this.usuario.email || !this.isValidEmail(this.usuario.email)) {
+                this.errors.email = "Informe um e-mail válido.";
+            }
             if (!this.usuario.gender) {
                 this.errors.gender = "O gênero é obrigatório.";
+            }
+            if (this.senhaAtual && (!this.passwordNew || !this.confirmarSenha)) {
+                this.errors.password = "A nova senha e confirmação são obrigatórias.";
             }
 
             return Object.keys(this.errors).length === 0;
         },
-        async sendUpdateRequest(formData) {
-            try {
-                if (!this.token) {
-                    alert('Usuário não autenticado!');
-                    return;
-                }
-
-                const response = await HttpService.put(`/candidate/update/${this.getCandidateId}`, formData, {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
-
-                if (response.data.success) {
-                    alert('Informações da conta atualizadas com sucesso.');
-                } else {
-                    alert('Erro ao atualizar as informações do candidato.');
-                }
-            } catch (error) {
-                console.error("Erro ao atualizar conta:", error);
-                alert('Erro ao atualizar informações da conta.');
-            }
+        isValidEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(String(email).toLowerCase());
         },
-        async updateConta() {
+        updateConta() {
             if (this.validateFields()) {
                 const formData = new FormData();
                 formData.append("name_candidate", this.usuario.name_candidate);
@@ -186,15 +146,71 @@ export default {
                     formData.append("fotoPerfil", this.usuario.fotoPerfil);
                 }
 
-                await this.sendUpdateRequest(formData);
+                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
+                    .then(() => {
+                        alert('Informações da conta atualizadas com sucesso.');
+                    })
+                    .catch(error => {
+                        console.error("Erro ao atualizar conta:", error);
+                    });
             }
+        },
+        salvarDataNascimento() {
+            if (this.validateFields()) {
+                const formData = new FormData();
+                formData.append("birthdate", this.usuario.birthdate);
+
+                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
+                    .then(() => {
+                        alert('Data de nascimento atualizada com sucesso.');
+                    })
+                    .catch(error => {
+                        console.error("Erro ao atualizar data de nascimento:", error);
+                    });
+            }
+        },
+        salvarEmail() {
+            if (this.validateFields()) {
+                const formData = new FormData();
+                formData.append("email", this.usuario.email);
+
+                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
+                    .then(() => {
+                        alert('Email atualizado com sucesso.');
+                    })
+                    .catch(error => {
+                        console.error("Erro ao atualizar email:", error);
+                    });
+            }
+        },
+        salvarSenha() {
+            if (this.passwordNew !== this.confirmarSenha) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("password_current", this.senhaAtual);
+            formData.append("password_new", this.passwordNew);
+
+            HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
+                .then(() => {
+                    alert('Senha alterada com sucesso.');
+                })
+                .catch(error => {
+                    console.error("Erro ao alterar senha:", error);
+                });
         }
     },
     mounted() {
         this.usuario.id = this.getCandidateId;
+
     }
 };
 </script>
+
+
+
 
 
 <style scoped>
