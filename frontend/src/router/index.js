@@ -9,6 +9,9 @@ import PerfilCandidato from '../views/PerfilCandidato.vue';
 import HomeEmpresa from '../views/HomeEmpresa.vue';
 import PerfilEmpresa from '../views/PerfilEmpresa.vue';
 import Recrutadores from '../views/Recrutadores.vue';
+import UpdateDN from '../views/UpdateDN.vue';
+import UpdateEmail from '../views/UpdateEmail.vue';
+import UpdateSenha from '../views/UpdateSenha.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +23,7 @@ const router = createRouter({
       meta: {
         title: 'Home Candidato',
         requiresAuth: true,
-        userType: 'candidato', // Define o tipo de usuário que pode acessar essa rota
+        userType: 'candidato',
       },
     },
     {
@@ -98,6 +101,36 @@ const router = createRouter({
         userType: 'empresa',
       },
     },
+    {
+      path: '/data-nascimento',
+      name: 'data nascimento',
+      component: UpdateDN,
+      meta: {
+        title: 'data nascimento',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/email',
+      name: 'email',
+      component: UpdateEmail,
+      meta: {
+        title: 'email',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/senha',
+      name: 'senha',
+      component: UpdateSenha,
+      meta: {
+        title: 'senha',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
   ],
 });
 
@@ -107,7 +140,7 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userRole;
 
-  // Verifica se o usuário está tentando acessar a rota de login enquanto já está autenticado
+
   if (to.path === '/login' && isAuthenticated) {
     if (userRole === 'candidato') {
       return next({ name: 'home-candidato' });
@@ -116,13 +149,12 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  // Verifica se a rota exige autenticação e se o usuário está autenticado
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated) {
       return next({ name: 'login' });
     }
 
-    // Restrição de rota: não permitir que um candidato acesse páginas de empresa e vice-versa
+
     if (to.path.startsWith('/home-candidato') && userRole !== 'candidato') {
       return next({ name: 'home-empresa' });
     } else if (to.path.startsWith('/home-empresa') && userRole !== 'empresa') {
