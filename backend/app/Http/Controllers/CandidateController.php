@@ -100,6 +100,19 @@ class CandidateController extends Controller
         return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
     }
 
+    public function deleteCandidate(Request $request)
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        }
+
+        $candidate->delete();
+
+        return response()->json(['message' => 'Candidato deletado com sucesso'], 200);
+    }
+
 
 
     public function logoutCandidate(Request $request)

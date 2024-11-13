@@ -24,8 +24,9 @@ Route::post('/candidate/register', [CandidateController::class, 'store']);
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
+        Route::delete('/delete', [CandidateController::class, 'deleteCandidate']);
+        });
     });
-});
 
 Route::prefix('recruiter')->group(function () {
     Route::post('/login', [RecruiterController::class, 'loginRecruiter']);
