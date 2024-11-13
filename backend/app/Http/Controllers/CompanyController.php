@@ -40,6 +40,23 @@ class CompanyController extends Controller
         ], 201);
     }
 
+    public function loginCompany(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('company')->attempt($credentials)) {
+            $company = Auth::guard('company')->user();
+            $token = $company->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Usuário autenticado com sucesso!',
+                'token' => $token,
+            ]);
+        }
+
+        return response()->json(['message' => 'Falha na autenticação do usuário'], 401);
+    }
+
     public function update(Request $request, $id)
     {
         // Validação dos dados
