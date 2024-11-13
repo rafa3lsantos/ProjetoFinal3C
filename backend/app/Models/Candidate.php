@@ -18,7 +18,8 @@ class Candidate extends Authenticatable
         'cpf',
         'email',
         'password',
-        'new_password'
+        'new_password',
+        'photo'
     ];
 
 }

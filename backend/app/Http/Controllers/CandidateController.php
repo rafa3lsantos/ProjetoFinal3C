@@ -10,25 +10,33 @@ use App\Models\Candidate;
 class CandidateController extends Controller
 {
     public function store(Request $request)
-    {
-        $arrayRequest = $request->validate([
-            'name_candidate' => 'required|string|min:3|max:255',
-            'cpf' => 'required|string|min:11|max:14|unique:candidates',
-            'birth_date' => 'nullable|date',
-            'email' => 'required|string|string|min:3|max:255|unique:candidates',
-            'password' => 'required|string|min:6|max:255|confirmed',
-            'password_confirmation' => 'required|string|min:6|max:255',
-        ]);
+{
+    $arrayRequest = $request->validate([
+        'name_candidate' => 'required|string|min:3|max:255',
+        'cpf' => 'required|string|min:11|max:14|unique:candidates',
+        'birth_date' => 'nullable|date',
+        'email' => 'required|string|min:3|max:255|unique:candidates',
+        'password' => 'required|string|min:6|max:255|confirmed',
+        'password_confirmation' => 'required|string|min:6|max:255',
+        'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
-
-        $candidate = Candidate::create($arrayRequest);
-
-        return response()->json([
-            'message' => 'Cadastrado com sucesso!',
-            'candidate' => $candidate,
-        ], 201);
+    if ($request->hasFile('photo')) {
+        $imagePath = $request->file('photo')->store('images', 'public');
+        $arrayRequest['image'] = $imagePath; // Adiciona o caminho da imagem ao array de dados
     }
+
+    $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+    unset($arrayRequest['password_confirmation']);
+
+    $candidate = Candidate::create($arrayRequest);
+
+    return response()->json([
+        'message' => 'Cadastrado com sucesso!',
+        'candidate' => $candidate,
+    ], 201);
+}
+
     public function loginCandidate(Request $request)
     {
         $credentials = $request->validate([
@@ -51,7 +59,7 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
     }
-  
+
     public function updateCandidate(Request $request)
     {
 
@@ -74,8 +82,13 @@ class CandidateController extends Controller
             'state' => 'sometimes|string|min:2|max:255',
             'city' => 'sometimes|string|min:3|max:255',
             'about_candidate' => 'sometimes|string|min:3|max:255',
-            'photo' => 'sometimes|image',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->store('images', 'public');
+            $arrayRequest['image'] = $imagePath; // Adiciona o caminho da imagem ao array de dados
+        }
 
         if (isset($arrayRequest['new_password'])) {
             $arrayRequest['password'] = bcrypt($arrayRequest['new_password']);
