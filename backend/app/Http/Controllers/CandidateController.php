@@ -18,7 +18,7 @@ class CandidateController extends Controller
         'email' => 'required|string|min:3|max:255|unique:candidates',
         'password' => 'required|string|min:6|max:255|confirmed',
         'password_confirmation' => 'required|string|min:6|max:255',
-        'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     if ($request->hasFile('photo')) {
@@ -82,7 +82,7 @@ class CandidateController extends Controller
             'state' => 'sometimes|string|min:2|max:255',
             'city' => 'sometimes|string|min:3|max:255',
             'about_candidate' => 'sometimes|string|min:3|max:255',
-            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -113,6 +113,19 @@ class CandidateController extends Controller
         return response()->json(['message' => 'Candidato deletado com sucesso'], 200);
     }
 
+    public function show($id)
+    {
+        $candidate = Candidate::find($id);
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrada'], 404);
+        }
+
+        return response()->json([
+            'message' => 'candidato encontrada com sucesso!',
+            'candidate' => $candidate,
+        ], 200);
+    }
 
 
     public function logoutCandidate(Request $request)
