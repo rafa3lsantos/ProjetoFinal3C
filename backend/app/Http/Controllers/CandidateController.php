@@ -67,8 +67,6 @@ class CandidateController extends Controller
 
         $candidate = Auth::user();
 
-        dd($request);
-        
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
         }

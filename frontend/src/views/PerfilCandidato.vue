@@ -66,9 +66,9 @@
                                                     :src="usuario.perfilPicture" alt="Imagem de Perfil">
                                                 <input type="file" @change="onImageChange" style="display: none;"
                                                     ref="fileInput" />
-                                                <button class="btn btn-primary mt-3" @click="triggerFileInput">
-                                                    Alterar Imagem
-                                                </button>
+                                                <button type="button" class="btn btn-primary mt-3"
+                                                    @click="triggerFileInput">Alterar Imagem</button>
+
                                             </div>
                                             <small>Adicione uma foto de perfil para seu recrutador. Se não selecionar,
                                                 será usada a imagem padrão.</small>
@@ -127,7 +127,6 @@ export default {
             const file = event.target.files[0];
             if (file) {
                 this.profileImagePreview = URL.createObjectURL(file);
-
                 const reader = new FileReader();
                 reader.onload = () => {
                     this.usuario.perfilPicture = reader.result;
@@ -137,14 +136,12 @@ export default {
         },
         validateFields() {
             this.errors = {};
-
             if (!this.usuario.name_candidate) {
                 this.errors.name_candidate = "O nome é obrigatório.";
             }
             if (!this.usuario.gender) {
                 this.errors.gender = "O gênero é obrigatório.";
             }
-
             return Object.keys(this.errors).length === 0;
         },
         async sendUpdateRequest() {
@@ -161,7 +158,9 @@ export default {
                     }
                 });
 
-                if (response.data.success) {
+                console.log(response)
+
+                if (response.status == 200) {
                     alert('Informações da conta atualizadas com sucesso.');
                 } else {
                     alert('Erro ao atualizar as informações do candidato.');
@@ -178,13 +177,12 @@ export default {
         },
         async fetchUserProfile() {
             try {
-                const response = await HttpService.get(`/candidate/update/${this.getCandidateId}`, {
+                const response = await HttpService.get(`/candidate/show/${this.getCandidateId}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
                 });
-                const user = response.data;
-
+                const user = response.data.candidate;
                 this.usuario.name_candidate = user.name_candidate || '';
                 this.usuario.phone = user.phone || '';
                 this.usuario.gender = user.gender || '';
@@ -203,7 +201,6 @@ export default {
     }
 };
 </script>
-
 
 <style scoped>
 body {
