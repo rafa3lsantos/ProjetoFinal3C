@@ -180,7 +180,7 @@ export default {
                 const formData = new FormData();
                 formData.append("name_candidate", this.usuario.name_candidate);
                 formData.append("about_candidate", this.usuario.about_candidate);
-                formData.append("phone", this.usuario.phone);
+                formData.append("phone", this.usuario.phone); 
                 formData.append("gender", this.usuario.gender);
                 if (this.usuario.fotoPerfil) {
                     formData.append("fotoPerfil", this.usuario.fotoPerfil);
