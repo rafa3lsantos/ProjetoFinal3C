@@ -1,7 +1,6 @@
 <template>
     <div>
         <Navbar />
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 
         <div class="container p-0">
             <div class="row">
@@ -11,125 +10,73 @@
                             <h5 class="card-title mb-0">Configurações de Perfil</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <a class="list-group-item list-group-item-action" @click="showSection('conta')">
-                                Conta
-                            </a>
-                            <a class="list-group-item list-group-item-action" @click="showSection('dataNascimento')">
-                                Data de Nascimento
-                            </a>
-                            <a class="list-group-item list-group-item-action" @click="showSection('email')">
-                                Email
-                            </a>
-                            <a class="list-group-item list-group-item-action" @click="showSection('senha')">
-                                Senha
-                            </a>
+                            <router-link to="/meu-perfil"
+                                class="list-group-item list-group-item-action">Conta</router-link>
+                            <router-link to="/data-nascimento" class="list-group-item list-group-item-action">Data de
+                                Nascimento</router-link>
+                            <router-link to="/email" class="list-group-item list-group-item-action">Email</router-link>
+                            <router-link to="/senha" class="list-group-item list-group-item-action">Senha</router-link>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-                    <div v-if="currentSection === 'conta'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Conta</h5>
-                            </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label for="inputUsername">Nome Completo</label>
-                                                <input type="text" class="form-control" id="inputUsername"
-                                                    placeholder="Username">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="inputUsername">Sobre você</label>
-                                                <textarea rows="2" class="form-control" id="inputBio"
-                                                    placeholder="Faça um breve resumo sobre você"></textarea>
-                                            </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Conta</h5>
+                        </div>
+                        <div class="card-body">
+                            <form @submit.prevent="updateConta">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="name">Nome Completo</label>
+                                            <input type="text" class="form-control" id="name"
+                                                v-model="usuario.name_candidate" placeholder="Nome Completo">
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <img alt="João da Silva" src="../../public/user.png"
-                                                    class="rounded-circle img-responsive mt-2" width="128" height="128">
-                                                <div class="mt-2">
-                                                    <span class="btn btn-primary"><i class="fa fa-upload"></i></span>
+                                        <div class="form-group">
+                                            <label>Gênero</label>
+                                            <div class="genero-options py-2">
+                                                <div class="form-check" v-for="(option, index) in genderOptions"
+                                                    :key="index">
+                                                    <input class="form-check-input" type="radio" :name="'gender'"
+                                                        :id="option.value" :value="option.value"
+                                                        v-model="usuario.gender">
+                                                    <label class="form-check-label" :for="option.value">{{ option.label
+                                                        }}</label>
                                                 </div>
-                                                <small>Para melhores resultados, use uma imagem de pelo menos 128px por
-                                                    128px em .jpg</small>
-
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="about_candidate">Sobre você</label>
+                                            <textarea rows="2" class="form-control" id="about_candidate"
+                                                v-model="usuario.about_candidate"
+                                                placeholder="Faça um breve resumo sobre você"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Telefone</label>
+                                            <input type="text" class="form-control" id="phone" v-model="usuario.phone"
+                                                placeholder="Informe seu Telefone" />
+                                        </div>
                                     </div>
-
-                                    <button type="submit" class="btn btn-primary">Salvar Informações</button>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="currentSection === 'dataNascimento'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Data de Nascimento</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="salvarDataNascimento">
-                                    <div class="form-group">
-                                        <label for="dataNascimento">Data de Nascimento</label>
-                                        <input type="date" class="form-control" id="dataNascimento"
-                                            v-model="usuario.dataNascimento">
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <div class="mt-2">
+                                                <img class="rounded-circle mt-5" width="150px"
+                                                    :src="usuario.perfilPicture" alt="Imagem de Perfil">
+                                                <input type="file" @change="onImageChange" style="display: none;"
+                                                    ref="fileInput" />
+                                                <button class="btn btn-primary mt-3" @click="triggerFileInput">
+                                                    Alterar Imagem
+                                                </button>
+                                            </div>
+                                            <small>Adicione uma foto de perfil para seu recrutador. Se não selecionar,
+                                                será usada a imagem padrão.</small>
+                                        </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Salvar</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="currentSection === 'email'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Email</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="salvarEmail">
-                                    <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input type="email" class="form-control" id="email" v-model="usuario.email"
-                                            placeholder="Email">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Salvar</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="currentSection === 'senha'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Alterar Senha</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="salvarSenha">
-                                    <div class="form-group">
-                                        <label for="senhaAtual">Senha Atual</label>
-                                        <input type="password" class="form-control" id="senhaAtual" v-model="senhaAtual"
-                                            placeholder="Digite sua senha atual">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="novaSenha">Nova Senha</label>
-                                        <input type="password" class="form-control" id="novaSenha" v-model="novaSenha"
-                                            placeholder="Digite a nova senha">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="confirmarSenha">Confirmar Nova Senha</label>
-                                        <input type="password" class="form-control" id="confirmarSenha"
-                                            v-model="confirmarSenha" placeholder="Confirme a nova senha">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Aterar Senha</button>
-                                </form>
-                            </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Informações</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -140,54 +87,123 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+import HttpService from '../services/HttpService';
+import { mapGetters } from 'vuex';
 
 export default {
-    data() {
-        return {
-            currentSection: 'conta',
-            usuario: {
-                nome: '',
-                dataNascimento: '',
-                email: '',
-                fotoPerfil: null,
-            },
-            senhaAtual: '',
-            novaSenha: '',
-            confirmarSenha: '',
-        };
-    },
-    methods: {
-        showSection(section) {
-            this.currentSection = section;
-        },
-        salvarConta() {
-            alert('Informações da conta salvas com sucesso!');
-        },
-        trocarFotoPerfil(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.usuario.fotoPerfil = URL.createObjectURL(file);
-            }
-        },
-        salvarDataNascimento() {
-            alert('Data de nascimento salva com sucesso!');
-        },
-        salvarEmail() {
-            alert('Email salvo com sucesso!');
-        },
-        salvarSenha() {
-            if (this.novaSenha !== this.confirmarSenha) {
-                alert('As senhas não correspondem!');
-                return;
-            }
-            alert('Senha alterada com sucesso!');
-        },
-    },
     components: {
         Navbar
+    },
+    data() {
+        return {
+            usuario: {
+                id: '',
+                name_candidate: '',
+                about_candidate: '',
+                phone: '',
+                gender: '',
+                perfilPicture: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
+            },
+            profileImagePreview: '',
+            genderOptions: [
+                { label: 'Masculino', value: 'masculino' },
+                { label: 'Feminino', value: 'feminino' },
+                { label: 'Não-Binário', value: 'nao-binario' },
+                { label: 'Outro', value: 'outro' },
+                { label: 'Prefiro não responder', value: 'sem-resposta' }
+            ],
+            errors: {},
+            token: localStorage.getItem('authToken') || ''
+        };
+    },
+    created() {
+        this.fetchUserProfile();
+    },
+    computed: {
+        ...mapGetters(['getCandidateId'])
+    },
+    methods: {
+        onImageChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.profileImagePreview = URL.createObjectURL(file);
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.usuario.perfilPicture = reader.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+        validateFields() {
+            this.errors = {};
+
+            if (!this.usuario.name_candidate) {
+                this.errors.name_candidate = "O nome é obrigatório.";
+            }
+            if (!this.usuario.gender) {
+                this.errors.gender = "O gênero é obrigatório.";
+            }
+
+            return Object.keys(this.errors).length === 0;
+        },
+        async sendUpdateRequest() {
+            try {
+                if (!this.token) {
+                    alert('Usuário não autenticado!');
+                    return;
+                }
+
+                const response = await HttpService.put(`/candidate/update/${this.getCandidateId}`, this.usuario, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.data.success) {
+                    alert('Informações da conta atualizadas com sucesso.');
+                } else {
+                    alert('Erro ao atualizar as informações do candidato.');
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar conta:", error);
+                alert('Erro ao atualizar informações da conta.');
+            }
+        },
+        async updateConta() {
+            if (this.validateFields()) {
+                await this.sendUpdateRequest();
+            }
+        },
+        async fetchUserProfile() {
+            try {
+                const response = await HttpService.get(`/candidate/update/${this.getCandidateId}`, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                });
+                const user = response.data;
+
+                this.usuario.name_candidate = user.name_candidate || '';
+                this.usuario.phone = user.phone || '';
+                this.usuario.gender = user.gender || '';
+                this.usuario.about_candidate = user.about_candidate || '';
+                this.usuario.perfilPicture = user.perfilPicture || this.usuario.perfilPicture;
+            } catch (error) {
+                console.error('Erro ao carregar o perfil do usuário:', error);
+            }
+        },
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        }
+    },
+    mounted() {
+        this.usuario.id = this.getCandidateId;
     }
 };
 </script>
+
 
 <style scoped>
 body {
@@ -200,36 +216,11 @@ body {
     box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
 }
 
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid #e5e9f2;
-    border-radius: .2rem;
-}
-
-.card-header:first-child {
-    border-radius: calc(.2rem - 1px) calc(.2rem - 1px) 0 0;
-}
-
 .card-header {
     border-bottom-width: 1px;
-}
-
-.card-header {
     padding: .75rem 1.25rem;
-    margin-bottom: 0;
-    color: inherit;
     background-color: #fff;
     border-bottom: 1px solid #e5e9f2;
-}
-
-.save {
-    margin-top: 20px;
 }
 
 .genero-options {
@@ -241,26 +232,12 @@ body {
     margin-right: 15px;
 }
 
-.form-check:last-child {
-    margin-right: 0;
-}
-
 .form-group {
     margin-bottom: 30px;
 }
 
-.disabled-link {
-    color: inherit;
-    text-decoration: none;
-}
-
-.skill-badge {
-    color: #504e4e;
-    background-color: transparent;
-    border: 1px solid #cfcccc;
-}
-
-.upload {
-    margin-bottom: 20px;
+.text-center small {
+    display: block;
+    margin-top: 10px;
 }
 </style>

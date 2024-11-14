@@ -15,6 +15,8 @@ class CandidateController extends Controller
         'name_candidate' => 'required|string|min:3|max:255',
         'cpf' => 'required|string|min:11|max:14|unique:candidates',
         'birth_date' => 'nullable|date',
+        'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
+        'phone' => 'nullable|string|min:11|max:14|unique:candidates',
         'email' => 'required|string|min:3|max:255|unique:candidates',
         'password' => 'required|string|min:6|max:255|confirmed',
         'password_confirmation' => 'required|string|min:6|max:255',
@@ -65,6 +67,8 @@ class CandidateController extends Controller
 
         $candidate = Auth::user();
 
+        dd($request);
+        
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
         }
