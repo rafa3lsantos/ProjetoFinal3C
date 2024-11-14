@@ -97,7 +97,7 @@ return [
             'model' => App\Models\Candidate::class,
         ],
 
-        'companies' => [        
+        'companies' => [
             'driver' => 'eloquent',
             'model' => App\Models\Company::class,
         ],

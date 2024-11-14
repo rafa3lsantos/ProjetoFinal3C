@@ -9,12 +9,14 @@ class CurriculumController extends Controller
 {
     public function index()
     {
-        // Lógica para exibir a página inicial do currículo
+        // Lógica para exibir todos os currículos
     }
 
     public function store(Request $request)
     {
-        // Lógica para salvar o currículo no banco de dados
+        $arrayRequest = $request->validate([
+            
+        ])
     }
 
     public function show($id)

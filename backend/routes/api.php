@@ -25,6 +25,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::delete('/delete', [CandidateController::class, 'deleteCandidate']);
+        Route::get('/show/{id}', [CandidateController::class, 'show']);
         });
     });
 
