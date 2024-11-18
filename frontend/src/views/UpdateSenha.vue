@@ -24,31 +24,30 @@
                                 Senha
                             </router-link>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Alterar Senha</h5>
+                            <h5 class="card-title mb-0">Atualizar Senha</h5>
                         </div>
                         <div class="card-body">
                             <form @submit.prevent="salvarSenha">
                                 <div class="form-group">
                                     <label for="passwordCurrent">Senha Atual</label>
                                     <input type="password" class="form-control" id="passwordCurrent"
-                                        v-model="senhaAtual" placeholder="Digite sua senha atual">
+                                        v-model="senhaAtual" placeholder="Digite sua senha atual" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="passwordNew">Nova Senha</label>
                                     <input type="password" class="form-control" id="passwordNew" v-model="passwordNew"
-                                        placeholder="Digite a nova senha">
+                                        placeholder="Digite a nova senha" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="passwordConfirm">Confirmar Nova Senha</label>
                                     <input type="password" class="form-control" id="passwordConfirm"
-                                        v-model="confirmarSenha" placeholder="Confirme a nova senha">
+                                        v-model="confirmarSenha" placeholder="Confirme a nova senha" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Alterar Senha</button>
                             </form>
@@ -71,147 +70,57 @@ export default {
     },
     data() {
         return {
-            currentSection: 'conta',
-            usuario: {
-                id: '',
-                name_candidate: '',
-                email: '',
-                password: '',
-                new_password: '',
-                about_candidate: '',
-                birthdate: '',
-                gender: '',
-                phone: '',
-                fotoPerfil: null,
-                curriculum: ''
-            },
-            profileImagePreview: '',
             senhaAtual: '',
             passwordNew: '',
             confirmarSenha: '',
-            genderOptions: [
-                { label: 'Masculino', value: 'masculino' },
-                { label: 'Feminino', value: 'feminino' },
-                { label: 'Não-Binário', value: 'nao-binario' },
-                { label: 'Outro', value: 'outro' },
-                { label: 'Prefiro não responder', value: 'sem-resposta' }
-            ],
             errors: {}
         };
     },
     computed: {
-        ...mapGetters(['getCandidateId']),
+        ...mapGetters(['getCandidateId', 'getAuthToken']),
     },
     methods: {
-        showSection(section) {
-            this.currentSection = section;
-        },
-        trocarFotoPerfil(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.profileImagePreview = URL.createObjectURL(file);
-                this.usuario.fotoPerfil = file;
-            }
-        },
         validateFields() {
             this.errors = {};
 
-            if (!this.usuario.name_candidate) {
-                this.errors.name_candidate = "O nome é obrigatório.";
+            if (!this.senhaAtual) {
+                this.errors.senhaAtual = "A senha atual é obrigatória.";
             }
-            if (!this.usuario.email || !this.isValidEmail(this.usuario.email)) {
-                this.errors.email = "Informe um e-mail válido.";
+
+            if (!this.passwordNew || this.passwordNew.length < 6) {
+                this.errors.passwordNew = "A nova senha deve ter pelo menos 6 caracteres.";
             }
-            if (!this.usuario.gender) {
-                this.errors.gender = "O gênero é obrigatório.";
-            }
-            if (this.senhaAtual && (!this.passwordNew || !this.confirmarSenha)) {
-                this.errors.password = "A nova senha e confirmação são obrigatórias.";
+
+            if (this.passwordNew !== this.confirmarSenha) {
+                this.errors.confirmarSenha = "As senhas não coincidem.";
             }
 
             return Object.keys(this.errors).length === 0;
         },
-        isValidEmail(email) {
-            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return re.test(String(email).toLowerCase());
-        },
-        updateConta() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("name_candidate", this.usuario.name_candidate);
-                formData.append("about_candidate", this.usuario.about_candidate);
-                formData.append("phone", this.usuario.phone);
-                formData.append("gender", this.usuario.gender);
-                if (this.usuario.fotoPerfil) {
-                    formData.append("fotoPerfil", this.usuario.fotoPerfil);
-                }
 
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Informações da conta atualizadas com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar conta:", error);
-                    });
-            }
-        },
-        salvarDataNascimento() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("birthdate", this.usuario.birthdate);
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Data de nascimento atualizada com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar data de nascimento:", error);
-                    });
-            }
-        },
-        salvarEmail() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("email", this.usuario.email);
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Email atualizado com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar email:", error);
-                    });
-            }
-        },
         salvarSenha() {
-            if (this.passwordNew !== this.confirmarSenha) {
-                alert('As senhas não coincidem.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("password_current", this.senhaAtual);
-            formData.append("password_new", this.passwordNew);
-
-            HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                .then(() => {
-                    alert('Senha alterada com sucesso.');
+            if (this.validateFields()) {
+                const data = {
+                    password_current: this.senhaAtual,
+                    password_new: this.passwordNew
+                };
+                HttpService.put(`/candidate/update/${this.getCandidateId}`, data, {
+                    headers: {
+                        'Authorization': `Bearer ${this.getAuthToken}`
+                    }
                 })
-                .catch(error => {
-                    console.error("Erro ao alterar senha:", error);
-                });
+                    .then(() => {
+                        alert('Senha alterada com sucesso.');
+                    })
+                    .catch(error => {
+                        console.error("Erro ao alterar senha:", error);
+                        alert('Erro ao atualizar a senha. Por favor, tente novamente.');
+                    });
+            }
         }
-    },
-    mounted() {
-        this.usuario.id = this.getCandidateId;
-
     }
 };
 </script>
-
-
-
-
 
 <style scoped>
 body {

@@ -24,26 +24,25 @@
                                 Senha
                             </router-link>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Data de Nascimento</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="salvarDataNascimento">
-                                    <div class="form-group">
-                                        <label for="birthdate">Data de Nascimento</label>
-                                        <input type="date" class="form-control" id="birthdate"
-                                            v-model="usuario.birthdate">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Salvar</button>
-                                </form>
-                            </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Data de Nascimento</h5>
                         </div>
+                        <div class="card-body">
+                            <form @submit.prevent="salvarDataNascimento">
+                                <div class="form-group">
+                                    <label for="birthdate">Data de Nascimento</label>
+                                    <input type="date" class="form-control" id="birthdate" v-model="usuario.birthdate">
+                                    <small v-if="errors.birthdate" class="text-danger">{{ errors.birthdate }}</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,154 +50,89 @@
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
-import HttpService from '../services/HttpService';
-import { mapGetters } from 'vuex';
+import Navbar from "@/components/Navbar.vue";
+import HttpService from "../services/HttpService";
+import { mapGetters } from "vuex";
 
 export default {
     components: {
-        Navbar
+        Navbar,
     },
     data() {
         return {
-            currentSection: 'conta',
             usuario: {
-                id: '',
-                name_candidate: '',
-                email: '',
-                password: '',
-                new_password: '',
-                about_candidate: '',
-                birthdate: '',
-                gender: '',
-                phone: '',
-                fotoPerfil: null,
-                curriculum: ''
+                id: "",
+                birthdate: "",
             },
-            profileImagePreview: '',
-            senhaAtual: '',
-            passwordNew: '',
-            confirmarSenha: '',
-            genderOptions: [
-                { label: 'Masculino', value: 'masculino' },
-                { label: 'Feminino', value: 'feminino' },
-                { label: 'Não-Binário', value: 'nao-binario' },
-                { label: 'Outro', value: 'outro' },
-                { label: 'Prefiro não responder', value: 'sem-resposta' }
-            ],
-            errors: {}
+            errors: {},
+            token: localStorage.getItem("authToken") || "",
         };
     },
     computed: {
-        ...mapGetters(['getCandidateId']),
+        ...mapGetters(["getCandidateId"]),
     },
     methods: {
-        showSection(section) {
-            this.currentSection = section;
-        },
-        trocarFotoPerfil(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.profileImagePreview = URL.createObjectURL(file);
-                this.usuario.fotoPerfil = file;
-            }
-        },
         validateFields() {
             this.errors = {};
-
-            if (!this.usuario.name_candidate) {
-                this.errors.name_candidate = "O nome é obrigatório.";
+            if (!this.usuario.birthdate) {
+                this.errors.birthdate = "A data de nascimento é obrigatória.";
             }
-            if (!this.usuario.email || !this.isValidEmail(this.usuario.email)) {
-                this.errors.email = "Informe um e-mail válido.";
-            }
-            if (!this.usuario.gender) {
-                this.errors.gender = "O gênero é obrigatório.";
-            }
-            if (this.senhaAtual && (!this.passwordNew || !this.confirmarSenha)) {
-                this.errors.password = "A nova senha e confirmação são obrigatórias.";
-            }
-
             return Object.keys(this.errors).length === 0;
         },
-        isValidEmail(email) {
-            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return re.test(String(email).toLowerCase());
-        },
-        updateConta() {
+        async salvarDataNascimento() {
             if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("name_candidate", this.usuario.name_candidate);
-                formData.append("about_candidate", this.usuario.about_candidate);
-                formData.append("phone", this.usuario.phone);
-                formData.append("gender", this.usuario.gender);
-                if (this.usuario.fotoPerfil) {
-                    formData.append("fotoPerfil", this.usuario.fotoPerfil);
+                try {
+                    const response = await HttpService.put(
+                        `/candidate/update/${this.getCandidateId}`,
+                        {
+                            birthdate: this.usuario.birthdate,
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${this.token}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+
+                    if (response.status === 200) {
+                        alert("Data de nascimento atualizada com sucesso.");
+                    } else {
+                        alert("Erro ao atualizar a data de nascimento.");
+                    }
+                } catch (error) {
+                    console.error("Erro ao atualizar data de nascimento:", error);
+                    alert("Erro ao salvar os dados.");
                 }
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Informações da conta atualizadas com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar conta:", error);
-                    });
+            } else {
+                alert("Por favor, preencha todos os campos obrigatórios.");
             }
         },
-        salvarDataNascimento() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("birthdate", this.usuario.birthdate);
+        async fetchUserProfile() {
+            try {
+                const response = await HttpService.get(
+                    `/candidate/show/${this.getCandidateId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                        },
+                    }
+                );
 
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Data de nascimento atualizada com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar data de nascimento:", error);
-                    });
+                const user = response.data.candidate;
+                this.usuario.id = user.id || "";
+                this.usuario.birthdate = user.birthdate || "";
+            } catch (error) {
+                console.error("Erro ao carregar o perfil do usuário:", error);
             }
         },
-        salvarEmail() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("email", this.usuario.email);
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Email atualizado com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar email:", error);
-                    });
-            }
-        },
-        salvarSenha() {
-            if (this.passwordNew !== this.confirmarSenha) {
-                alert('As senhas não coincidem.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("password_current", this.senhaAtual);
-            formData.append("password_new", this.passwordNew);
-
-            HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                .then(() => {
-                    alert('Senha alterada com sucesso.');
-                })
-                .catch(error => {
-                    console.error("Erro ao alterar senha:", error);
-                });
-        }
     },
     mounted() {
         this.usuario.id = this.getCandidateId;
-    }
+        this.fetchUserProfile();
+    },
 };
 </script>
-
-
 
 
 

@@ -7,29 +7,34 @@ export default createStore({
     userRole: localStorage.getItem('userRole') || null,
     companyId: localStorage.getItem('companyId') || null,
     candidateId: localStorage.getItem('candidateId') || null,
+    email: localStorage.getItem('email') || null,
   },
   mutations: {
-    login(state, { token, role, companyId,candidateId }) {
+    login(state, { token, role, companyId, candidateId, email }) {
       state.isAuthenticated = true;
       state.authToken = token;
       state.userRole = role;
       state.companyId = companyId;
       state.candidateId = candidateId;
+      state.email = email;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
       localStorage.setItem('companyId', companyId);
       localStorage.setItem('candidateId', candidateId);
+      localStorage.setItem('email', email);
     },
     logout(state) {
-      state.isAuthenticated = false;a
+      state.isAuthenticated = false;
       state.authToken = null;
       state.userRole = null;
       state.companyId = null;
       state.candidateId = null;
+      state.email = null;
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
       localStorage.removeItem('candidateId');
+      localStorage.removeItem('email');
     },
   },
   actions: {
@@ -39,6 +44,7 @@ export default createStore({
       localStorage.setItem('userRole', payload.role);
       localStorage.setItem('companyId', payload.companyId);
       localStorage.setItem('candidateId', payload.candidateId);
+      localStorage.setItem('email', payload.email);
     },
     logout({ commit }) {
       commit('logout');
@@ -46,6 +52,7 @@ export default createStore({
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
       localStorage.removeItem('candidateId');
+      localStorage.removeItem('email');
     },
   },
   getters: {
@@ -54,5 +61,6 @@ export default createStore({
     userRole: (state) => state.userRole,
     getCompanyId: (state) => state.companyId,
     getCandidateId: (state) => state.candidateId,
+    getUserEmail: (state) => state.email,
   },
 });
