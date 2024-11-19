@@ -22,10 +22,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
 Route::post('/candidate/register', [CandidateController::class, 'store']);
 
-Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {  
     Route::prefix('candidate')->group(function () {
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
-        Route::put('/update-password', [CandidateController::class, 'updatePassword']); // Nova rota
+        Route::put('/update-password', [CandidateController::class, 'updatePassword']);
+        Route::put('/update-email', [CandidateController::class, 'updateEmail']);
         Route::delete('/delete', [CandidateController::class, 'deleteCandidate']);
         Route::get('/show/{id}', [CandidateController::class, 'show']);
     });
