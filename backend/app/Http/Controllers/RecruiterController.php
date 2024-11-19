@@ -47,6 +47,7 @@ class RecruiterController extends Controller
             return response()->json([
                 'message' => 'Recrutador autenticado com sucesso!',
                 'token' => $token,
+                'recruiter_id' => $recruiter->id,
             ]);
         }
 
@@ -55,6 +56,16 @@ class RecruiterController extends Controller
 
 
     public function update(Request $request, $id){
+        $recruiter = Auth::user();
+
+        if (!$recruiter) {
+            return response()->json([
+                'message' => 'Ação não autorizada. Faça login como recrutador.',
+            ], 403);
+        }
+
+        $recruiter = Recruiter::where('id', $id)->where('id', $recruiter->id)->first();
+
         $arrayRequest = $request->validate([
             'recruiter_name' => 'nullable|string|max:255',
             'recruiter_cpf' => 'nullable|string|max:14',
