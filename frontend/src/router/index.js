@@ -12,6 +12,7 @@ import Recrutadores from '../views/Recrutadores.vue';
 import UpdateDN from '../views/UpdateDN.vue';
 import UpdateEmail from '../views/UpdateEmail.vue';
 import UpdateSenha from '../views/UpdateSenha.vue';
+import AddRecrutador from '../views/AddRecrutador.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -129,6 +130,16 @@ const router = createRouter({
         title: 'senha',
         requiresAuth: true,
         userType: 'candidato',
+      },
+    },
+    {
+      path: '/add-recrutador',
+      name: 'Adicionar Recrutador',
+      component: AddRecrutador,
+      meta: {
+        title: 'Adicionar Recrutador',
+        requiresAuth: true,
+        userType: 'empresa',
       },
     },
   ],

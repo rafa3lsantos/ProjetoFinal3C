@@ -11,132 +11,58 @@
                             <h5 class="card-title mb-0">Configurações de Perfil Empresa</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <a class="list-group-item list-group-item-action"
-                                @click="showSection('empresa')">Empresa</a>
-                            <a class="list-group-item list-group-item-action"
-                                @click="showSection('addRecrutador')">Adicionar Recrutador</a>
+                            <router-link to="/perfil-empresa"
+                                class="list-group-item list-group-item-action">Empresa</router-link>
+                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action">Adicionar
+                                Recrutador</router-link>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-                    <div v-if="currentSection === 'empresa'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Empresa</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="updateCompany">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label for="name">Nome da Empresa</label>
-                                                <input type="text" v-model="company_name" class="form-control" id="name"
-                                                    placeholder="Nome da sua empresa" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="setor">Setor da empresa</label>
-                                                <input type="text" v-model="company_sector" class="form-control"
-                                                    id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="inputBio">Sobre</label>
-                                                <textarea rows="2" v-model="about_company" class="form-control"
-                                                    id="inputBio"
-                                                    placeholder="Faça um breve resumo sobre sua empresa"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <img :src="company_photoPreview || company_photoUrl || '../../public/user.png'"
-                                                    alt="Imagem da Empresa" class="rounded-circle img-responsive mt-2"
-                                                    width="128" height="128">
-                                                <div class="mt-2">
-                                                    <label class="btn btn-primary">
-                                                        <i class="fa fa-upload"></i>
-                                                        <input type="file" @change="handleCompanyPhotoUpload" hidden>
-                                                    </label>
-                                                </div>
-                                                <small>Para melhores resultados, use uma imagem de pelo menos 128px por
-                                                    128px em .jpg</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Salvar Informações</button>
-                                </form>
-                            </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Empresa</h5>
                         </div>
-                    </div>
-
-                    <div v-if="currentSection === 'addRecrutador'">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Adicionar Recrutador</h5>
-                            </div>
-                            <div class="card-body">
-                                <form @submit.prevent="registerRecruiter" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label for="name">Nome do Recrutador</label>
-                                                <input type="text" v-model="name" class="form-control" required
-                                                    placeholder="Nome do Recrutador">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="birthdate">Data de Nascimento</label>
-                                                <input type="date" class="form-control" id="dataNascimento" required
-                                                    v-model="birthdate">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="cpf">CPF</label>
-                                                <input type="text" v-model="cpf" class="form-control" required
-                                                    placeholder="CPF do Recrutador">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="email">Email</label>
-                                                <input type="email" v-model="email" class="form-control" required
-                                                    placeholder="Email para o login">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="password">Crie uma Senha</label>
-                                                <input type="password" v-model="password" class="form-control" required
-                                                    placeholder="Senha para o login">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="password_confirmation">Confirme a senha</label>
-                                                <input type="password" v-model="password_confirmation"
-                                                    class="form-control" required placeholder="Confirme a senha">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="company_id">Selecione a Empresa</label>
-                                                <select v-model="companyId" class="form-control" required>
-                                                    <option value="" disabled selected>Selecione uma empresa</option>
-                                                    <option v-for="company in companies" :value="company.id"
-                                                        :key="company.id">
-                                                        {{ company.company_name }}
-                                                    </option>
-                                                </select>
-                                            </div>
+                        <div class="card-body">
+                            <form @submit.prevent="updateConta">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="name">Nome da Empresa</label>
+                                            <input type="text" v-model="empresa.company_name" class="form-control"
+                                                id="name" placeholder="Nome da sua empresa" required>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <img :src="profileImagePreview || '../../public/user.png'"
-                                                    alt="Foto do Recrutador" class="rounded-circle img-responsive mt-2"
-                                                    width="128" height="128">
-                                                <div class="mt-2">
-                                                    <label class="btn btn-primary">
-                                                        <i class="fa fa-upload"></i>
-                                                        <input type="file" @change="handleFileUpload" hidden>
-                                                    </label>
-                                                </div>
-                                                <small>Adicione uma foto de perfil para seu recrutador. Se não
-                                                    selecionar, será usada a imagem padrão.</small>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="setor">Setor da empresa</label>
+                                            <input type="text" v-model="empresa.company_sector" class="form-control"
+                                                id="setor" placeholder="Ex: vendas, marketing, tecnologia, etc.">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputBio">Sobre</label>
+                                            <textarea rows="2" v-model="empresa.about_company" class="form-control"
+                                                id="inputBio"
+                                                placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Adicionar Recrutador</button>
-                                </form>
-                            </div>
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <img :src="profileImagePreview || empresa.company_photo || '../../public/user.png'"
+                                                alt="Imagem da Empresa" class="rounded-circle img-responsive mt-2"
+                                                width="128" height="128">
+                                            <div class="mt-2">
+                                                <label class="btn btn-primary">
+                                                    <i class="fa fa-upload"></i>
+                                                    <input type="file" ref="fileInput" @change="onImageChange" hidden>
+                                                </label>
+                                            </div>
+                                            <small>Para melhores resultados, use uma imagem de pelo menos 128px por
+                                                128px em .jpg</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Informações</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -156,182 +82,107 @@ export default {
     },
     data() {
         return {
-            currentSection: 'empresa',
-            company_name: '',
-            company_sector: '',
-            about_company: '',
-            company_photo: null,
-            company_photoPreview: '',
-            company_photoUrl: '',
-
-            name: '',
-            cpf: '',
-            email: '',
-            birthdate: '',
-            password: '',
-            password_confirmation: '',
-            profileImage: null,
+            empresa: {
+                id: '',
+                company_name: '',
+                company_sector: '',
+                about_company: '',
+                company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
+            },
             profileImagePreview: '',
-            companyId: '',
-            companies: []
+            errors: {},
+            token: localStorage.getItem('authToken') || ''
         };
     },
+    created() {
+        this.fetchCompany();
+    },
     computed: {
-        ...mapGetters(['getCompanyId']),
+        ...mapGetters(['getCompanyId'])
     },
     methods: {
-        showSection(section) {
-            this.currentSection = section;
-        },
-        handleFileUpload(event) {
+        onImageChange(event) {
             const file = event.target.files[0];
-            this.profileImage = file;
-            this.profileImagePreview = URL.createObjectURL(file);
-        },
-        handleCompanyPhotoUpload(event) {
-            const file = event.target.files[0];
-            this.company_photo = file;
-            this.company_photoPreview = URL.createObjectURL(file);
-        },
-        async fetchCompanies() {
-            try {
-                const response = await HttpService.get('company/show');
-                this.companies = response.data;
-            } catch (error) {
-                console.error("Erro ao carregar empresas:", error);
+            if (file) {
+                this.profileImagePreview = URL.createObjectURL(file);
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.empresa.company_photo = reader.result;
+                };
+                reader.readAsDataURL(file);
             }
         },
-        async fetchCompanyDetails() {
-            try {
-                const response = await HttpService.get(`company/show/${this.getCompanyId}`);
-                const company = response.data;
-                this.company_name = company.company_name;
-                this.company_sector = company.company_sector;
-                this.about_company = company.about_company;
-                this.company_photoUrl = company.company_photo;
-            } catch (error) {
-                console.error("Erro ao carregar detalhes da empresa:", error);
+        validateFields() {
+            this.errors = {};
+            if (!this.empresa.company_name) {
+                this.errors.company_name = "O nome da empresa é obrigatório.";
             }
+            if (!this.empresa.company_sector) {
+                this.errors.company_sector = "O setor da empresa é obrigatório.";
+            }
+            if (!this.empresa.about_company) {
+                this.errors.about_company = "O sobre da empresa é obrigatório.";
+            }
+
+            return Object.keys(this.errors).length === 0;
         },
-        async updateCompany() {
-            if (!this.getCompanyId) {
-                alert("Erro: ID da empresa não está disponível.");
-                return;
-            }
-
-
-            let data = {
-                company_name: this.company_name,
-                company_sector: this.company_sector,
-                about_company: this.about_company,
-                company_photo: this.company_photo || null,
-            };
-
+        async sendUpdateRequest() {
             try {
-                const token = localStorage.getItem('authToken');
-                if (!token) {
+                if (!this.token) {
                     alert('Usuário não autenticado!');
                     return;
                 }
 
-
-                if (this.company_photo) {
-                    const photoData = new FormData();
-                    photoData.append('company_photo', this.company_photo);
-
-
-                    const photoResponse = await HttpService.post('company/upload-photo', photoData, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'multipart/form-data',
-                        }
-                    });
-
-                    if (photoResponse.data.success) {
-                        data.company_photo = photoResponse.data.photo_url;
-                    } else {
-                        alert('Erro ao fazer upload da foto');
-                        return;
-                    }
-                }
-
-                const response = await HttpService.put(`company/update/${this.getCompanyId}`, data, {
+                const response = await HttpService.put(`/company/update/${this.getCompanyId}`, this.empresa, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (response.data.success) {
-                    alert('Informações da empresa atualizadas com sucesso!');
+                if (response.status == 200) {
+                    alert('Informações da conta atualizadas com sucesso.');
                 } else {
                     alert('Erro ao atualizar as informações da empresa.');
                 }
             } catch (error) {
-                console.error("Erro ao atualizar informações da empresa:", error);
-                alert('Erro ao atualizar informações da empresa.');
+                console.error("Erro ao atualizar conta:", error);
+                alert('Erro ao atualizar informações da conta.');
             }
         },
-
-
-
-        async registerRecruiter() {
-            if (this.password !== this.password_confirmation) {
-                alert('As senhas não coincidem!');
-                return;
+        async updateConta() {
+            if (this.validateFields()) {
+                await this.sendUpdateRequest();
             }
-
-            if (!this.name || !this.cpf || !this.email || !this.password || !this.birthdate || !this.companyId) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('name', this.name);
-            formData.append('cpf', this.cpf);
-            formData.append('email', this.email);
-            formData.append('password', this.password);
-            formData.append('birthdate', this.birthdate);
-            formData.append('company_id', this.companyId);
-            if (this.profileImage) {
-                formData.append('photo', this.profileImage);
-            }
-
+        },
+        async fetchCompany() {
             try {
-                const response = await HttpService.post('recruiter/register', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                const response = await HttpService.get(`/company/show/${this.getCompanyId}`, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
                 });
-
-                if (response.data.success) {
-                    alert('Recrutador adicionado com sucesso!');
-                    this.name = '';
-                    this.cpf = '';
-                    this.email = '';
-                    this.password = '';
-                    this.password_confirmation = '';
-                    this.birthdate = '';
-                    this.companyId = '';
-                    this.profileImage = null;
-                    this.profileImagePreview = '';
-                    this.$router.push('/perfil-empresa');
-                } else {
-                    alert('Erro ao cadastrar recrutador, tente novamente.');
-                }
+                const user = response.data.company;
+                this.empresa.id = user.id || '';
+                this.empresa.company_name = user.company_name || '';
+                this.empresa.company_sector = user.company_sector || '';
+                this.empresa.about_company = user.about_company || '';
+                this.empresa.company_photo = user.company_photo || null;
             } catch (error) {
-                console.error("Erro ao registrar o recrutador:", error);
-                alert('Erro ao cadastrar recrutador, tente novamente.');
+                console.error('Erro ao carregar o perfil da empresa:', error);
             }
+        },
+        triggerFileInput() {
+            this.$refs.fileInput.click();
         }
     },
     mounted() {
-        this.fetchCompanies();
-        this.fetchCompanyDetails();
+        console.log('Company ID: ', this.getCompanyId);
+        this.empresa.id = this.getCompanyId;
+
     }
-}
+};
 </script>
-
-
-
 
 
 

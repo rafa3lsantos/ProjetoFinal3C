@@ -24,23 +24,23 @@
                                 Senha
                             </router-link>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Email</h5>
+                            <h5 class="card-title mb-0">Atualizar Email</h5>
                         </div>
                         <div class="card-body">
                             <form @submit.prevent="salvarEmail">
                                 <div class="form-group">
-                                    <label for="email">Email</label>
+                                    <label for="email">Email atual</label>
                                     <input type="email" class="form-control" id="email" v-model="usuario.email"
                                         placeholder="Email">
+                                    <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
                                 </div>
+
                                 <button type="submit" class="btn btn-primary">Salvar</button>
                             </form>
                         </div>
@@ -62,62 +62,23 @@ export default {
     },
     data() {
         return {
-            currentSection: 'conta',
             usuario: {
                 id: '',
-                name_candidate: '',
                 email: '',
-                password: '',
-                new_password: '',
-                about_candidate: '',
-                birthdate: '',
-                gender: '',
-                phone: '',
-                fotoPerfil: null,
-                curriculum: ''
             },
-            profileImagePreview: '',
-            senhaAtual: '',
-            passwordNew: '',
-            confirmarSenha: '',
-            genderOptions: [
-                { label: 'Masculino', value: 'masculino' },
-                { label: 'Feminino', value: 'feminino' },
-                { label: 'Não-Binário', value: 'nao-binario' },
-                { label: 'Outro', value: 'outro' },
-                { label: 'Prefiro não responder', value: 'sem-resposta' }
-            ],
-            errors: {}
+            errors: {},
+            token: localStorage.getItem('authToken') || '',
         };
     },
     computed: {
         ...mapGetters(['getCandidateId']),
     },
     methods: {
-        showSection(section) {
-            this.currentSection = section;
-        },
-        trocarFotoPerfil(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.profileImagePreview = URL.createObjectURL(file);
-                this.usuario.fotoPerfil = file;
-            }
-        },
         validateFields() {
             this.errors = {};
 
-            if (!this.usuario.name_candidate) {
-                this.errors.name_candidate = "O nome é obrigatório.";
-            }
             if (!this.usuario.email || !this.isValidEmail(this.usuario.email)) {
-                this.errors.email = "Informe um e-mail válido.";
-            }
-            if (!this.usuario.gender) {
-                this.errors.gender = "O gênero é obrigatório.";
-            }
-            if (this.senhaAtual && (!this.passwordNew || !this.confirmarSenha)) {
-                this.errors.password = "A nova senha e confirmação são obrigatórias.";
+                this.errors.email = 'Informe um e-mail válido.';
             }
 
             return Object.keys(this.errors).length === 0;
@@ -126,82 +87,58 @@ export default {
             const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             return re.test(String(email).toLowerCase());
         },
-        updateConta() {
+        async salvarEmail() {
             if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("name_candidate", this.usuario.name_candidate);
-                formData.append("about_candidate", this.usuario.about_candidate);
-                formData.append("phone", this.usuario.phone);
-                formData.append("gender", this.usuario.gender);
-                if (this.usuario.fotoPerfil) {
-                    formData.append("fotoPerfil", this.usuario.fotoPerfil);
-                }
+                try {
+                    const response = await HttpService.put(
+                        `/candidate/update/${this.getCandidateId}`,
+                        {
+                            email: this.usuario.email,
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${this.token}`,
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    );
 
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Informações da conta atualizadas com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar conta:", error);
-                    });
-            }
-        },
-        salvarDataNascimento() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("birthdate", this.usuario.birthdate);
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
-                        alert('Data de nascimento atualizada com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar data de nascimento:", error);
-                    });
-            }
-        },
-        salvarEmail() {
-            if (this.validateFields()) {
-                const formData = new FormData();
-                formData.append("email", this.usuario.email);
-
-                HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                    .then(() => {
+                    if (response.status === 200) {
                         alert('Email atualizado com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao atualizar email:", error);
-                    });
+                    } else {
+                        alert('Erro ao atualizar o email.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao atualizar email:', error);
+                    alert('Erro ao salvar os dados.');
+                }
             }
         },
-        salvarSenha() {
-            if (this.passwordNew !== this.confirmarSenha) {
-                alert('As senhas não coincidem.');
-                return;
+        async fetchUserProfile() {
+            try {
+                const response = await HttpService.get(
+                    `/candidate/show/${this.getCandidateId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                        },
+                    }
+                );
+
+                const user = response.data.candidate;
+                this.usuario.id = user.id || '';
+                this.usuario.email = user.email || '';
+            } catch (error) {
+                console.error('Erro ao carregar o perfil do usuário:', error);
             }
-
-            const formData = new FormData();
-            formData.append("password_current", this.senhaAtual);
-            formData.append("password_new", this.passwordNew);
-
-            HttpService.put(`/candidates/update/${this.getCandidateId}`, formData)
-                .then(() => {
-                    alert('Senha alterada com sucesso.');
-                })
-                .catch(error => {
-                    console.error("Erro ao alterar senha:", error);
-                });
-        }
+        },
     },
     mounted() {
         this.usuario.id = this.getCandidateId;
+        this.fetchUserProfile();
     }
 };
 </script>
-
-
-
-
 
 <style scoped>
 body {

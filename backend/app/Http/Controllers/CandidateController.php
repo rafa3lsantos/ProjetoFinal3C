@@ -14,7 +14,7 @@ class CandidateController extends Controller
     $arrayRequest = $request->validate([
         'name_candidate' => 'required|string|min:3|max:255',
         'cpf' => 'required|string|min:11|max:14|unique:candidates',
-        'birth_date' => 'nullable|date',
+        'birthdate' => 'nullable|date',
         'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
         'phone' => 'nullable|string|min:11|max:14|unique:candidates',
         'email' => 'required|string|min:3|max:255|unique:candidates',
@@ -25,7 +25,7 @@ class CandidateController extends Controller
 
     if ($request->hasFile('photo')) {
         $imagePath = $request->file('photo')->store('images', 'public');
-        $arrayRequest['image'] = $imagePath; // Adiciona o caminho da imagem ao array de dados
+        $arrayRequest['image'] = $imagePath;
     }
 
     $arrayRequest['password'] = Hash::make($arrayRequest['password']);
@@ -74,7 +74,6 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,' . $candidate->id,
-            'birth_date' => 'sometimes|date',
             'gender'=> 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
@@ -87,7 +86,7 @@ class CandidateController extends Controller
 
         if ($request->hasFile('photo')) {
             $imagePath = $request->file('photo')->store('images', 'public');
-            $arrayRequest['image'] = $imagePath; // Adiciona o caminho da imagem ao array de dados
+            $arrayRequest['image'] = $imagePath;
         }
 
         $candidate->update($arrayRequest);

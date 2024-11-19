@@ -15,7 +15,7 @@
                             <router-link to="/home-empresa" class="nav-link active" aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link to="/recrutadores" class="nav-link">Recrutadores</router-link>
+                            <router-link to="/add-recrutador" class="nav-link">Adicionar Recrutador</router-link>
                         </li>
                     </ul>
                 </div>
@@ -26,7 +26,7 @@
                         <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40" height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/perfil-empresa" class="dropdown-item">Perfil Empresa</router-link>
-                            <router-link to="/recrutadores" class="dropdown-item">Meus Recrutadores</router-link>
+                            <router-link to="/add-recrutador" class="dropdown-item">Adicionar Recrutador</router-link>
                             <a @click.prevent="handleLogout" class="dropdown-item exit-color">
                                 Sair <img width="15px" src="../../public/logout.png" alt="Sair">
                             </a>
@@ -53,10 +53,10 @@ export default {
     computed: {
         ...mapGetters(['getUserImage', 'getArrowIcon']),
         userImage() {
-            return this.getUserImage || '../../public/user.png'; // Imagem de fallback
+            return this.getUserImage || '../../public/user.png';
         },
         arrowUser() {
-            return this.getArrowIcon || '../../public/down.png'; // Ícone de seta de fallback
+            return this.getArrowIcon || '../../public/down.png'; 
         },
     },
     methods: {
