@@ -48,7 +48,6 @@ class CandidateController extends Controller
             ], 200);
         }
 
-
         return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
     }
   
