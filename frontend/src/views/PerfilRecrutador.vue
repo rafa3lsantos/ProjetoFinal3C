@@ -33,7 +33,7 @@
                                         <div class="form-group">
                                             <label for="email">Email</label>
                                             <input type="text" class="form-control" id="email"
-                                                v-model="recruiter.recruiter_email" placeholder="Email">
+                                                v-model="recruiter.email" placeholder="Email">
                                         </div>
                                         <div class="form-group">
                                             <label>Gênero</label>
@@ -53,16 +53,16 @@
                                             <input type="text" class="form-control" id="phone" v-model="recruiter.phone"
                                                 placeholder="Informe seu Telefone" />
                                         </div>
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label for="passwordCurrent">Senha Atual</label>
                                             <input type="password" class="form-control" id="passwordCurrent"
-                                                v-model="senhaAtual" placeholder="Digite sua senha atual" required>
+                                                v-model="senhaAtual" placeholder="Digite sua senha atual">
                                         </div>
                                         <div class="form-group">
                                             <label for="passwordNew">Nova Senha</label>
                                             <input type="password" class="form-control" id="passwordNew"
-                                                v-model="passwordNew" placeholder="Digite a nova senha" required>
-                                        </div>
+                                                v-model="passwordNew" placeholder="Digite a nova senha">
+                                        </div> -->
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Salvar Informações</button>
@@ -89,7 +89,7 @@ export default {
             recruiter: {
                 id: '',
                 recruiter_name: '',
-                recruiter_email: '',
+                email: '',
                 phone: '',
                 gender: '',
                 senhaAtual: '',
@@ -149,7 +149,7 @@ export default {
                 const recruiter = response.data.recruiter;
                 this.recruiter.recruiter_name = recruiter.recruiter_name || '';
                 this.recruiter.phone = recruiter.phone || '';
-                this.recruiter.recruiter_email = recruiter.recruiter_email || '';
+                this.recruiter.email = recruiter.email || '';
                 this.recruiter.gender = recruiter.gender || '';
             } catch (error) {
                 console.error('Erro ao carregar o perfil do recrutador:', error);

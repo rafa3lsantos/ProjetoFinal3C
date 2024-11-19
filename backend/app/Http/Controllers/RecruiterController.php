@@ -17,15 +17,15 @@ class RecruiterController extends Controller
             'recruiter_birthdate' => 'sometimes|date',
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
-            'recruiter_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',  
-            'company_id' => 'required|exists:companies,id', 
+            'recruiter_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'company_id' => 'required|exists:companies,id',
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
         if ($request->hasFile('recruiter_photo')) {
-            $path = $request->file('recruiter_photo')->store('photos', 'public');  
-            $arrayRequest['recruiter_photo'] = $path;  
+            $path = $request->file('recruiter_photo')->store('photos', 'public');
+            $arrayRequest['recruiter_photo'] = $path;
         }
 
         $recruiter = Recruiter::create($arrayRequest);
@@ -54,8 +54,8 @@ class RecruiterController extends Controller
         return response()->json(['message' => 'Falha na autenticação do recrutador'], 401);
     }
 
-
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $recruiter = Auth::user();
 
         if (!$recruiter) {
@@ -66,19 +66,22 @@ class RecruiterController extends Controller
 
         $recruiter = Recruiter::where('id', $id)->where('id', $recruiter->id)->first();
 
+
         $arrayRequest = $request->validate([
             'recruiter_name' => 'nullable|string|max:255',
             'recruiter_cpf' => 'nullable|string|max:14',
             'recruiter_birthdate' => 'nullable|date',
             'email' => 'nullable|email',
-            'password' => 'nullable|string|min:8',
+            'password' => 'sometimes|string|min:8',
             'recruiter_photo' => 'nullable|string|max:255',
             'company_id' => 'nullable|exists:companies,id',
         ]);
 
-        $recruiter = Recruiter::find($id);
-
-        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        if (isset($arrayRequest['password']) && !empty($arrayRequest['password'])) {
+            $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        } else {
+            unset($arrayRequest['password']);
+        }
 
         $recruiter->update($arrayRequest);
 
@@ -87,6 +90,7 @@ class RecruiterController extends Controller
             'recruiter' => $recruiter,
         ], 201);
     }
+
 
     public function show($id)
     {
