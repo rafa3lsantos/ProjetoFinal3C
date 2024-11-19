@@ -181,6 +181,7 @@ class CandidateController extends Controller
         $validatedData = $request->validate([
             'email' => 'required|string|min:3|max:255',
             'new_email' => 'required|string|min:6|max:255|confirmed|unique:candidates,email',
+            'new_email_confirmation' => 'required|string|min:6|max:255',
         ]);
 
         if ($validatedData['email'] !== $candidate->email) {
