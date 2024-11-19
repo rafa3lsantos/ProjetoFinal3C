@@ -17,16 +17,21 @@ class CandidateController extends Controller
         'birthdate' => 'nullable|date',
         'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
         'phone' => 'nullable|string|min:11|max:14|unique:candidates',
-        'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,',
+        'email' => 'required|string|min:3|max:255|unique:candidates',
         'password' => 'required|string|min:6|max:255|confirmed',
         'password_confirmation' => 'required|string|min:6|max:255',
         'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     if ($request->hasFile('photo')) {
-        $imagePath = $request->file('photo')->store('images', 'public');
-        $arrayRequest['image'] = $imagePath;
+        $file = $request->file('photo');
+        $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+
+        $filePath = $file->storeAs('images', $filename, 'public');
+
+        $arrayRequest['photo'] = $filePath;
     }
+
 
     $arrayRequest['password'] = Hash::make($arrayRequest['password']);
     unset($arrayRequest['password_confirmation']);
