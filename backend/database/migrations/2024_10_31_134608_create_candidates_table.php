@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_candidate');
             $table->string('email')->unique();
+            $table->string('new_email')->nullable();
             $table->string('password');
             $table->string('new_password')->nullable();
             $table->string('about_candidate')->nullable();
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('curriculum')->nullable();
-            $table->string('photo')->nullable(); 
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

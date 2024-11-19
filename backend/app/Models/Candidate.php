@@ -13,6 +13,7 @@ class Candidate extends Authenticatable
     protected $fillable = [
         'name_candidate',
         'email',
+        'new_email',
         'password',
         'new_password',
         'about_candidate',
@@ -23,7 +24,7 @@ class Candidate extends Authenticatable
         'curriculum',
         'photo'
     ];
-    
+
     public function curriculum()
     {
         return $this->hasOne(Curriculum::class);

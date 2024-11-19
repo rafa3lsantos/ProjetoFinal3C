@@ -17,7 +17,7 @@ class CandidateController extends Controller
         'birthdate' => 'nullable|date',
         'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
         'phone' => 'nullable|string|min:11|max:14|unique:candidates',
-        'email' => 'required|string|min:3|max:255|unique:candidates',
+        'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,',
         'password' => 'required|string|min:6|max:255|confirmed',
         'password_confirmation' => 'required|string|min:6|max:255',
         'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -72,7 +72,6 @@ class CandidateController extends Controller
 
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
-            'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,' . $candidate->id,
             'gender'=> 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
@@ -115,7 +114,7 @@ class CandidateController extends Controller
         }
 
         return response()->json([
-            'message' => 'candidato encontrada com sucesso!',
+            'message' => 'candidato encontrado com sucesso!',
             'candidate' => $candidate,
         ], 200);
     }
@@ -160,6 +159,28 @@ class CandidateController extends Controller
         $candidate->update(['password' => bcrypt($validatedData['new_password'])]);
 
         return response()->json(['message' => 'Senha atualizada com sucesso!'], 200);
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        }
+
+        $validatedData = $request->validate([
+            'email' => 'required|string|min:3|max:255',
+            'new_email' => 'required|string|min:6|max:255|confirmed|unique:candidates,email',
+        ]);
+
+        if ($validatedData['email'] !== $candidate->email) {
+            return response()->json(['message' => 'O email atual está incorreto.'], 403);
+        }
+
+        $candidate->update(['email' => $validatedData['new_email']]);
+
+        return response()->json(['message' => 'Seu email foi atualizado com sucesso!'], 200);
     }
 
 }
