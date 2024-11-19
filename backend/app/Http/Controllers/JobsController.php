@@ -4,13 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Jobs;
 use Illuminate\Http\Request;
-use App\Models\Applications;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+
 class JobsController extends Controller
 {
     public function store(Request $request)
     {
+        $recruiter = Auth::guard('recruiter')->user();
+
+        if (!$recruiter) {
+            return response()->json([
+                'message' => 'Ação não autorizada. Faça login como recrutador.',
+            ], 403);
+        }
+
         $arrayRequest = $request->validate([
             'title' => 'required|string|max:255',
             'work_model' => 'required|string|in:presential,remote,hybrid',
@@ -19,8 +26,10 @@ class JobsController extends Controller
             'jobs_city' => 'required|string|max:255',
             'jobs_status' => 'required|string|max:255',
             'jobs_description' => 'required|string',
-            'company_id' => 'required|exists:companies,id',
-        ]);        
+        ]);
+
+        // Preenchendo automaticamente o ID da empresa
+        $arrayRequest['company_id'] = $recruiter->company_id;
 
         $jobs = Jobs::create($arrayRequest);
 
@@ -32,6 +41,22 @@ class JobsController extends Controller
 
     public function update(Request $request, $id)
     {
+        $recruiter = Auth::user();
+
+        if (!$recruiter) {
+            return response()->json([
+                'message' => 'Ação não autorizada. Faça login como recrutador.',
+            ], 403);
+        }
+
+        $job = Jobs::where('id', $id)->where('company_id', $recruiter->company->id)->first(); //Moacir que fez pa nois
+
+        if (!$job) {
+            return response()->json([
+                'message' => 'Vaga não encontrada.',
+            ], 404);
+        }   
+
         $arrayRequest = $request->validate([
             'title' => 'nullable|string|max:255',
             'work_model' => 'nullable|string|in:presential,remote,hybrid',
@@ -41,31 +66,14 @@ class JobsController extends Controller
             'jobs_status' => 'nullable|string|max:255',
             'jobs_description' => 'nullable|string',
         ]);
-    
-        $job = Jobs::find($id);
-    
-        if (!$job) {
-            return response()->json([
-                'message' => 'Vaga não encontrada.',
-            ], 404);
-        }
-    
-        $recruiter = Auth::guard('recruiter')->user();
-    
-        if ($job->company_id !== $recruiter->company_id) {
-            return response()->json([
-                'message' => 'Você não tem permissão para atualizar esta vaga.',
-            ], 403);
-        }
-    
+
         $job->update($arrayRequest);
-    
+
         return response()->json([
             'message' => 'Emprego atualizado com sucesso!',
             'jobs' => $job,
         ], 200);
     }
-    
 
     public function show($id)
     {
@@ -83,3 +91,4 @@ class JobsController extends Controller
         ], 200);
     }
 }
+
