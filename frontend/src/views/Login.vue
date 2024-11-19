@@ -72,25 +72,35 @@ export default {
             }
 
             try {
-                const response = await HttpService.post('candidate/login', {
+                const candidateResponse = await HttpService.post('candidate/login', {
                     email: this.email,
                     password: this.password,
                 });
 
-                console.log(response);
-                this.$store.dispatch('login', { token: response.data.token, role: 'candidato', candidateId: response.data.candidate_id });
+
+                this.$store.dispatch('login', {
+                    token: candidateResponse.data.token,
+                    role: 'candidato',
+                    candidateId: candidateResponse.data.candidate_id,
+                });
                 alert('Login realizado com sucesso!');
                 this.$router.push('/home-candidato');
+                return;
             } catch (error) {
                 console.error(error);
 
                 try {
-                    const response = await HttpService.post('company/login', {
+                    const companyResponse = await HttpService.post('company/login', {
                         email: this.email,
                         password: this.password,
                     });
 
-                    this.$store.dispatch('login', { token: response.data.token, role: 'empresa', companyId: response.data.company_id });
+
+                    this.$store.dispatch('login', {
+                        token: companyResponse.data.token,
+                        role: 'empresa',
+                        companyId: companyResponse.data.company_id,
+                    });
                     alert('Login realizado com sucesso!');
                     this.$router.push('/home-empresa');
                 } catch (error) {
@@ -98,9 +108,9 @@ export default {
                     alert('Erro ao tentar realizar o login. Tente novamente.');
                 }
             }
-
         }
-
     }
-};
+
+}
+
 </script>

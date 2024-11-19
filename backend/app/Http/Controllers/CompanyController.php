@@ -12,21 +12,19 @@ class CompanyController extends Controller
 {
     public function store(Request $request)
     {
-        // Validação
         $arrayRequest = $request->validate([
             'company_name' => 'required|string|max:255',
             'company_cnpj' => 'required|string|max:14|unique:companies',
             'company_phone' => 'nullable|string|max:255',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
-            'company_photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048', // Validação para imagens
+            'company_photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
-        // Verificar se foi enviado uma imagem
         if ($request->hasFile('company_photo')) {
             $path = $request->file('company_photo')->store('public/company_photos');
             $arrayRequest['company_photo'] = $path;
@@ -60,7 +58,6 @@ class CompanyController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validação dos dados
         $arrayRequest = $request->validate([
             'company_name' => 'sometimes|string|max:255',
             'company_cnpj' => 'sometimes|string|max:14',

@@ -10,25 +10,35 @@ use App\Models\Candidate;
 class CandidateController extends Controller
 {
     public function store(Request $request)
-    {
-        $arrayRequest = $request->validate([
-            'name_candidate' => 'required|string|min:3|max:255',
-            'cpf' => 'required|string|min:11|max:14|unique:candidates',
-            'birth_date' => 'nullable|date',
-            'email' => 'required|string|string|min:3|max:255|unique:candidates',
-            'password' => 'required|string|min:6|max:255|confirmed',
-            'password_confirmation' => 'required|string|min:6|max:255',
-        ]);
+{
+    $arrayRequest = $request->validate([
+        'name_candidate' => 'required|string|min:3|max:255',
+        'cpf' => 'required|string|min:11|max:14|unique:candidates',
+        'birthdate' => 'nullable|date',
+        'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
+        'phone' => 'nullable|string|min:11|max:14|unique:candidates',
+        'email' => 'required|string|min:3|max:255|unique:candidates',
+        'password' => 'required|string|min:6|max:255|confirmed',
+        'password_confirmation' => 'required|string|min:6|max:255',
+        'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
-
-        $candidate = Candidate::create($arrayRequest);
-
-        return response()->json([
-            'message' => 'Cadastrado com sucesso!',
-            'candidate' => $candidate,
-        ], 201);
+    if ($request->hasFile('photo')) {
+        $imagePath = $request->file('photo')->store('images', 'public');
+        $arrayRequest['image'] = $imagePath;
     }
+
+    $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+    unset($arrayRequest['password_confirmation']);
+
+    $candidate = Candidate::create($arrayRequest);
+
+    return response()->json([
+        'message' => 'Cadastrado com sucesso!',
+        'candidate' => $candidate,
+    ], 201);
+}
+
     public function loginCandidate(Request $request)
     {
         $credentials = $request->validate([
@@ -50,7 +60,7 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
     }
-  
+
     public function updateCandidate(Request $request)
     {
 
@@ -63,9 +73,6 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,' . $candidate->id,
-            'password' => 'sometimes|string|min:6|max:255',
-            'new_password' => 'sometimes|string|min:6|max:255|confirmed',
-            'birth_date' => 'sometimes|date',
             'gender'=> 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
@@ -73,12 +80,12 @@ class CandidateController extends Controller
             'state' => 'sometimes|string|min:2|max:255',
             'city' => 'sometimes|string|min:3|max:255',
             'about_candidate' => 'sometimes|string|min:3|max:255',
-            'photo' => 'sometimes|image',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if (isset($arrayRequest['new_password'])) {
-            $arrayRequest['password'] = bcrypt($arrayRequest['new_password']);
-            unset($arrayRequest['new_password']);
+        if ($request->hasFile('photo')) {
+            $imagePath = $request->file('photo')->store('images', 'public');
+            $arrayRequest['image'] = $imagePath;
         }
 
         $candidate->update($arrayRequest);
@@ -86,6 +93,32 @@ class CandidateController extends Controller
         return response()->json(['message' => 'Candidato atualizado com sucesso'], 200);
     }
 
+    public function deleteCandidate(Request $request)
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        }
+
+        $candidate->delete();
+
+        return response()->json(['message' => 'Candidato deletado com sucesso'], 200);
+    }
+
+    public function show($id)
+    {
+        $candidate = Candidate::find($id);
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrada'], 404);
+        }
+
+        return response()->json([
+            'message' => 'candidato encontrada com sucesso!',
+            'candidate' => $candidate,
+        ], 200);
+    }
 
 
     public function logoutCandidate(Request $request)
@@ -96,4 +129,37 @@ class CandidateController extends Controller
             'message' => 'Logout realizado com sucesso!',
         ], 200);
     }
+
+    public function index()
+    {
+        $candidates = Candidate::all();
+
+        return response()->json([
+            'message' => 'Listagem de candidatos realizada com sucesso!',
+            'candidates' => $candidates,
+        ], 200);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        }
+
+        $validatedData = $request->validate([
+            'password' => 'required|string',
+            'new_password' => 'required|string|min:6|max:255|confirmed',
+        ]);
+
+        if (!Hash::check($validatedData['password'], $candidate->password)) {
+            return response()->json(['message' => 'A senha atual está incorreta.'], 403);
+        }
+
+        $candidate->update(['password' => bcrypt($validatedData['new_password'])]);
+
+        return response()->json(['message' => 'Senha atualizada com sucesso!'], 200);
+    }
+
 }

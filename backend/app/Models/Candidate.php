@@ -12,13 +12,21 @@ class Candidate extends Authenticatable
 
     protected $fillable = [
         'name_candidate',
-        'cpf',
-        'about_candidate',
-        'birthdate',
-        'cpf',
         'email',
         'password',
-        'new_password'
+        'new_password',
+        'about_candidate',
+        'cpf',
+        'birthdate',
+        'gender',
+        'phone',
+        'curriculum',
+        'photo'
     ];
+    
+    public function curriculum()
+    {
+        return $this->hasOne(Curriculum::class);
+    }
 
 }

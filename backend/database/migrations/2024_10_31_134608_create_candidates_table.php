@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('curriculum')->nullable();
+            $table->string('photo')->nullable(); 
             $table->timestamps();
         });
     }
