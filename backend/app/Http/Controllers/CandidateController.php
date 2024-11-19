@@ -74,8 +74,6 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'email' => 'sometimes|string|min:3|max:255|unique:candidates,email_candidate,' . $candidate->id,
-            'password' => 'sometimes|string|min:6|max:255',
-            'new_password' => 'sometimes|string|min:6|max:255|confirmed',
             'birth_date' => 'sometimes|date',
             'gender'=> 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
@@ -90,11 +88,6 @@ class CandidateController extends Controller
         if ($request->hasFile('photo')) {
             $imagePath = $request->file('photo')->store('images', 'public');
             $arrayRequest['image'] = $imagePath; // Adiciona o caminho da imagem ao array de dados
-        }
-
-        if (isset($arrayRequest['new_password'])) {
-            $arrayRequest['password'] = bcrypt($arrayRequest['new_password']);
-            unset($arrayRequest['new_password']);
         }
 
         $candidate->update($arrayRequest);
@@ -138,4 +131,37 @@ class CandidateController extends Controller
             'message' => 'Logout realizado com sucesso!',
         ], 200);
     }
+
+    public function index()
+    {
+        $candidates = Candidate::all();
+
+        return response()->json([
+            'message' => 'Listagem de candidatos realizada com sucesso!',
+            'candidates' => $candidates,
+        ], 200);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        }
+
+        $validatedData = $request->validate([
+            'password' => 'required|string',
+            'new_password' => 'required|string|min:6|max:255|confirmed',
+        ]);
+
+        if (!Hash::check($validatedData['password'], $candidate->password)) {
+            return response()->json(['message' => 'A senha atual está incorreta.'], 403);
+        }
+
+        $candidate->update(['password' => bcrypt($validatedData['new_password'])]);
+
+        return response()->json(['message' => 'Senha atualizada com sucesso!'], 200);
+    }
+
 }
