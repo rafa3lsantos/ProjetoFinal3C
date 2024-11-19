@@ -56,6 +56,11 @@ return [
             'provider' => 'companies',
         ],
 
+        'curriculum' => [
+            'driver' => 'session',
+            'provider' => 'curriculums',
+        ],
+
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -100,6 +105,11 @@ return [
         'companies' => [
             'driver' => 'eloquent',
             'model' => App\Models\Company::class,
+        ],
+
+        'curriculums' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Curriculum::class,
         ],
 
         // 'users' => [

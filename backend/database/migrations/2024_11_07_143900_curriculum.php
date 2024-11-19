@@ -15,6 +15,7 @@ return new class extends Migration
     Schema::create('curriculum', function (Blueprint $table) {
         $table->id();
         $table->foreignId('candidate_id')->constrained('candidates')->onDelete('cascade'); //se apagar o candidato, apaga o currículo
+        $table->string('name_candidate')->nullable()->constrained('candidates')->onDelete('cascade');
         $table->string('cep')->nullable();
         $table->string('address')->nullable();
         $table->string('state')->nullable();

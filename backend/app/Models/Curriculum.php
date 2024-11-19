@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Curriculum extends Model
+class Curriculum extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $table = 'curriculum';
 
@@ -39,7 +40,6 @@ class Curriculum extends Model
         'curriculum_attachment',
     ];
 
-    // Relacionamento com o modelo Candidate
     public function candidate()
     {
         return $this->belongsTo(Candidate::class);
