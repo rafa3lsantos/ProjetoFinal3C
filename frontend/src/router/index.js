@@ -13,6 +13,8 @@ import UpdateEmail from '../views/UpdateEmail.vue';
 import UpdateSenha from '../views/UpdateSenha.vue';
 import AddRecrutador from '../views/AddRecrutador.vue';
 import HomeRecrutador from '../views/HomeRecrutador.vue';
+import AddVagas from '../views/AddVagas.vue';
+import PerfilRecrutador from '../views/PerfilRecrutador.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -138,6 +140,26 @@ const router = createRouter({
       component: HomeRecrutador,
       meta: {
         title: 'Home Recrutador',
+        requiresAuth: true,
+        userType: 'recrutador',
+      },
+    },
+    {
+      path: '/add-vaga',
+      name: 'Adicionar Vaga',
+      component: AddVagas,
+      meta: {
+        title: 'Adicionar Vaga',
+        requiresAuth: true,
+        userType: 'recrutador',
+      },
+    },
+    {
+      path: '/perfil-recrutador',
+      name: 'Perfil Recrutador',
+      component: PerfilRecrutador,
+      meta: {
+        title: 'Perfil Recrutador',
         requiresAuth: true,
         userType: 'recrutador',
       },

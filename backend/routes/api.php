@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
 Route::post('candidate/register', [CandidateController::class, 'store']);
 
-Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {  
+Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
         Route::put('update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::post('jobs/{jobId}/apply', [ApplicationsController::class, 'applicationToJob']); // Candidatar-se a uma vaga
@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
 Route::prefix('recruiter')->group(function () {
     Route::post('login', [RecruiterController::class, 'loginRecruiter']);
     Route::get('show/{id}', [RecruiterController::class, 'show']);
-    
+
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::post('register', [RecruiterController::class, 'store']);
     });
