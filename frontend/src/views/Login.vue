@@ -19,29 +19,32 @@
                                             </div>
                                             <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Entre em sua
                                                 conta:</h5>
-                                            <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="email" id="form2Example17" v-model="email"
-                                                    class="form-control form-control" required />
-                                                <label class="form-label" for="form2Example17">Email</label>
+
+                                            <div class="form-floating mb-4">
+                                                <input type="email" class="form-control" id="email" v-model="email"
+                                                    placeholder="name@example.com" required />
+                                                <label for="email">Email</label>
                                             </div>
-                                            <div data-mdb-input-init class="form-outline mb-4">
-                                                <input type="password" id="form2Example27" v-model="password"
-                                                    class="form-control form-control" required />
-                                                <label class="form-label" for="form2Example27">Senha</label>
+                                            <div class="form-floating mb-4">
+                                                <input type="password" class="form-control" id="password"
+                                                    v-model="password" placeholder="Password" required />
+                                                <label for="password">Senha</label>
                                             </div>
+
                                             <div class="pt-1 mb-4">
-                                                <button type="submit" class="btn btn-dark btn-lg btn-block"
-                                                    data-mdb-button-init data-mdb-ripple-init>
+                                                <button type="submit" class="btn btn-dark btn-lg btn-block">
                                                     Login
                                                 </button>
                                             </div>
+
                                             <a class="small text-muted" href="#!">Esqueceu sua senha?</a>
-                                            <p class="mb-5 pb-lg-2" style="color: #393f81;">Não tem uma conta?
+                                            <p class="mb-5 pb-lg-2" style="color: #393f81;">
+                                                Não tem uma conta?
                                                 <router-link to="/register"
                                                     style="color: #393f81;">Registre-se</router-link>
                                             </p>
                                             <a href="#!" class="small text-muted">Termos de uso.</a>
-                                            <a href="#!" class="small text-muted">Política de Privacidade</a>
+                                            <a href="#!" class="small text-muted"> Política de Privacidade</a>
                                         </form>
                                     </div>
                                 </div>
@@ -72,45 +75,96 @@ export default {
             }
 
             try {
-                const candidateResponse = await HttpService.post('candidate/login', {
+                const recruiterResponse = await HttpService.post('recruiter/login', {
                     email: this.email,
                     password: this.password,
                 });
 
-
                 this.$store.dispatch('login', {
-                    token: candidateResponse.data.token,
-                    role: 'candidato',
-                    candidateId: candidateResponse.data.candidate_id,
+                    token: recruiterResponse.data.token,
+                    role: 'recrutador',
+                    recruiterId: recruiterResponse.data.recruiter_id,
                 });
                 alert('Login realizado com sucesso!');
-                this.$router.push('/home-candidato');
-                return;
+                this.$router.push('/home-recrutador');
             } catch (error) {
                 console.error(error);
-
                 try {
-                    const companyResponse = await HttpService.post('company/login', {
+                    const candidateResponse = await HttpService.post('candidate/login', {
                         email: this.email,
                         password: this.password,
                     });
 
-
                     this.$store.dispatch('login', {
-                        token: companyResponse.data.token,
-                        role: 'empresa',
-                        companyId: companyResponse.data.company_id,
+                        token: candidateResponse.data.token,
+                        role: 'candidato',
+                        candidateId: candidateResponse.data.candidate_id,
                     });
                     alert('Login realizado com sucesso!');
-                    this.$router.push('/home-empresa');
+                    this.$router.push('/home-candidato');
                 } catch (error) {
                     console.error(error);
-                    alert('Erro ao tentar realizar o login. Tente novamente.');
+                    try {
+                        const companyResponse = await HttpService.post('company/login', {
+                            email: this.email,
+                            password: this.password,
+                        });
+
+                        this.$store.dispatch('login', {
+                            token: companyResponse.data.token,
+                            role: 'empresa',
+                            companyId: companyResponse.data.company_id,
+                        });
+                        alert('Login realizado com sucesso!');
+                        this.$router.push('/home-empresa');
+                    } catch (error) {
+                        console.error(error);
+                        alert('Erro ao tentar realizar o login. Tente novamente.');
+                    }
                 }
             }
-        }
-    }
+        },
+    },
+};
+</script>
 
+<style scoped>
+.form-outline {
+    position: relative;
+    margin-bottom: 1.5rem;
 }
 
-</script>
+.form-control {
+    width: 100%;
+}
+
+.form-label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 16px;
+    transition: all 0.2s ease-in-out;
+    pointer-events: none;
+}
+
+.form-control:focus+.form-label,
+.form-control:not(:placeholder-shown)+.form-label {
+    top: 0;
+    left: 10px;
+    font-size: 12px;
+    color: #333;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.entryarea {
+    position: relative;
+    height: 80px;
+    line-height: 80px;
+}
+</style>

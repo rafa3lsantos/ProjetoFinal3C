@@ -8,11 +8,11 @@ import RegisterEmpresa from '../views/RegisterEmpresa.vue';
 import PerfilCandidato from '../views/PerfilCandidato.vue';
 import HomeEmpresa from '../views/HomeEmpresa.vue';
 import PerfilEmpresa from '../views/PerfilEmpresa.vue';
-import Recrutadores from '../views/Recrutadores.vue';
 import UpdateDN from '../views/UpdateDN.vue';
 import UpdateEmail from '../views/UpdateEmail.vue';
 import UpdateSenha from '../views/UpdateSenha.vue';
 import AddRecrutador from '../views/AddRecrutador.vue';
+import HomeRecrutador from '../views/HomeRecrutador.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,21 +93,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/recrutadores',
-      name: 'Recrutadores',
-      component: Recrutadores,
-      meta: {
-        title: 'Recrutadores',
-        requiresAuth: true,
-        userType: 'empresa',
-      },
-    },
-    {
       path: '/data-nascimento',
       name: 'data nascimento',
       component: UpdateDN,
       meta: {
-        title: 'data nascimento',
+        title: 'Data de Nascimento',
         requiresAuth: true,
         userType: 'candidato',
       },
@@ -117,7 +107,7 @@ const router = createRouter({
       name: 'email',
       component: UpdateEmail,
       meta: {
-        title: 'email',
+        title: 'Email',
         requiresAuth: true,
         userType: 'candidato',
       },
@@ -127,19 +117,29 @@ const router = createRouter({
       name: 'senha',
       component: UpdateSenha,
       meta: {
-        title: 'senha',
+        title: 'Senha',
         requiresAuth: true,
         userType: 'candidato',
       },
     },
     {
       path: '/add-recrutador',
-      name: 'Adicionar Recrutador',
+      name: 'adicionar-recrutador',
       component: AddRecrutador,
       meta: {
         title: 'Adicionar Recrutador',
         requiresAuth: true,
         userType: 'empresa',
+      },
+    },
+    {
+      path: '/home-recrutador',
+      name: 'home-recrutador',
+      component: HomeRecrutador,
+      meta: {
+        title: 'Home Recrutador',
+        requiresAuth: true,
+        userType: 'recrutador',
       },
     },
   ],
@@ -151,12 +151,13 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userRole;
 
-
   if (to.path === '/login' && isAuthenticated) {
     if (userRole === 'candidato') {
       return next({ name: 'home-candidato' });
     } else if (userRole === 'empresa') {
       return next({ name: 'home-empresa' });
+    } else if (userRole === 'recrutador') {
+      return next({ name: 'home-recrutador' });
     }
   }
 
@@ -170,13 +171,12 @@ router.beforeEach((to, from, next) => {
       return next({ name: 'home-empresa' });
     } else if (to.path.startsWith('/home-empresa') && userRole !== 'empresa') {
       return next({ name: 'home-candidato' });
+    } else if (to.path.startsWith('/home-recrutador') && userRole !== 'recrutador') { 
+      return next({ name: 'home-candidato' });
     }
   }
 
   next();
 });
-
-
-
 
 export default router;
