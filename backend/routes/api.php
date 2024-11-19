@@ -25,7 +25,7 @@ Route::post('candidate/register', [CandidateController::class, 'store']);
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
         Route::put('update/{id}', [CandidateController::class, 'updateCandidate']);
-        Route::post('jobs/{jobId}/apply', [ApplicationsController::class, 'applicationToJob']); // Candidatar-se a uma vaga
+        Route::post('jobs/{jobId}/apply', [ApplicationsController::class, 'applicationToJob']);
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::put('/update-password', [CandidateController::class, 'updatePassword']);
         Route::put('/update-email', [CandidateController::class, 'updateEmail']);
@@ -55,7 +55,7 @@ Route::prefix('recruiter')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
         Route::put('update/{id}', [RecruiterController::class, 'update']);
-        Route::get('applications/{jobId}/candidates', [ApplicationsController::class, 'viewCandidate']); // Ver candidatos de uma vaga
+        Route::get('applications/{jobId}/candidates', [ApplicationsController::class, 'viewCandidate']); 
     });
 });
 

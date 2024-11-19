@@ -38,16 +38,20 @@
                                     <label for="passwordCurrent">Senha Atual</label>
                                     <input type="password" class="form-control" id="passwordCurrent"
                                         v-model="senhaAtual" placeholder="Digite sua senha atual" required>
+                                    <span v-if="errors.senhaAtual" class="text-danger">{{ errors.senhaAtual }}</span>
                                 </div>
                                 <div class="form-group">
                                     <label for="passwordNew">Nova Senha</label>
                                     <input type="password" class="form-control" id="passwordNew" v-model="passwordNew"
                                         placeholder="Digite a nova senha" required>
+                                    <span v-if="errors.passwordNew" class="text-danger">{{ errors.passwordNew }}</span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="passwordConfirm">Confirmar Nova Senha</label>
-                                    <input type="password" class="form-control" id="passwordConfirm"
-                                        v-model="confirmarSenha" placeholder="Confirme a nova senha" required>
+                                    <label for="password_confirmation">Confirmar Nova Senha</label>
+                                    <input type="password" class="form-control" id="password_confirmation"
+                                        v-model="password_confirmation" placeholder="Confirme a nova senha" required>
+                                    <span v-if="errors.password_confirmation" class="text-danger">{{
+                                        errors.password_confirmation }}</span>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Alterar Senha</button>
                             </form>
@@ -72,7 +76,7 @@ export default {
         return {
             senhaAtual: '',
             passwordNew: '',
-            confirmarSenha: '',
+            password_confirmation: '',
             errors: {}
         };
     },
@@ -82,17 +86,16 @@ export default {
     methods: {
         validateFields() {
             this.errors = {};
-
             if (!this.senhaAtual) {
                 this.errors.senhaAtual = "A senha atual é obrigatória.";
             }
 
-            if (!this.passwordNew || this.passwordNew.length < 6) {
-                this.errors.passwordNew = "A nova senha deve ter pelo menos 6 caracteres.";
+            if (!this.passwordNew) {
+                this.errors.passwordNew = "A nova senha é obrigatória.";
             }
 
-            if (this.passwordNew !== this.confirmarSenha) {
-                this.errors.confirmarSenha = "As senhas não coincidem.";
+            if (this.passwordNew !== this.password_confirmation) {
+                this.errors.password_confirmation = "As senhas não coincidem.";
             }
 
             return Object.keys(this.errors).length === 0;
@@ -101,21 +104,27 @@ export default {
         salvarSenha() {
             if (this.validateFields()) {
                 const data = {
-                    password_current: this.senhaAtual,
-                    password_new: this.passwordNew
+                    password: this.senhaAtual,
+                    new_password: this.passwordNew,
+                    new_password_confirmation: this.password_confirmation
                 };
-                HttpService.put(`/candidate/update/${this.getCandidateId}`, data, {
+
+                HttpService.put(`/candidate/update-password`, data, {
                     headers: {
                         'Authorization': `Bearer ${this.getAuthToken}`
                     }
                 })
-                    .then(() => {
-                        alert('Senha alterada com sucesso.');
-                    })
-                    .catch(error => {
-                        console.error("Erro ao alterar senha:", error);
+                .then(() => {
+                    alert('Senha alterada com sucesso.');
+                })
+                .catch(error => {
+                    console.error("Erro ao alterar senha:", error);
+                    if (error.response && error.response.data.message) {
+                        alert(error.response.data.message);
+                    } else {
                         alert('Erro ao atualizar a senha. Por favor, tente novamente.');
-                    });
+                    }
+                });
             }
         }
     }

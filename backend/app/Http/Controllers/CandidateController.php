@@ -10,39 +10,39 @@ use App\Models\Candidate;
 class CandidateController extends Controller
 {
     public function store(Request $request)
-{
-    $arrayRequest = $request->validate([
-        'name_candidate' => 'required|string|min:3|max:255',
-        'cpf' => 'required|string|min:11|max:14|unique:candidates',
-        'birthdate' => 'nullable|date',
-        'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
-        'phone' => 'nullable|string|min:11|max:14|unique:candidates',
-        'email' => 'required|string|min:3|max:255|unique:candidates',
-        'password' => 'required|string|min:6|max:255|confirmed',
-        'password_confirmation' => 'required|string|min:6|max:255',
-        'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $arrayRequest = $request->validate([
+            'name_candidate' => 'required|string|min:3|max:255',
+            'cpf' => 'required|string|min:11|max:14|unique:candidates',
+            'birthdate' => 'nullable|date',
+            'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
+            'phone' => 'nullable|string|min:11|max:14|unique:candidates',
+            'email' => 'required|string|min:3|max:255|unique:candidates',
+            'password' => 'required|string|min:6|max:255|confirmed',
+            'password_confirmation' => 'required|string|min:6|max:255',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    if ($request->hasFile('photo')) {
-        $file = $request->file('photo');
-        $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
 
-        $filePath = $file->storeAs('images', $filename, 'public');
+            $filePath = $file->storeAs('images', $filename, 'public');
 
-        $arrayRequest['photo'] = $filePath;
+            $arrayRequest['photo'] = $filePath;
+        }
+
+
+        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        unset($arrayRequest['password_confirmation']);
+
+        $candidate = Candidate::create($arrayRequest);
+
+        return response()->json([
+            'message' => 'Cadastrado com sucesso!',
+            'candidate' => $candidate,
+        ], 201);
     }
-
-
-    $arrayRequest['password'] = Hash::make($arrayRequest['password']);
-    unset($arrayRequest['password_confirmation']);
-
-    $candidate = Candidate::create($arrayRequest);
-
-    return response()->json([
-        'message' => 'Cadastrado com sucesso!',
-        'candidate' => $candidate,
-    ], 201);
-}
 
     public function loginCandidate(Request $request)
     {
@@ -77,7 +77,7 @@ class CandidateController extends Controller
 
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
-            'gender'=> 'sometimes|string|in:masculino,feminino,nao-binario,outro',
+            'gender' => 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
             'address' => 'sometimes|string|min:3|max:255',
@@ -155,16 +155,20 @@ class CandidateController extends Controller
         $validatedData = $request->validate([
             'password' => 'required|string',
             'new_password' => 'required|string|min:6|max:255|confirmed',
+            'new_password_confirmation' => 'required|string|min:6|max:255',
         ]);
+
 
         if (!Hash::check($validatedData['password'], $candidate->password)) {
             return response()->json(['message' => 'A senha atual está incorreta.'], 403);
         }
 
+
         $candidate->update(['password' => bcrypt($validatedData['new_password'])]);
 
         return response()->json(['message' => 'Senha atualizada com sucesso!'], 200);
     }
+
 
     public function updateEmail(Request $request)
     {
@@ -187,5 +191,4 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Seu email foi atualizado com sucesso!'], 200);
     }
-
 }
