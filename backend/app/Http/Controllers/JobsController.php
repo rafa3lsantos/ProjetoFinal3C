@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Jobs;
 use Illuminate\Http\Request;
+use App\Models\Applications;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 class JobsController extends Controller
 {
@@ -28,7 +30,8 @@ class JobsController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $arrayRequest = $request->validate([
             'title' => 'nullable|string|max:255',
             'work_model' => 'nullable|string|in:presential,remote,hybrid',
@@ -37,18 +40,32 @@ class JobsController extends Controller
             'jobs_city' => 'nullable|string|max:255',
             'jobs_status' => 'nullable|string|max:255',
             'jobs_description' => 'nullable|string',
-            'company_id' => 'nullable|exists:companies,id',
         ]);
-
-        $jobs = Jobs::find($id);
-
-        $jobs->update($arrayRequest);
-
+    
+        $job = Jobs::find($id);
+    
+        if (!$job) {
+            return response()->json([
+                'message' => 'Vaga não encontrada.',
+            ], 404);
+        }
+    
+        $recruiter = Auth::guard('recruiter')->user();
+    
+        if ($job->company_id !== $recruiter->company_id) {
+            return response()->json([
+                'message' => 'Você não tem permissão para atualizar esta vaga.',
+            ], 403);
+        }
+    
+        $job->update($arrayRequest);
+    
         return response()->json([
             'message' => 'Emprego atualizado com sucesso!',
-            'jobs' => $jobs,
-        ], 201);
+            'jobs' => $job,
+        ], 200);
     }
+    
 
     public function show($id)
     {

@@ -49,6 +49,7 @@ class CompanyController extends Controller
             return response()->json([
                 'message' => 'Usuário autenticado com sucesso!',
                 'token' => $token,
+                'company_id' => $company->id,
             ]);
         }
 
@@ -63,7 +64,7 @@ class CompanyController extends Controller
             'company_phone' => 'sometimes|string|max:255',
             'email' => 'sometimes|email',
             'password' => 'sometimes|string|min:8',
-            'company_photo' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'company_photo' => 'sometimes|image|mimes:jpg,jpeg,png,gif|max:2048', // Validação para imagens
             'company_sector' => 'sometimes|string|max:255',
             'about_company' => 'sometimes|string|max:255',
         ]);
