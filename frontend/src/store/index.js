@@ -7,20 +7,23 @@ export default createStore({
     userRole: localStorage.getItem('userRole') || null,
     companyId: localStorage.getItem('companyId') || null,
     candidateId: localStorage.getItem('candidateId') || null,
+    recruiterId: localStorage.getItem('recruiterId') || null,
     email: localStorage.getItem('email') || null,
   },
   mutations: {
-    login(state, { token, role, companyId, candidateId, email }) {
+    login(state, { token, role, companyId, candidateId, recruiterId, email }) {
       state.isAuthenticated = true;
       state.authToken = token;
       state.userRole = role;
       state.companyId = companyId;
       state.candidateId = candidateId;
+      state.recruiterId = recruiterId;
       state.email = email;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
       localStorage.setItem('companyId', companyId);
       localStorage.setItem('candidateId', candidateId);
+      localStorage.setItem('recruiterId', recruiterId);
       localStorage.setItem('email', email);
     },
     logout(state) {
@@ -29,30 +32,22 @@ export default createStore({
       state.userRole = null;
       state.companyId = null;
       state.candidateId = null;
+      state.recruiterId = null;
       state.email = null;
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
       localStorage.removeItem('candidateId');
+      localStorage.removeItem('recruiterId');
       localStorage.removeItem('email');
     },
   },
   actions: {
     login({ commit }, payload) {
       commit('login', payload);
-      localStorage.setItem('authToken', payload.token);
-      localStorage.setItem('userRole', payload.role);
-      localStorage.setItem('companyId', payload.companyId);
-      localStorage.setItem('candidateId', payload.candidateId);
-      localStorage.setItem('email', payload.email);
     },
     logout({ commit }) {
       commit('logout');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('companyId');
-      localStorage.removeItem('candidateId');
-      localStorage.removeItem('email');
     },
   },
   getters: {
@@ -61,6 +56,7 @@ export default createStore({
     userRole: (state) => state.userRole,
     getCompanyId: (state) => state.companyId,
     getCandidateId: (state) => state.candidateId,
+    getRecruiterId: (state) => state.recruiterId,
     getUserEmail: (state) => state.email,
   },
 });
