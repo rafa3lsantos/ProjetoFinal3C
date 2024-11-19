@@ -25,7 +25,7 @@
                         <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
                         <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40" height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
-                            <router-link to="/perfil-recutador" class="dropdown-item">Perfil Recrutador</router-link>
+                            <router-link to="/perfil-recrutador" class="dropdown-item">Perfil Recrutador</router-link>
                             <router-link to="/add-vaga" class="dropdown-item">Adicionar Vaga</router-link>
                             <a @click.prevent="handleLogout" class="dropdown-item exit-color">
                                 Sair <img width="15px" src="../../public/logout.png" alt="Sair">
