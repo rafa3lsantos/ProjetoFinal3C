@@ -14,7 +14,6 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name_candidate' => 'required|string|min:3|max:255',
             'cpf' => 'required|string|min:11|max:14|unique:candidates',
-            'birthdate' => 'nullable|date',
             'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
             'phone' => 'nullable|string|min:11|max:14|unique:candidates',
             'email' => 'required|string|min:3|max:255|unique:candidates',
@@ -78,6 +77,7 @@ class CandidateController extends Controller
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'gender' => 'sometimes|string|in:masculino,feminino,nao-binario,outro',
+            'birthdate' => 'sometimes|date',
             'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
             'address' => 'sometimes|string|min:3|max:255',
