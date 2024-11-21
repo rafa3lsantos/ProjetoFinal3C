@@ -84,6 +84,7 @@ export default {
                     token: recruiterResponse.data.token,
                     role: 'recrutador',
                     recruiterId: recruiterResponse.data.recruiter_id,
+                    companyId: recruiterResponse.data.company_id,
                 });
                 alert('Login realizado com sucesso!');
                 this.$router.push('/home-recrutador');
