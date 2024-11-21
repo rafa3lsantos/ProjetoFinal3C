@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('recruiter_name');
             $table->string('recruiter_cpf');
-            $table->enum('recruiter_gender', ['male', 'female'. 'non-binary', 'other', 'prefer not to say']);
+            $table->enum('recruiter_gender', ['male', 'female', 'non-binary', 'other', 'prefer not to say']);
             $table->string('recruiter_phone')->nullable();
             $table->date('recruiter_birthdate')->nullable();
             $table->string('email')->unique();
