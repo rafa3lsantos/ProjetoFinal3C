@@ -17,6 +17,9 @@
                             <router-link to="/add-vaga" class="list-group-item list-group-item-action">
                                 Adicionar Vaga
                             </router-link>
+                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">
+                                Minhas Vagas
+                            </router-link>
                         </div>
                     </div>
                 </div>
