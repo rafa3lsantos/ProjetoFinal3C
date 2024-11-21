@@ -18,6 +18,7 @@ class Jobs extends Model
         'jobs_city',
         'jobs_status',
         'jobs_description',
+        'recruiter_id',
         'company_id',
     ];
 

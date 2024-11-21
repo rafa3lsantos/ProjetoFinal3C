@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// -- Candidate Routes --
+
 Route::post('candidate/login', [CandidateController::class, 'loginCandidate']);
 Route::post('candidate/register', [CandidateController::class, 'store']);
 
@@ -34,6 +36,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     });
 });
 
+// -- Curriculum Routes --
 
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('curriculum')->group(function () {
@@ -44,6 +47,8 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     });
 
 });
+
+// -- Recruiter Routes --
 
 Route::prefix('recruiter')->group(function () {
     Route::post('login', [RecruiterController::class, 'loginRecruiter']);
@@ -59,6 +64,8 @@ Route::prefix('recruiter')->group(function () {
     });
 });
 
+// -- Company Routes --
+
 Route::prefix('company')->group(function () {
     Route::post('register', [CompanyController::class, 'store']);
     Route::post('login', [CompanyController::class, 'loginCompany']);
@@ -69,7 +76,11 @@ Route::prefix('company')->group(function () {
     });
 });
 
+// -- Jobs Routes --
+
 Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
     Route::post('register', [JobsController::class, 'store']);
     Route::put('update/{id}', [JobsController::class, 'update']);
 });
+
+Route::get('jobs/show/{id}', [JobsController::class, 'show']);
