@@ -33,6 +33,7 @@ class RecruiterController extends Controller
         return response()->json([
             'message' => 'Recrutador criado com sucesso!',
             'recruiter' => $recruiter,
+            'company_id' => $recruiter->company_id,
         ], 201);
     }
 
@@ -48,6 +49,7 @@ class RecruiterController extends Controller
                 'message' => 'Recrutador autenticado com sucesso!',
                 'token' => $token,
                 'recruiter_id' => $recruiter->id,
+                'company_id' => $recruiter->company_id,
             ]);
         }
 
