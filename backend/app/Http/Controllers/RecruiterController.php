@@ -14,6 +14,8 @@ class RecruiterController extends Controller
         $arrayRequest = $request->validate([
             'recruiter_name' => 'required|string|max:255',
             'recruiter_cpf' => 'required|string|max:14|unique:recruiters',
+            'recruiter_gender' => 'in:male,female,non-binary,other,prefer not to say',
+            'recruiter_phone' => 'required|string|max:20',
             'recruiter_birthdate' => 'sometimes|date',
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
