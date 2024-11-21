@@ -42,7 +42,12 @@ class CurriculumController extends Controller
         $validatedData = $request->validate($rules);
 
         if ($request->hasFile('curriculum_attachment')) {
-            $validatedData['curriculum_attachment'] = $request->file('curriculum_attachment')->store('curriculums', 'public');
+            $file = $request->file('curriculum_attachment');
+            $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+
+            $filePath = $file->storeAs('file', $filename, 'public');
+
+            $arrayRequest['curriculum_attachment'] = $filePath;
         }
 
         $validatedData['candidate_id'] = $user->id;
