@@ -28,7 +28,6 @@ class JobsController extends Controller
             'jobs_description' => 'required|string',
         ]);
 
-        // Preenchendo automaticamente o ID da empresa
         $arrayRequest['company_id'] = $recruiter->company_id;
 
         $jobs = Jobs::create($arrayRequest);

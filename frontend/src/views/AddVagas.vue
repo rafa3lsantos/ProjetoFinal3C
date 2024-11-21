@@ -126,25 +126,50 @@ export default {
                 { label: 'Temporário', value: 'temporary' },
                 { label: 'Estágio', value: 'internship' },
             ],
+            token: localStorage.getItem('authToken') || ''
         };
     },
     methods: {
         async createJob() {
+            if (!this.validateFields()) return;
+
             try {
                 const response = await HttpService.post('/jobs/register', this.vaga, {
-                    headers: { Authorization: `Bearer ${this.$store.getters.getAuthToken}` },
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                alert('Vaga criada com sucesso!');
-                this.clearForm();
+
+                if (response.status === 201) {
+                    alert('Vaga criada com sucesso!');
+                    this.clearForm();
+                } else {
+                    alert('Erro ao criar a vaga. Tente novamente.');
+                }
             } catch (error) {
                 console.error('Erro ao criar vaga:', error);
                 alert('Erro ao criar a vaga.');
             }
         },
-        clearForm() {
-            this.vaga = { title: '', work_model: '', job_type: '', jobs_state: '', jobs_city: '', description: '' };
+        validateFields() {
+            if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.description) {
+                alert('Preencha todos os campos!');
+                return false;
+            }
+            return true;
         },
-    },
+        clearForm() {
+            this.vaga = {
+                title: '',
+                work_model: '',
+                job_type: '',
+                jobs_state: '',
+                jobs_city: '',
+                description: ''
+            };
+        }
+    }
 };
 </script>
 
@@ -184,6 +209,7 @@ textarea.form-control {
 
 .form-check {
     margin-right: 15px;
+    
 }
 
 .form-group {
