@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('jobs_city');
             $table->enum('jobs_status', ['in_progress', 'under_review', 'finshed']);
             $table->text('jobs_description');
+            $table->foreignId('recruiter_id')->constrained('recruiters');
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamps();
         });

@@ -13,6 +13,8 @@ class Recruiter extends Authenticatable
     protected $fillable = [
         'recruiter_name',
         'recruiter_cpf',
+        'recruiter_gender',
+        'recruiter_phone',
         'recruiter_birthdate',
         'email',
         'password',
