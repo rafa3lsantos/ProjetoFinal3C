@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('curriculum')->group(function () {
         Route::post('/register', [CurriculumController::class, 'store']);
-        Route::put('/update/{id}', [CurriculumController::class, 'update']);
+        Route::put('/update/{id}', [CurriculumController::class, 'updateCurriculum']);
         Route::delete('/delete', [CurriculumController::class, 'delete']);
         Route::get('/show/{id}', [CurriculumController::class, 'show']);
     });
@@ -55,7 +55,7 @@ Route::prefix('recruiter')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
         Route::put('update/{id}', [RecruiterController::class, 'update']);
-        Route::get('applications/{jobId}/candidates', [ApplicationsController::class, 'viewCandidate']); 
+        Route::get('applications/{jobId}/candidates', [ApplicationsController::class, 'viewCandidate']);
     });
 });
 
