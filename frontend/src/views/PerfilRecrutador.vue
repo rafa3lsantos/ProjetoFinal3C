@@ -10,8 +10,10 @@
                             <h5 class="card-title mb-0">Configurações de Perfil</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/perfil-recrutador" class="list-group-item list-group-item-action">Conta</router-link>
-                            <router-link to="/add-vaga" class="list-group-item list-group-item-action">Adicionar Vaga</router-link>
+                            <router-link to="/perfil-recrutador"
+                                class="list-group-item list-group-item-action">Conta</router-link>
+                            <router-link to="/add-vaga" class="list-group-item list-group-item-action">Adicionar
+                                Vaga</router-link>
                         </div>
                     </div>
                 </div>
@@ -32,8 +34,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="text" class="form-control" id="email"
-                                                v-model="recruiter.email" placeholder="Email">
+                                            <input type="email" class="form-control" id="email" v-model="recruiter.email"
+                                                placeholder="Email">
                                         </div>
                                         <div class="form-group">
                                             <label>Gênero</label>
@@ -53,16 +55,6 @@
                                             <input type="text" class="form-control" id="phone" v-model="recruiter.phone"
                                                 placeholder="Informe seu Telefone" />
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <label for="passwordCurrent">Senha Atual</label>
-                                            <input type="password" class="form-control" id="passwordCurrent"
-                                                v-model="senhaAtual" placeholder="Digite sua senha atual">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="passwordNew">Nova Senha</label>
-                                            <input type="password" class="form-control" id="passwordNew"
-                                                v-model="passwordNew" placeholder="Digite a nova senha">
-                                        </div> -->
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Salvar Informações</button>
@@ -90,17 +82,15 @@ export default {
                 id: '',
                 recruiter_name: '',
                 email: '',
-                phone: '',
-                gender: '',
-                senhaAtual: '',
-                passwordNew: '',
+                phone: '', // Ajustado para usar 'phone' em vez de 'recruiter_phone'
+                gender: '', // Ajustado para 'gender' em vez de 'recruiter_gender'
             },
             genderOptions: [
-                { label: 'Masculino', value: 'masculino' },
-                { label: 'Feminino', value: 'feminino' },
-                { label: 'Não-Binário', value: 'nao-binario' },
-                { label: 'Outro', value: 'outro' },
-                { label: 'Prefiro não responder', value: 'sem-resposta' }
+                { label: 'Masculino', value: 'male' },
+                { label: 'Feminino', value: 'female' },
+                { label: 'Não-Binário', value: 'non-binary' },
+                { label: 'Outro', value: 'other' },
+                { label: 'Prefiro não responder', value: 'prefer not to say' },
             ],
             token: localStorage.getItem('authToken') || ''
         };
@@ -119,7 +109,14 @@ export default {
                     return;
                 }
 
-                const response = await HttpService.put(`/recruiter/update/${this.getRecruiterId}`, this.recruiter, {
+                const payload = {
+                    recruiter_name: this.recruiter.recruiter_name,
+                    email: this.recruiter.email,
+                    phone: this.recruiter.phone,
+                    gender: this.recruiter.gender,
+                };
+
+                const response = await HttpService.put(`/recruiter/update/${this.getRecruiterId}`, payload, {
                     headers: {
                         'Authorization': `Bearer ${this.token}`,
                         'Content-Type': 'application/json'
@@ -141,16 +138,18 @@ export default {
         },
         async fetchRecruiter() {
             try {
-                const response = await HttpService.get(`/recruiter/show/${this.getRecruiterId}`, {
+                const recruiterId = this.getRecruiterId; // Garantir que `getRecruiterId` seja chamado no momento certo.
+                const response = await HttpService.get(`/recruiter/show/${recruiterId}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
                 });
                 const recruiter = response.data.recruiter;
+                this.recruiter.id = recruiterId;
                 this.recruiter.recruiter_name = recruiter.recruiter_name || '';
-                this.recruiter.phone = recruiter.phone || '';
+                this.recruiter.phone = recruiter.recruiter_phone || '';
+                this.recruiter.gender = recruiter.recruiter_gender || '';
                 this.recruiter.email = recruiter.email || '';
-                this.recruiter.gender = recruiter.gender || '';
             } catch (error) {
                 console.error('Erro ao carregar o perfil do recrutador:', error);
             }

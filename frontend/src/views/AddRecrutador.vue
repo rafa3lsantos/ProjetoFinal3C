@@ -11,10 +11,12 @@
                             <h5 class="card-title mb-0">Configurações de Perfil Empresa</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/perfil-empresa"
-                                class="list-group-item list-group-item-action">Empresa</router-link>
-                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action">Adicionar
-                                Recrutador</router-link>
+                            <router-link to="/perfil-empresa" class="list-group-item list-group-item-action">
+                                Empresa
+                            </router-link>
+                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action">
+                                Adicionar Recrutador
+                            </router-link>
                         </div>
                     </div>
                 </div>
@@ -31,31 +33,49 @@
                                         <div class="form-group">
                                             <label for="recruiter_name">Nome do Recrutador</label>
                                             <input type="text" v-model="recruiter_name" class="form-control"
-                                                placeholder="Nome do Recrutador">
+                                                placeholder="Nome completo do Recrutador" />
                                         </div>
                                         <div class="form-group">
                                             <label for="recruiter_birthdate">Data de Nascimento</label>
-                                            <input type="date" v-model="recruiter_birthdate" class="form-control">
+                                            <input type="date" v-model="recruiter_birthdate" class="form-control" />
                                         </div>
                                         <div class="form-group">
                                             <label for="recruiter_cpf">CPF</label>
                                             <input type="text" v-model="recruiter_cpf" class="form-control"
-                                                placeholder="CPF do Recrutador">
+                                                placeholder="000.000.000-00" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recruiter_phone">Telefone</label>
+                                            <input type="text" v-model="recruiter_phone" class="form-control"
+                                                placeholder="(XX) XXXXX-XXXX" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Gênero</label>
+                                            <div class="genero-options py-2">
+                                                <div class="form-check" v-for="(option, index) in genderOptions"
+                                                    :key="index">
+                                                    <input class="form-check-input" type="radio" :name="'gender'"
+                                                        :id="option.value" :value="option.value"
+                                                        v-model="recruiter_gender" />
+                                                    <label class="form-check-label" :for="option.value">{{ option.label
+                                                        }}</label>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email</label>
                                             <input type="email" v-model="email" class="form-control"
-                                                placeholder="Email para o login">
+                                                placeholder="exemplo@empresa.com" />
                                         </div>
                                         <div class="form-group">
                                             <label for="password">Crie uma Senha</label>
                                             <input type="password" v-model="password" class="form-control"
-                                                placeholder="Senha para o login">
+                                                placeholder="Senha segura" />
                                         </div>
                                         <div class="form-group">
                                             <label for="password_confirmation">Confirme a senha</label>
                                             <input type="password" v-model="password_confirmation" class="form-control"
-                                                placeholder="Confirme a senha">
+                                                placeholder="Repita a senha" />
                                         </div>
                                     </div>
                                 </div>
@@ -76,16 +96,25 @@ import { mapGetters } from 'vuex';
 
 export default {
     components: {
-        NavbarEmpresa
+        NavbarEmpresa,
     },
     data() {
         return {
             recruiter_name: '',
             recruiter_cpf: '',
+            recruiter_phone: '',
+            recruiter_gender: '',
             email: '',
             recruiter_birthdate: '',
             password: '',
             password_confirmation: '',
+            genderOptions: [
+                { label: 'Masculino', value: 'male' },
+                { label: 'Feminino', value: 'female' },
+                { label: 'Não-Binário', value: 'non-binary' },
+                { label: 'Outro', value: 'other' },
+                { label: 'Prefiro não responder', value: 'prefer not to say' },
+            ],
         };
     },
     computed: {
@@ -93,32 +122,15 @@ export default {
     },
     methods: {
         async registerRecruiter() {
+            if (!this.recruiter_name || !this.recruiter_cpf || !this.email || !this.password || !this.recruiter_birthdate || !this.recruiter_phone) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
 
             if (this.password !== this.password_confirmation) {
                 alert('As senhas não coincidem!');
                 return;
             }
-
-
-            if (!this.recruiter_name || !this.recruiter_cpf || !this.email || !this.password || !this.recruiter_birthdate) {
-                alert('Por favor, preencha todos os campos obrigatórios!');
-                return;
-            }
-
-
-            if (!this.getCompanyId) {
-                alert('ID da empresa não encontrado!');
-                return;
-            }
-
-            const recruiterData = {
-                recruiter_name: this.recruiter_name,
-                recruiter_cpf: this.recruiter_cpf,
-                email: this.email,
-                password: this.password,
-                recruiter_birthdate: this.recruiter_birthdate,
-                company_id: this.getCompanyId,
-            };
 
             try {
                 const token = localStorage.getItem('authToken');
@@ -127,35 +139,39 @@ export default {
                     return;
                 }
 
+                const recruiterData = {
+                    recruiter_name: this.recruiter_name,
+                    recruiter_cpf: this.recruiter_cpf,
+                    email: this.email,
+                    recruiter_phone: this.recruiter_phone,
+                    recruiter_gender: this.recruiter_gender,
+                    recruiter_birthdate: this.recruiter_birthdate,
+                    password: this.password,
+                    company_id: this.getCompanyId,
+                };
+
                 const response = await HttpService.post('recruiter/register', recruiterData, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
-                    }
+                    },
                 });
 
                 if (response.data.success) {
-                    alert('Recrutador adicionado com sucesso!');
-                    this.recruiter_name = '';
-                    this.recruiter_cpf = '';
-                    this.email = '';
-                    this.password = '';
-                    this.password_confirmation = '';
-                    this.recruiter_birthdate = '';
+                    alert('Recrutador cadastrado com sucesso!');
                     this.$router.push('/perfil-empresa');
                 } else {
-                    alert('Erro ao cadastrar recrutador, tente novamente.');
+                    alert('Erro ao cadastrar recrutador. Tente novamente!');
                 }
             } catch (error) {
-                console.error("Erro ao registrar o recrutador:", error);
-                alert('Erro ao cadastrar recrutador, tente novamente.');
+                console.error('Erro ao registrar recrutador:', error);
+                alert('Erro no servidor. Tente novamente mais tarde!');
             }
-        }
+        },
     },
-    mounted() {
-    }
 };
 </script>
+
 
 <style scoped>
 body {
@@ -185,5 +201,10 @@ body {
 
 .form-group {
     margin-bottom: 30px;
+}
+
+.genero-options {
+    display: flex;
+    flex-wrap: wrap;
 }
 </style>
