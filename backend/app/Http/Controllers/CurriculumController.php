@@ -4,23 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Curriculum;
-use Illuminate\Support\Facades\Auth;;
+use Illuminate\Support\Facades\Auth;
 
 class CurriculumController extends Controller
 {
     public function store(Request $request)
     {
-        // Verificar se o usuário está autenticado
         $user = Auth::user();
         if (!$user) {
-            return response()->json([
-                'message' => 'Usuário não autenticado.'
-            ], 401);  // Retorna 401 Unauthorized
+            return response()->json(['message' => 'Usuário não autenticado.'], 401);
         }
 
-        // Regras de validação
         $rules = [
-            'cep' => 'required',
+            'cep' => 'required|string|min:8|max:9',
             'address' => 'required|string|min:3|max:255',
             'state' => 'required|string|min:2|max:2',
             'city' => 'required|string|min:3|max:255',
@@ -46,16 +42,13 @@ class CurriculumController extends Controller
         $validatedData = $request->validate($rules);
 
         if ($request->hasFile('curriculum_attachment')) {
-            // Armazenar o arquivo
-            $validatedData['curriculum_attachment'] = $request->file('curriculum_attachment')->store('attachments');
+            $validatedData['curriculum_attachment'] = $request->file('curriculum_attachment')->store('curriculums', 'public');
         }
 
         $validatedData['candidate_id'] = $user->id;
 
-        //cria o curriculo
         $curriculum = Curriculum::create($validatedData);
 
-        // Retornar resposta
         return response()->json([
             'message' => 'Currículo cadastrado com sucesso!',
             'curriculum' => $curriculum,
@@ -67,20 +60,61 @@ class CurriculumController extends Controller
         $curriculum = Curriculum::find($id);
 
         if (!$curriculum) {
-            return response()->json([
-                'message' => 'Currículo não encontrado.'
-            ], 404);
+            return response()->json(['message' => 'Currículo não encontrado.'], 404);
         }
 
         $user = Auth::user();
         if ($user->id !== $curriculum->candidate_id) {
-            return response()->json([
-                'message' => 'Acesso negado.'
-            ], 403);
+            return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
-        return response()->json([
-            'curriculum' => $curriculum
-        ]);
+        return response()->json(['curriculum' => $curriculum]);
+    }
+
+    public function updateCurriculum(Request $request, $id)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não autenticado.'], 401);
+        }
+
+        $curriculum = Curriculum::where('candidate_id', $user->id)->find($id);
+        if (!$curriculum) {
+            return response()->json(['message' => 'Currículo não encontrado.'], 404);
+        }
+
+        $rules = [
+            'cep' => 'sometimes|string|min:8|max:9',
+            'address' => 'sometimes|string|min:3|max:255',
+            'state' => 'sometimes|string|min:2|max:2',
+            'city' => 'sometimes|string|min:3|max:255',
+            'formation' => 'sometimes|string|in:graduação,pos-graduação,mestrado,doutorado',
+            'institution' => 'sometimes|string|min:3|max:255',
+            'experience' => 'sometimes|string|min:3|max:255',
+            'degree' => 'sometimes|string|in:tecnologo,licenciatura,bacharelado',
+            'status' => 'sometimes|string|in:completo,em andamento,incompleto',
+            'course' => 'sometimes|string|min:3|max:255',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|date|after_or_equal:start_date',
+            'certificate_type' => 'sometimes|string|in:conquista,certificado',
+            'certificate_title' => 'sometimes|string|min:3|max:255',
+            'certificate_description' => 'sometimes|string|min:3|max:255',
+            'certificate_institution' => 'sometimes|string|min:3|max:255',
+            'soft_skills' => 'sometimes|string|min:3|max:255',
+            'hard_skills' => 'sometimes|string|min:3|max:255',
+            'language' => 'sometimes|string|min:3|max:255',
+            'language_level' => 'sometimes|string|min:3|max:255',
+            'curriculum_attachment' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
+        ];
+
+        $validatedData = $request->validate($rules);
+
+        if ($request->hasFile('curriculum_attachment')) {
+            $validatedData['curriculum_attachment'] = $request->file('curriculum_attachment')->store('curriculums', 'public');
+        }
+
+        $curriculum->update($validatedData);
+
+        return response()->json(['message' => 'Currículo atualizado com sucesso!', 'curriculum' => $curriculum]);
     }
 }
