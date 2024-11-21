@@ -56,15 +56,21 @@ class RecruiterController extends Controller
 
 
     public function update(Request $request, $id){
-        $recruiter = Auth::user();
+        $authRecruiter = Auth::user();
 
-        if (!$recruiter) {
+        if (!$authRecruiter) {
             return response()->json([
                 'message' => 'Ação não autorizada. Faça login como recrutador.',
             ], 403);
         }
-
-        $recruiter = Recruiter::where('id', $id)->where('id', $recruiter->id)->first();
+    
+        $recruiter = Recruiter::where('id', $id)->where('id', $authRecruiter->id)->first();
+    
+        if (!$recruiter) {
+            return response()->json([
+                'message' => 'Recrutador não encontrado ou você não tem permissão para atualizar este recurso.',
+            ], 404);
+        }
 
         $arrayRequest = $request->validate([
             'recruiter_name' => 'nullable|string|max:255',
@@ -85,6 +91,7 @@ class RecruiterController extends Controller
         return response()->json([
             'message' => 'Recrutador atualizado com sucesso!',
             'recruiter' => $recruiter,
+            'companu_id' => $recruiter->company_id,
         ], 201);
     }
 
