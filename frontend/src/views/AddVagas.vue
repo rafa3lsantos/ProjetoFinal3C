@@ -65,7 +65,6 @@
                                             </div>
                                         </div>
 
-
                                         <div class="form-group">
                                             <label for="state">Estado</label>
                                             <input type="text" class="form-control" id="state" v-model="vaga.jobs_state"
@@ -81,11 +80,10 @@
                                         <div class="form-group">
                                             <label for="description">Sobre a Vaga</label>
                                             <textarea rows="4" class="form-control" id="description"
-                                                v-model="vaga.description"
+                                                v-model="vaga.jobs_description"
                                                 placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber.">
                                             </textarea>
                                         </div>
-
 
                                         <button type="submit" class="btn btn-primary">Salvar Informações</button>
                                     </div>
@@ -102,6 +100,7 @@
 <script>
 import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
 import HttpService from '../services/HttpService';
+import { mapGetters } from 'vuex';
 
 export default {
     components: { NavbarRecrutador },
@@ -113,7 +112,9 @@ export default {
                 job_type: '',
                 jobs_state: '',
                 jobs_city: '',
-                description: '',
+                jobs_description: '',
+                recruiter_id: '',
+                company_id: '',
             },
             modeloOptions: [
                 { label: 'Presencial', value: 'presential' },
@@ -129,9 +130,15 @@ export default {
             token: localStorage.getItem('authToken') || ''
         };
     },
+    computed: {
+        ...mapGetters(['getRecruiterId', 'getCompanyId'])
+    },
     methods: {
         async createJob() {
             if (!this.validateFields()) return;
+
+            this.vaga.recruiter_id = this.getRecruiterId;
+            this.vaga.company_id = this.getCompanyId;
 
             try {
                 const response = await HttpService.post('/jobs/register', this.vaga, {
@@ -153,7 +160,7 @@ export default {
             }
         },
         validateFields() {
-            if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.description) {
+            if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.jobs_description) {
                 alert('Preencha todos os campos!');
                 return false;
             }
@@ -166,12 +173,13 @@ export default {
                 job_type: '',
                 jobs_state: '',
                 jobs_city: '',
-                description: ''
+                jobs_description: ''
             };
         }
     }
 };
 </script>
+
 
 <style scoped>
 body {
@@ -209,7 +217,7 @@ textarea.form-control {
 
 .form-check {
     margin-right: 15px;
-    
+
 }
 
 .form-group {

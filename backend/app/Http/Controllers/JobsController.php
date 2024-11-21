@@ -29,6 +29,8 @@ class JobsController extends Controller
         ]);
 
         $arrayRequest['company_id'] = $recruiter->company_id;
+        $arrayRequest['recruiter_id'] = $recruiter->id;
+
 
         $jobs = Jobs::create($arrayRequest);
 
