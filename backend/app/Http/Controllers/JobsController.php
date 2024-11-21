@@ -10,7 +10,7 @@ class JobsController extends Controller
 {
     public function store(Request $request)
     {
-        $recruiter = Auth::guard('recruiter')->user();
+        $recruiter = Auth::user();
 
         if (!$recruiter) {
             return response()->json([
@@ -55,7 +55,7 @@ class JobsController extends Controller
             return response()->json([
                 'message' => 'Vaga não encontrada.',
             ], 404);
-        }   
+        }
 
         $arrayRequest = $request->validate([
             'title' => 'nullable|string|max:255',
