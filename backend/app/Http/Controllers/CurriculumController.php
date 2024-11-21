@@ -44,10 +44,8 @@ class CurriculumController extends Controller
         if ($request->hasFile('curriculum_attachment')) {
             $file = $request->file('curriculum_attachment');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-
             $filePath = $file->storeAs('file', $filename, 'public');
-
-            $arrayRequest['curriculum_attachment'] = $filePath;
+            $validatedData['curriculum_attachment'] = $filePath;
         }
 
         $validatedData['candidate_id'] = $user->id;
@@ -83,9 +81,13 @@ class CurriculumController extends Controller
             return response()->json(['message' => 'Usuário não autenticado.'], 401);
         }
 
-        $curriculum = Curriculum::where('candidate_id', $user->id)->find($id);
+        $curriculum = Curriculum::find($id);
         if (!$curriculum) {
             return response()->json(['message' => 'Currículo não encontrado.'], 404);
+        }
+
+        if ($user->id !== $curriculum->candidate_id) {
+            return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
         $rules = [
@@ -115,11 +117,16 @@ class CurriculumController extends Controller
         $validatedData = $request->validate($rules);
 
         if ($request->hasFile('curriculum_attachment')) {
-            $validatedData['curriculum_attachment'] = $request->file('curriculum_attachment')->store('curriculums', 'public');
+            $file = $request->file('curriculum_attachment');
+            $path = $file->store('curriculums', 'public');
+            $validatedData['curriculum_attachment'] = $path;
         }
 
         $curriculum->update($validatedData);
 
-        return response()->json(['message' => 'Currículo atualizado com sucesso!', 'curriculum' => $curriculum]);
+        return response()->json([
+            'message' => 'Currículo atualizado com sucesso!',
+            'curriculum' => $curriculum,
+        ]);
     }
 }
