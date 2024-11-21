@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('job_type', ['effective', 'freelancer', 'temporary', 'internship']);
             $table->string('jobs_state');
             $table->string('jobs_city');
-            $table->enum('jobs_status', ['in_progress', 'under_review', 'finished']);
+            $table->enum('jobs_status', ['in_progress', 'under_review', 'finished'])->nullable();
             $table->text('jobs_description');
             $table->foreignId('recruiter_id')->constrained('recruiters');
             $table->foreignId('company_id')->constrained('companies');
