@@ -24,7 +24,7 @@ class JobsController extends Controller
             'job_type' => 'required|string|in:effective,freelancer,temporary,internship',
             'jobs_state' => 'required|string|max:255',
             'jobs_city' => 'required|string|max:255',
-            'jobs_status' => 'required|string|max:255',
+            'jobs_status' => 'sometimes|string|in:in_progress, under_review, finished',
             'jobs_description' => 'required|string',
         ]);
 
@@ -36,6 +36,8 @@ class JobsController extends Controller
         return response()->json([
             'message' => 'Emprego criado com sucesso!',
             'jobs' => $jobs,
+            'recruiter' => $recruiter,
+            'company' => $recruiter->company->id,
         ], 201);
     }
 
@@ -63,7 +65,7 @@ class JobsController extends Controller
             'job_type' => 'nullable|string|in:effective,freelancer,temporary,internship',
             'jobs_state' => 'nullable|string|max:255',
             'jobs_city' => 'nullable|string|max:255',
-            'jobs_status' => 'nullable|string|max:255',
+            'jobs_status' => 'sometimes|string|in:in_progress, under_review, finished',
             'jobs_description' => 'nullable|string',
         ]);
 

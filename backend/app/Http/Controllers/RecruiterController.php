@@ -11,6 +11,14 @@ class RecruiterController extends Controller
 {
     public function store(Request $request)
     {
+        $authenticatedCompany = Auth::user();
+
+        if (!$authenticatedCompany) {
+            return response()->json([
+                'message' => 'Ação não autorizada. Faça login como empresa.',
+            ], 403);
+        }
+
         $arrayRequest = $request->validate([
             'recruiter_name' => 'required|string|max:255',
             'recruiter_cpf' => 'required|string|max:14|unique:recruiters',
@@ -20,10 +28,10 @@ class RecruiterController extends Controller
             'email' => 'required|email|unique:recruiters',
             'password' => 'required|string|min:8',
             'recruiter_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'company_id' => 'required|exists:companies,id',
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        $arrayRequest['company_id'] = $authenticatedCompany->id;
 
         if ($request->hasFile('recruiter_photo')) {
             $path = $request->file('recruiter_photo')->store('photos', 'public');
