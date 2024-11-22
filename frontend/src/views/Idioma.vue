@@ -11,25 +11,25 @@
                             <h5 class="card-title mb-0">Currículo</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/curriculo" class="list-group-item list-group-item-action">Dados
-                                Pessoais</router-link>
-                            <router-link to="/experiencia-profissional"
-                                class="list-group-item list-group-item-action">Experiência Profissional</router-link>
-                            <router-link to="/formacao"
-                                class="list-group-item list-group-item-action">Formação</router-link>
-                            <router-link to="/conquistas-certificados"
-                                class="list-group-item list-group-item-action">Certificados</router-link>
-                            <router-link to="/skills"
-                                class="list-group-item list-group-item-action">Skills</router-link>
-                            <router-link to="/idiomas"
-                                class="list-group-item list-group-item-action">Idiomas</router-link>
-
+                            <router-link to="/curriculo" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('dadosPessoais')">Dados Pessoais</router-link>
+                            <router-link to="/experiencia-profissional" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('experienciaProfissional')">Experiência
+                                Profissional</router-link>
+                            <router-link to="/formacao" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('formacao')">Formação</router-link>
+                            <router-link to="/certificados" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('certificados')">Certificados</router-link>
+                            <router-link to="/skills" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('skills')">Skills</router-link>
+                            <router-link to="/idiomas" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('idiomas')">Idiomas</router-link>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-                    <div class="card">
+                    <div class="card" v-if="currentSection === 'idiomas'">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Idiomas</h5>
                         </div>
@@ -65,9 +65,26 @@
                         </div>
                     </div>
 
+                    <!-- Adicione outras seções aqui -->
+                    <div class="card" v-if="currentSection === 'experienciaProfissional'">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Experiência Profissional</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Formulário para Experiência Profissional -->
+                        </div>
+                    </div>
 
+                    <div class="card" v-if="currentSection === 'formacao'">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Formação</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Formulário para Formação -->
+                        </div>
+                    </div>
 
-
+                    <!-- Adicione mais cards conforme a necessidade -->
                 </div>
             </div>
         </div>
@@ -78,18 +95,31 @@
 import Navbar from "@/components/Navbar.vue";
 
 export default {
-    name: 'idiomas',
-    components: {
-        Navbar,
-    },
+    name: 'CurriculoCandidato',
     data() {
         return {
-
+            currentSection: 'dadosPessoais',
+            idiomas: [
+                { nome: '', nivel: '' }
+            ]
         };
     },
+    methods: {
+        showSection(section) {
+            this.currentSection = section;
+        },
+        adicionarIdioma() {
+            this.idiomas.push({ nome: '', nivel: '' });
+        },
+        salvarIdiomas() {
+            console.log(this.idiomas);
+        }
+    },
+    components: {
+        Navbar
+    }
 };
 </script>
-
 
 
 <style scoped>

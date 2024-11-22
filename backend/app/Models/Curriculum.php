@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-class Curriculum extends Authenticatable
+class Curriculum extends Model
 {
-    use HasFactory, HasApiTokens;
+use HasApiTokens;
 
-    protected $table = 'curriculum';
+protected $table = 'curriculum';
 
     protected $fillable = [
         'candidate_id',
@@ -41,8 +40,8 @@ class Curriculum extends Authenticatable
         'curriculum_id',
     ];
 
-    public function candidate()
-    {
-        return $this->belongsTo(Candidate::class);
-    }
+public function candidate()
+{
+return $this->belongsTo(Candidate::class);
+}
 }
