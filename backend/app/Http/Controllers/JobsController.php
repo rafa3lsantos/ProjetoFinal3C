@@ -31,7 +31,6 @@ class JobsController extends Controller
         $arrayRequest['company_id'] = $recruiter->company_id;
         $arrayRequest['recruiter_id'] = $recruiter->id;
 
-
         $jobs = Jobs::create($arrayRequest);
 
         return response()->json([
@@ -93,20 +92,20 @@ class JobsController extends Controller
             'jobs' => $jobs,
         ], 200);
     }
-
-    public function index(Request $request)
+    
+    public function index()
     {
-        $recruiter = Auth::user();
+        $jobs = Jobs::all();
 
-        if (!$recruiter) {
+        if (!$jobs) {
+
             return response()->json([
-                'message' => 'Ação não autorizada. Faça login como recrutador.',
-            ], 403);
+                'message' => 'Não há empregos cadastrados!',
+            ], 404);
         }
 
-        $jobs = Jobs::where('company_id', $recruiter->company_id)->get();
-
         return response()->json([
+            'message' => 'Empregos encontrados com sucesso!',
             'jobs' => $jobs,
         ], 200);
     }
