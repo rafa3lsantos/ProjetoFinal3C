@@ -138,7 +138,14 @@ export default {
                 });
 
                 if (response.status === 200) {
-                    this.vagas = response.data.jobs;
+                    console.log('Vagas retornadas:', response.data.jobs); // Verifique os dados retornados
+                    console.log('Recruiter ID:', this.getRecruiterId); // Verifique o Recruiter ID
+
+                    // Certifique-se de que os tipos de dados coincidam
+                    this.vagas = response.data.jobs.filter(vaga =>
+                        String(vaga.recruiter_id) === String(this.getRecruiterId)
+                    );
+
                     this.filteredVagas = [...this.vagas];
                 } else {
                     alert('Erro ao carregar as vagas.');
@@ -147,6 +154,8 @@ export default {
                 console.error('Erro ao carregar as vagas:', error);
             }
         },
+
+
         async fetchCompany() {
             try {
                 const response = await HttpService.get(`/company/show/${this.getCompanyId}`, {

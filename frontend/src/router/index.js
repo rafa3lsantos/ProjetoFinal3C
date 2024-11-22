@@ -18,6 +18,13 @@ import PerfilRecrutador from '../views/PerfilRecrutador.vue';
 import MinhasVagas from '../views/MinhasVagas.vue';
 import UpdateVaga from '../views/UpdateVaga.vue';
 import Vagas from '../views/Vagas.vue';
+import ExProfissional from '../views/ExProfissional.vue';
+import Idioma from '../views/Idioma.vue';
+import AnexarCurriculo from '../views/AnexarCurriculo.vue';
+import ConEcer from '../views/ConEcer.vue';
+import Skills from '../views/Skills.vue';
+import Formacao from '../views/Formacao.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -194,6 +201,66 @@ const router = createRouter({
       component: Vagas,
       meta: {
         title: 'Vagas',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/experiencia-profissional',
+      name: 'experiencia-profissional',
+      component: ExProfissional,
+      meta: {
+        title: 'Experiência Profissional',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/formacao',
+      name: 'formacao',
+      component: Formacao,
+      meta: {
+        title: 'Formação',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/conquistas-certificados',
+      name: 'conquistas-certificados',
+      component: ConEcer,
+      meta: {
+        title: 'Conquistas ou Certificados',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/skills',
+      name: 'skills',
+      component: Skills,
+      meta: {
+        title: 'Skills',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/idiomas',
+      name: 'idiomas',
+      component: Idioma,
+      meta: {
+        title: 'Idiomas',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/anexar-curriculo',
+      name: 'anexar-curriculo',
+      component: AnexarCurriculo,
+      meta: {
+        title: 'Anexar Currículo',
         requiresAuth: true,
         userType: 'candidato',
       },
