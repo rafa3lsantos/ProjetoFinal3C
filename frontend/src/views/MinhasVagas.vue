@@ -9,33 +9,55 @@
 
                 <div class="container mt-5 pt-4">
                     <div class="row align-items-end mb-4 pb-2">
-                        <div class="col-md-8">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" v-model="searchTerm"
+                                placeholder="Pesquisar por título ou descrição">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" v-model="selectedWorkModel">
+                                <option value="">Modelo de Trabalho</option>
+                                <option value="remote">Remoto</option>
+                                <option value="presential">Presencial</option>
+                                <option value="hybrid">Híbrido</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" v-model="selectedJobType">
+                                <option value="">Tipo de Trabalho</option>
+                                <option value="effective">Efetivo</option>
+                                <option value="freelancer">Freelancer</option>
+                                <option value="temporary">Temporário</option>
+                                <option value="internship">Estágio</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" @click="applyFilters">Filtrar</button>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-4 col-md-6 col-12 mt-4 pt-2" v-for="(vaga, index) in vagas" :key="index">
+                        <div class="col-lg-6 col-md-6 col-12 mt-4 pt-2" v-for="(vaga, index) in filteredVagas"
+                            :key="index">
                             <div class="card border-0 bg-light rounded shadow">
                                 <div class="card-body p-4">
                                     <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">
-                                        {{ vaga.work_model === 'remote' ? 'Remoto' : 'Presencial' }}
+                                        {{ translateWorkModel(vaga.work_model) }}
                                     </span>
                                     <h5>{{ vaga.title }}</h5>
                                     <div class="mt-3">
                                         <span class="text-muted d-block"><i class="fa fa-building"
                                                 aria-hidden="true"></i>
-                                            <a href="#" target="_blank" class="text-muted"> {{
-                                                 empresa.company_name }}</a></span>
+                                            <a href="#" target="_blank" class="text-muted"> {{ empresa.company_name
+                                                }}</a></span>
                                         <span class="text-muted d-block"><i class="fa fa-briefcase"
                                                 aria-hidden="true"></i>
-                                            <a href="#" target="_blank" class="text-muted"> {{ vaga.job_type
-                                                }}</a></span>
+                                            <a href="#" target="_blank" class="text-muted"> {{
+                                                translateWorktype(vaga.job_type) }}</a></span>
                                         <span class="text-muted d-block"><i class="fa fa-map-marker"
                                                 aria-hidden="true"></i>
                                             {{ vaga.jobs_city }} - {{ vaga.jobs_state }}</span>
-                                        <p>{{ vaga.jobs_description }}</p>
+                                        <p>{{ truncateDescription(vaga.jobs_description) }}</p>
                                     </div>
-
                                     <div class="mt-3">
                                         <a href="#" class="btn btn-primary">Editar</a>
                                     </div>
@@ -44,6 +66,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -59,14 +82,17 @@ export default {
     data() {
         return {
             vagas: [],
+            filteredVagas: [],
             companies: {},
             empresa: {
                 id: '',
                 company_name: '',
                 company_sector: '',
                 about_company: '',
-                // company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
             },
+            searchTerm: '',
+            selectedWorkModel: '',
+            selectedJobType: '',
         };
     },
     created() {
@@ -77,7 +103,31 @@ export default {
         ...mapGetters(['getAuthToken', 'getRecruiterId', 'getCompanyId'])
     },
     methods: {
-        // Método para buscar as vagas e associar os nomes das empresas
+
+        translateWorkModel(model) {
+            const translations = {
+                remote: 'Remoto',
+                presential: 'Presencial',
+                hybrid: 'Híbrido',
+            };
+            return translations[model];
+        },
+
+        translateWorktype(model) {
+            const translations = {
+                effective: 'Efetivo',
+                freelancer: 'Freelancer',
+                temporary: 'Temporário',
+                internship: 'Estágio',
+            };
+            return translations[model];
+        },
+        truncateDescription(description, limit = 200) {
+            if (!description) return '';
+            return description.length > limit
+                ? description.substring(0, limit) + '...'
+                : description;
+        },
         async fetchVagas() {
             try {
                 const response = await HttpService.get('/jobs/show', {
@@ -90,8 +140,7 @@ export default {
 
                 if (response.status === 200) {
                     this.vagas = response.data.jobs;
-
-                    // Buscar os nomes das empresas associadas às vagas
+                    this.filteredVagas = [...this.vagas];
                     const companyIds = [...new Set(this.vagas.map(vaga => vaga.company_id))];
                     for (let companyId of companyIds) {
                         await this.fetchCompanyName(companyId);
@@ -104,13 +153,11 @@ export default {
                 alert('Erro ao buscar vagas.');
             }
         },
-
-        // Método para buscar o nome da empresa com base no company_id
         async fetchCompany() {
             try {
                 const response = await HttpService.get(`/company/show/${this.getCompanyId}`, {
                     headers: {
-                        Authorization: `Bearer ${this.token}`
+                        Authorization: `Bearer ${this.getAuthToken}`
                     }
                 });
                 const user = response.data.company;
@@ -118,18 +165,34 @@ export default {
                 this.empresa.company_name = user.company_name || '';
                 this.empresa.company_sector = user.company_sector || '';
                 this.empresa.about_company = user.about_company || '';
-                // this.empresa.company_photo = user.company_photo || null;
             } catch (error) {
                 console.error('Erro ao carregar o perfil da empresa:', error);
             }
         },
+        applyFilters() {
+            this.filteredVagas = this.vagas.filter(vaga => {
+                const matchesSearchTerm = this.searchTerm
+                    ? vaga.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                    vaga.jobs_description.toLowerCase().includes(this.searchTerm.toLowerCase())
+                    : true;
+
+                const matchesWorkModel = this.selectedWorkModel
+                    ? vaga.work_model === this.selectedWorkModel
+                    : true;
+
+                const matchesJobType = this.selectedJobType
+                    ? vaga.job_type === this.selectedJobType
+                    : true;
+
+                return matchesSearchTerm && matchesWorkModel && matchesJobType;
+            });
+        },
     },
     mounted() {
         this.empresa.id = this.getCompanyId;
-    }
+    },
 };
 </script>
-
 
 
 
@@ -150,34 +213,6 @@ body {
     background-color: #f7f8fa !important;
 }
 
-.bg-primary,
-.btn-primary,
-.btn-outline-primary:hover,
-.btn-outline-primary:focus,
-.btn-outline-primary:active,
-.btn-outline-primary.active,
-.btn-outline-primary.focus,
-.btn-outline-primary:not(:disabled):not(.disabled):active,
-.badge-primary,
-.nav-pills .nav-link.active,
-.pagination .active a,
-.custom-control-input:checked~.custom-control-label:before,
-#preloader #status .spinner>div,
-.social-icon li a:hover,
-.back-to-top:hover,
-.back-to-home a,
-::selection,
-#topnav .navbar-toggle.open span:hover,
-.owl-theme .owl-dots .owl-dot.active span,
-.owl-theme .owl-dots.clickable .owl-dot:hover span,
-.watch-video a .play-icon-circle,
-.sidebar .widget .tagcloud>a:hover,
-.flatpickr-day.selected,
-.flatpickr-day.selected:hover,
-.tns-nav button.tns-nav-active,
-.form-check-input.form-check-input:checked {
-    background-color: #6dc77a !important;
-}
 
 .btn {
     padding: 8px 20px;
@@ -190,12 +225,7 @@ body {
     border-radius: 5px;
 }
 
-.btn-primary {
-    background-color: #6dc77a !important;
-    border: 1px solid #6dc77a !important;
-    color: #fff !important;
-    box-shadow: 0 3px 7px rgb(109 199 122 / 50%);
-}
+
 
 a {
     text-decoration: none;
