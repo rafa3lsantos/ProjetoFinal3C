@@ -11,6 +11,7 @@ use HasApiTokens;
 
 protected $table = 'curriculum';
 
+
 protected $fillable = [
 'candidate_id',
 'name_candidate',

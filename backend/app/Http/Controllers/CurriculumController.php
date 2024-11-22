@@ -62,6 +62,7 @@ class CurriculumController extends Controller
     public function show($id)
     {
         $curriculum = Curriculum::find($id);
+        dd($curriculum);
 
         if (!$curriculum) {
             return response()->json(['message' => 'Currículo não encontrado.'], 404);
@@ -73,6 +74,7 @@ class CurriculumController extends Controller
         }
 
         return response()->json(['curriculum' => $curriculum]);
+
     }
 
     public function updateCurriculum(Request $request, $id)
