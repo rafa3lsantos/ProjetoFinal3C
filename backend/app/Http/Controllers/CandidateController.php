@@ -59,6 +59,7 @@ class CandidateController extends Controller
                 'message' => 'Candidato autenticado com sucesso!',
                 'token' => $token,
                 'candidate_id' => $candidate->id,
+                'curriculum_id' => $candidate->curriculum_id,
             ], 200);
         }
 

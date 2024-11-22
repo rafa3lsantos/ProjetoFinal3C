@@ -11,39 +11,34 @@
                             <h5 class="card-title mb-0">Currículo</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/curriculo" class="list-group-item list-group-item-action">Dados
-                                Pessoais</router-link>
-                            <router-link to="/experiencia-profissional"
-                                class="list-group-item list-group-item-action">Experiência Profissional</router-link>
-                            <router-link to="/formacao"
-                                class="list-group-item list-group-item-action">Formação</router-link>
-                            <router-link to="/conquistas-certificados"
-                                class="list-group-item list-group-item-action">Certificados</router-link>
-                            <router-link to="/skills"
-                                class="list-group-item list-group-item-action">Skills</router-link>
-                            <router-link to="/idiomas"
-                                class="list-group-item list-group-item-action">Idiomas</router-link>
-
+                            <router-link to="/curriculo" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('dadosPessoais')">Dados Pessoais</router-link>
+                            <router-link to="/experiencia-profissional" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('experienciaProfissional')">Experiência
+                                Profissional</router-link>
+                            <router-link to="/formacao" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('formacao')">Formação</router-link>
+                            <router-link to="/conquistas-certificados" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('certificados')">Certificados</router-link>
+                            <router-link to="/skills" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('skills')">Skills</router-link>
+                            <router-link to="/idiomas" class="list-group-item list-group-item-action"
+                                @click.prevent="showSection('idiomas')">Idiomas</router-link>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-7 col-xl-8">
-
-
-
-
-
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Experiência Profissional</h5>
                         </div>
                         <div class="card-body">
-                            <form>
+                            <form @submit.prevent="updateExperience">
                                 <div v-for="(experiencia, index) in experiencias" :key="index">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label for="empresa{{ index }}">Empresa</label>
+                                            <label :for="'empresa' + index">Empresa</label>
                                             <input type="text" class="form-control" :id="'empresa' + index"
                                                 v-model="experiencia.empresa" placeholder="Digite o nome da empresa">
                                         </div>
@@ -51,7 +46,7 @@
                                     <div class="form-group">
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
-                                                <label for="cargo{{ index }}">Cargo</label>
+                                                <label :for="'cargo' + index">Cargo</label>
                                                 <input type="text" class="form-control" :id="'cargo' + index"
                                                     v-model="experiencia.cargo" placeholder="Cargo que exercia">
                                             </div>
@@ -69,14 +64,14 @@
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label for="inicio{{ index }}">Início</label>
+                                            <label :for="'inicio' + index">Início</label>
                                             <input type="text" class="form-control" :id="'inicio' + index"
                                                 v-model="experiencia.inicio" placeholder="dd/mm/aaaa">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label for="fim{{ index }}">Fim</label>
+                                            <label :for="'fim' + index">Fim</label>
                                             <input type="text" class="form-control" :id="'fim' + index"
                                                 v-model="experiencia.fim" placeholder="dd/mm/aaaa">
                                         </div>
@@ -84,7 +79,7 @@
 
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
-                                            <label for="descricao{{ index }}">Descrição das atividades</label>
+                                            <label :for="'descricao' + index">Descrição das atividades</label>
                                             <textarea class="form-control" :id="'descricao' + index"
                                                 v-model="experiencia.descricao" rows="4"
                                                 placeholder="Descreva as atividades..."></textarea>
@@ -103,8 +98,6 @@
                             </form>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -113,20 +106,116 @@
 
 <script>
 import Navbar from "@/components/Navbar.vue";
+import HttpService from "../services/HttpService";
+import { mapGetters } from "vuex";
 
 export default {
-    name: 'ExProfissional',
     components: {
         Navbar,
     },
     data() {
         return {
-
+            experiencias: [
+                {
+                    empresa: '',
+                    cargo: '',
+                    empregoAtual: false,
+                    inicio: '',
+                    fim: '',
+                    descricao: ''
+                }
+            ],
+            errors: {},
+            token: localStorage.getItem("authToken") || "",
         };
+    },
+    computed: {
+        ...mapGetters(["getCandidateId"]),
+    },
+    methods: {
+        validateFields() {
+            this.errors = {};
+            let isValid = true;
+            this.experiencias.forEach((experiencia, index) => {
+                if (!experiencia.empresa || !experiencia.cargo) {
+                    this.errors[`experiencia${index}`] = "Empresa e Cargo são obrigatórios.";
+                    isValid = false;
+                }
+            });
+            return isValid;
+        },
+        adicionarExperiencia() {
+            this.experiencias.push({
+                empresa: '',
+                cargo: '',
+                empregoAtual: false,
+                inicio: '',
+                fim: '',
+                descricao: ''
+            });
+        },
+        async updateExperience() {
+            if (this.validateFields()) {
+                try {
+                    const response = await HttpService.put(
+                        `/curriculum/update/${this.getCandidateId}`,
+                        {
+                            curriculum: {
+                                experiencias: this.experiencias,
+                            },
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${this.token}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+
+                    if (response.status === 200) {
+                        alert("Experiências atualizadas com sucesso.");
+                    } else {
+                        alert("Erro ao atualizar as experiências.");
+                    }
+                } catch (error) {
+                    console.error("Erro ao atualizar as experiências:", error);
+                    alert("Erro ao salvar os dados.");
+                }
+            } else {
+                alert("Por favor, preencha todos os campos obrigatórios.");
+            }
+        },
+
+
+        async fetchUserProfile() {
+            try {
+                const response = await HttpService.put(
+                    `/curriculum/update/${this.getCandidateId}`,
+                    {
+                        experiencias: this.experiencias,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+
+                const user = response.data.curriculo;
+                this.experiencias = user.experiencias || this.experiencias;
+            } catch (error) {
+                console.error("Erro ao carregar o perfil do usuário:", error);
+                alert("Erro ao carregar o perfil.");
+            }
+        },
+    },
+    mounted() {
+        this.fetchUserProfile();
     },
 };
 </script>
-
 
 
 
@@ -187,21 +276,21 @@ body {
 }
 
 .form-group {
-    margin-bottom: 30px;
+    margin-bottom: 1.5rem;
 }
 
 .disabled-link {
-    color: inherit;
+    color: #007bff;
     text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
 }
 
-.skill-badge {
-    color: #504e4e;
-    background-color: transparent;
-    border: 1px solid #cfcccc;
+.disabled-link:hover {
+    color: #0056b3;
 }
 
-.upload {
-    margin-bottom: 20px;
+.form-group textarea {
+    height: 80px;
 }
 </style>
