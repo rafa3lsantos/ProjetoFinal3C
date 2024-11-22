@@ -27,7 +27,6 @@ Route::post('candidate/register', [CandidateController::class, 'store']);
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
         Route::put('update/{id}', [CandidateController::class, 'updateCandidate']);
-        Route::post('jobs/{jobId}/apply', [ApplicationsController::class, 'applicationToJob']);
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::put('/update-password', [CandidateController::class, 'updatePassword']);
         Route::put('/update-email', [CandidateController::class, 'updateEmail']);
@@ -59,7 +58,6 @@ Route::prefix('recruiter')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
         Route::put('update/{id}', [RecruiterController::class, 'update']);
-        Route::get('applications/{jobId}/candidates', [ApplicationsController::class, 'viewCandidate']);
     });
 });
 
@@ -83,4 +81,16 @@ Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(fun
     Route::put('update/{id}', [JobsController::class, 'update']);
 });
 
+Route::get('jobs/index', [JobsController::class, 'index']);
 Route::get('jobs/show/{id}', [JobsController::class, 'show']);
+
+// -- Applications Routes --
+
+Route::prefix('applications')->group(function () {
+    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+        Route::post('/applyToJob', [ApplicationsController::class, 'applyToJob']);
+    });
+    Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
+        Route::get('viewCandidates/{jobId}', [ApplicationsController::class, 'viewCandidates']);
+    });
+});
