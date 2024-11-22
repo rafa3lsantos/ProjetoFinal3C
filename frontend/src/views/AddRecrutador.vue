@@ -206,5 +206,6 @@ body {
 .genero-options {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 </style>

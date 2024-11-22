@@ -44,6 +44,7 @@ class RecruiterController extends Controller
             'message' => 'Recrutador criado com sucesso!',
             'recruiter' => $recruiter,
             'company_id' => $recruiter->company_id,
+            'company_name' => $recruiter->company->company_name,
         ], 201);
     }
 
@@ -60,6 +61,7 @@ class RecruiterController extends Controller
                 'token' => $token,
                 'recruiter_id' => $recruiter->id,
                 'company_id' => $recruiter->company_id,
+                'company_name' => $recruiter->company->company_name,
             ]);
         }
 
@@ -82,6 +84,8 @@ class RecruiterController extends Controller
         $arrayRequest = $request->validate([
             'recruiter_name' => 'nullable|string|max:255',
             'recruiter_cpf' => 'nullable|string|max:14',
+            'recruiter_gender' => 'in:male,female,non-binary,other,prefer not to say',
+            'recruiter_phone' => 'required|string|max:20',
             'recruiter_birthdate' => 'nullable|date',
             'email' => 'nullable|email',
             'password' => 'sometimes|string|min:8',
