@@ -25,7 +25,6 @@ import ConEcer from '../views/ConEcer.vue';
 import Skills from '../views/Skills.vue';
 import Formacao from '../views/Formacao.vue';
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -184,6 +183,7 @@ const router = createRouter({
         userType: 'recrutador',
       },
     },
+
     {
       path: '/update-vaga/:id',
       name: 'UpdateVaga',
