@@ -37,6 +37,7 @@ protected $fillable = [
 'language',
 'language_level',
 'curriculum_attachment',
+'curriculum_id',
 ];
 
 public function candidate()
