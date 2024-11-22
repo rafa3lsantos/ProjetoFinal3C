@@ -87,7 +87,7 @@ class CurriculumController extends Controller
             return response()->json(['message' => 'Currículo não encontrado.'], 404);
         }
 
-        if ($user->id !== $curriculum->candidate_id) {
+        if ($user->id !== $curriculu    m->candidate_id) {
             return response()->json(['message' => 'Acesso negado.'], 403);
         }
 
