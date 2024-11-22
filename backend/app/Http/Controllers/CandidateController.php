@@ -101,7 +101,6 @@ class CandidateController extends Controller
     public function deleteCandidate(Request $request)
     {
         $candidate = Auth::user();
-
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
         }
@@ -114,7 +113,6 @@ class CandidateController extends Controller
     public function show($id)
     {
         $candidate = Candidate::find($id);
-
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrada'], 404);
         }

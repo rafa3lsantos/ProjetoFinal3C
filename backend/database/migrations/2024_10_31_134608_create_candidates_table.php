@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('candidates', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('curriculum_id')->nullable(); // Chave estrangeira para o curriculum
             $table->string('name_candidate');
             $table->string('email')->unique();
             $table->string('new_email')->nullable();
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('curriculum')->nullable();
-            $table->unsignedBigInteger('curriculum_id')->nullable(); // Chave estrangeira para o curriculum
             $table->string('photo')->nullable();
             $table->timestamps();
             $table->foreign('curriculum_id')

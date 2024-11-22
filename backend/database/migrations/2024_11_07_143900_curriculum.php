@@ -38,6 +38,11 @@ return new class extends Migration
         $table->string('curriculum_attachment')->nullable();
         $table->foreignId('curriculum_id')->nullable()->constrained('curriculum')->onDelete('set null');
         $table->timestamps();
+
+        $table->foreign('candidate_id')
+            ->references('id')->on('candidates')
+            ->onDelete('cascade');
+        
     });
 }
 
