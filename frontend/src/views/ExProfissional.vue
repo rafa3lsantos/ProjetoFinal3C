@@ -158,7 +158,7 @@ export default {
             if (this.validateFields()) {
                 try {
                     const response = await HttpService.put(
-                        `/curriculum/update/${this.getCandidateId}`,
+                        `/curriculum/update/${this.getCurriculumId}`,
                         {
                             curriculum: {
                                 experiencias: this.experiencias,
@@ -171,6 +171,7 @@ export default {
                             },
                         }
                     );
+                    console.log(response);
 
                     if (response.status === 200) {
                         alert("Experiências atualizadas com sucesso.");
@@ -190,7 +191,7 @@ export default {
         async fetchUserProfile() {
             try {
                 const response = await HttpService.put(
-                    `/curriculum/update/${this.getCandidateId}`,
+                    `/curriculum/update/${this.getCurriculumId}`,
                     {
                         experiencias: this.experiencias,
                     },

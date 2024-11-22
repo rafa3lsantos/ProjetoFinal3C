@@ -27,7 +27,6 @@ return new class extends Migration
             $table->unsignedBigInteger('curriculum_id')->nullable(); // Chave estrangeira para o curriculum
             $table->string('photo')->nullable();
             $table->timestamps();
-
             $table->foreign('curriculum_id')
                 ->references('id')->on('curriculum')
                 ->onDelete('set null');
