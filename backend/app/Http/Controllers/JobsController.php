@@ -93,5 +93,22 @@ class JobsController extends Controller
             'jobs' => $jobs,
         ], 200);
     }
+    
+    public function index(Request $request)
+    {
+        $recruiter = Auth::user();
+    
+        if (!$recruiter) {
+            return response()->json([
+                'message' => 'Ação não autorizada. Faça login como recrutador.',
+            ], 403);
+        }
+    
+        $jobs = Jobs::where('company_id', $recruiter->company_id)->get();
+    
+        return response()->json([
+            'jobs' => $jobs,
+        ], 200);
+    }
 }
 

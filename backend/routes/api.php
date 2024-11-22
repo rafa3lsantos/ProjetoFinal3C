@@ -45,7 +45,6 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
         Route::delete('/delete', [CurriculumController::class, 'delete']);
         Route::get('/show/{id}', [CurriculumController::class, 'show']);
     });
-
 });
 
 // -- Recruiter Routes --
@@ -79,6 +78,7 @@ Route::prefix('company')->group(function () {
 // -- Jobs Routes --
 
 Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
+    Route::get('show', [JobsController::class, 'index']);
     Route::post('register', [JobsController::class, 'store']);
     Route::put('update/{id}', [JobsController::class, 'update']);
 });
