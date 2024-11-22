@@ -16,6 +16,8 @@ import HomeRecrutador from '../views/HomeRecrutador.vue';
 import AddVagas from '../views/AddVagas.vue';
 import PerfilRecrutador from '../views/PerfilRecrutador.vue';
 import MinhasVagas from '../views/MinhasVagas.vue';
+import UpdateVaga from '../views/UpdateVaga.vue';
+import Vagas from '../views/Vagas.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -175,6 +177,28 @@ const router = createRouter({
         userType: 'recrutador',
       },
     },
+    {
+      path: '/update-vaga/:id',
+      name: 'UpdateVaga',
+      component: UpdateVaga,
+      meta: {
+        title: 'Editar Vaga',
+        requiresAuth: true,
+        userType: 'recrutador',
+      },
+      props: true,
+    },
+    {
+      path: '/vagas',
+      name: 'Vagas',
+      component: Vagas,
+      meta: {
+        title: 'Vagas',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+
   ],
 });
 
@@ -204,7 +228,7 @@ router.beforeEach((to, from, next) => {
       return next({ name: 'home-empresa' });
     } else if (to.path.startsWith('/home-empresa') && userRole !== 'empresa') {
       return next({ name: 'home-candidato' });
-    } else if (to.path.startsWith('/home-recrutador') && userRole !== 'recrutador') { 
+    } else if (to.path.startsWith('/home-recrutador') && userRole !== 'recrutador') {
       return next({ name: 'home-candidato' });
     }
   }
