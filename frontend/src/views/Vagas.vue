@@ -1,6 +1,6 @@
 <template>
     <div>
-        <NavbarRecrutador />
+        <Navbar />
 
         <div class="container p-0">
             <div class="row">
@@ -73,12 +73,12 @@
 </template>
 
 <script>
-import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
+import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
 
 export default {
-    components: { NavbarRecrutador },
+    components: { Navbar },
     data() {
         return {
             vagas: [],
