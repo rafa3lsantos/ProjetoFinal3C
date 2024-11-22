@@ -15,6 +15,7 @@ import AddRecrutador from '../views/AddRecrutador.vue';
 import HomeRecrutador from '../views/HomeRecrutador.vue';
 import AddVagas from '../views/AddVagas.vue';
 import PerfilRecrutador from '../views/PerfilRecrutador.vue';
+import MinhasVagas from '../views/MinhasVagas.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -160,6 +161,16 @@ const router = createRouter({
       component: PerfilRecrutador,
       meta: {
         title: 'Perfil Recrutador',
+        requiresAuth: true,
+        userType: 'recrutador',
+      },
+    },
+    {
+      path: '/minhas-vagas',
+      name: 'Minhas Vagas',
+      component: MinhasVagas,
+      meta: {
+        title: 'Minhas Vagas',
         requiresAuth: true,
         userType: 'recrutador',
       },

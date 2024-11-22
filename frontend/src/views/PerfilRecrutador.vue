@@ -14,6 +14,7 @@
                                 class="list-group-item list-group-item-action">Conta</router-link>
                             <router-link to="/add-vaga" class="list-group-item list-group-item-action">Adicionar
                                 Vaga</router-link>
+                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">Minhas vagas</router-link>
                         </div>
                     </div>
                 </div>
@@ -34,8 +35,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="email" class="form-control" id="email" v-model="recruiter.email"
-                                                placeholder="Email">
+                                            <input type="email" class="form-control" id="email"
+                                                v-model="recruiter.email" placeholder="Email">
                                         </div>
                                         <div class="form-group">
                                             <label>Gênero</label>

@@ -12,10 +12,14 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <router-link to="/home-recrutador" class="nav-link active" aria-current="page">Home</router-link>
+                            <router-link to="/home-recrutador" class="nav-link active"
+                                aria-current="page">Home</router-link>
                         </li>
                         <li class="nav-item">
                             <router-link to="/add-vaga" class="nav-link">Adicionar Vaga</router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link to="/minhas-vagas" class="nav-link">Minhas Vagas</router-link>
                         </li>
                     </ul>
                 </div>
@@ -23,10 +27,12 @@
                 <div class="user ms-auto">
                     <div class="dropdown" @click="toggleDropdown">
                         <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
-                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40" height="40" />
+                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40"
+                            height="40" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/perfil-recrutador" class="dropdown-item">Perfil Recrutador</router-link>
                             <router-link to="/add-vaga" class="dropdown-item">Adicionar Vaga</router-link>
+                            <router-link to="/minhas-vagas" class="dropdown-item">Minhas Vagas</router-link>
                             <a @click.prevent="handleLogout" class="dropdown-item exit-color">
                                 Sair <img width="15px" src="../../public/logout.png" alt="Sair">
                             </a>
@@ -56,7 +62,7 @@ export default {
             return this.getUserImage || '../../public/user.png';
         },
         arrowUser() {
-            return this.getArrowIcon || '../../public/down.png'; 
+            return this.getArrowIcon || '../../public/down.png';
         },
     },
     methods: {
