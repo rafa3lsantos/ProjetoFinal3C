@@ -83,8 +83,8 @@ export default {
                 id: '',
                 recruiter_name: '',
                 email: '',
-                phone: '', // Ajustado para usar 'phone' em vez de 'recruiter_phone'
-                gender: '', // Ajustado para 'gender' em vez de 'recruiter_gender'
+                phone: '',
+                gender: '',
             },
             genderOptions: [
                 { label: 'Masculino', value: 'male' },
@@ -139,7 +139,7 @@ export default {
         },
         async fetchRecruiter() {
             try {
-                const recruiterId = this.getRecruiterId; // Garantir que `getRecruiterId` seja chamado no momento certo.
+                const recruiterId = this.getRecruiterId; 
                 const response = await HttpService.get(`/recruiter/show/${recruiterId}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`

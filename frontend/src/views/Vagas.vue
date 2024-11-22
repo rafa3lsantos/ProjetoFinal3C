@@ -59,7 +59,7 @@
                                         <p>{{ truncateDescription(vaga.jobs_description) }}</p>
                                     </div>
                                     <div class="mt-3">
-                                        <a href="#" class="btn btn-primary" @click="editVaga(vaga)">Editar</a>
+                                        <a href="#" class="btn btn-primary">Editar</a>
                                     </div>
                                 </div>
                             </div>
@@ -97,10 +97,9 @@ export default {
     },
     created() {
         this.fetchVagas();
-        this.fetchCompany();
     },
     computed: {
-        ...mapGetters(['getAuthToken', 'getRecruiterId', 'getCompanyId'])
+        ...mapGetters(['getAuthToken'])
     },
     methods: {
 
@@ -138,6 +137,7 @@ export default {
                 });
 
                 if (response.status === 200) {
+                    console.log('Vagas retornadas:', response.data.jobs);
                     this.vagas = response.data.jobs;
                     this.filteredVagas = [...this.vagas];
                 } else {
@@ -147,22 +147,7 @@ export default {
                 console.error('Erro ao carregar as vagas:', error);
             }
         },
-        async fetchCompany() {
-            try {
-                const response = await HttpService.get(`/company/show/${this.getCompanyId}`, {
-                    headers: {
-                        Authorization: `Bearer ${this.getAuthToken}`
-                    }
-                });
-                const user = response.data.company;
-                this.empresa.id = user.id || '';
-                this.empresa.company_name = user.company_name || '';
-                this.empresa.company_sector = user.company_sector || '';
-                this.empresa.about_company = user.about_company || '';
-            } catch (error) {
-                console.error('Erro ao carregar o perfil da empresa:', error);
-            }
-        },
+
         applyFilters() {
             this.filteredVagas = this.vagas.filter(vaga => {
                 const matchesSearchTerm = this.searchTerm
@@ -181,16 +166,7 @@ export default {
                 return matchesSearchTerm && matchesWorkModel && matchesJobType;
             });
         },
-        editVaga(vaga) {
-            this.$router.push({
-                name: 'UpdateVaga',
-                params: { id: vaga.id },
-            });
-        },
 
-    },
-    mounted() {
-        this.empresa.id = this.getCompanyId;
     },
 };
 </script>
