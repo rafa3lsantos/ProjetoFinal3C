@@ -46,4 +46,4 @@ return new class extends Migration
             $table->dropColumn('curriculum_id');
         });
     }
-
+};
