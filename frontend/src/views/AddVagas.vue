@@ -20,7 +20,6 @@
                             <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">
                                 Minhas Vagas
                             </router-link>
-
                         </div>
                     </div>
                 </div>

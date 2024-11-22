@@ -36,6 +36,7 @@ return new class extends Migration
         $table->string('language')->nullable();
         $table->string('language_level')->nullable();
         $table->string('curriculum_attachment')->nullable();
+        $table->foreignId('curriculum_id')->nullable()->constrained('curriculum')->onDelete('set null');
         $table->timestamps();
     });
 }

@@ -76,7 +76,6 @@ Route::prefix('company')->group(function () {
 // -- Jobs Routes --
 
 Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
-    Route::get('show', [JobsController::class, 'index']);
     Route::post('register', [JobsController::class, 'store']);
     Route::put('update/{id}', [JobsController::class, 'update']);
 });

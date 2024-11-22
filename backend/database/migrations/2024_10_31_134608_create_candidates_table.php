@@ -24,16 +24,25 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('curriculum')->nullable();
+            $table->unsignedBigInteger('curriculum_id')->nullable(); // Chave estrangeira para o curriculum
             $table->string('photo')->nullable();
             $table->timestamps();
+            $table->foreign('curriculum_id')
+                ->references('id')->on('curriculum')
+                ->onDelete('set null');
         });
     }
 
     /**
      * Reverse the migrations.
      */
+
     public function down(): void
     {
-        Schema::dropIfExists('candidates');
+        Schema::table('candidates', function (Blueprint $table) {
+            $table->dropForeign(['curriculum_id']);
+
+            $table->dropColumn('curriculum_id');
+        });
     }
 };

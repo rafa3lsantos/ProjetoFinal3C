@@ -98,6 +98,7 @@ class JobsController extends Controller
         $jobs = Jobs::all();
 
         if (!$jobs) {
+
             return response()->json([
                 'message' => 'Não há empregos cadastrados!',
             ], 404);

@@ -8,22 +8,25 @@ export default createStore({
     companyId: localStorage.getItem('companyId') || null,
     candidateId: localStorage.getItem('candidateId') || null,
     recruiterId: localStorage.getItem('recruiterId') || null,
+    curriculumId: localStorage.getItem('curriculumId') || null,
     email: localStorage.getItem('email') || null,
   },
   mutations: {
-    login(state, { token, role, companyId, candidateId, recruiterId, email }) {
+    login(state, { token, role, companyId, candidateId, recruiterId,curriculumId, email }) {
       state.isAuthenticated = true;
       state.authToken = token;
       state.userRole = role;
       state.companyId = companyId;
       state.candidateId = candidateId;
       state.recruiterId = recruiterId;
+      state.curriculumId = curriculumId;
       state.email = email;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
       localStorage.setItem('companyId', companyId);
       localStorage.setItem('candidateId', candidateId);
       localStorage.setItem('recruiterId', recruiterId);
+      localStorage.setItem('curriculumId', curriculumId);
       localStorage.setItem('email', email);
     },
     logout(state) {
@@ -33,12 +36,14 @@ export default createStore({
       state.companyId = null;
       state.candidateId = null;
       state.recruiterId = null;
+      state.curriculumId = null;
       state.email = null;
       localStorage.removeItem('authToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('companyId');
       localStorage.removeItem('candidateId');
       localStorage.removeItem('recruiterId');
+      localStorage.removeItem('curriculumId');
       localStorage.removeItem('email');
     },
   },
@@ -58,5 +63,6 @@ export default createStore({
     getCandidateId: (state) => state.candidateId,
     getRecruiterId: (state) => state.recruiterId,
     getUserEmail: (state) => state.email,
+    getCurriculumId: (state) => state.curriculumId,
   },
 });
