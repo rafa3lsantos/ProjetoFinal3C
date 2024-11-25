@@ -105,7 +105,7 @@ class CandidateController extends Controller
             'candidate' => $candidate,
         ], 200);
     }
-
+    
     /**
      * Atualizar informações do candidato.
      */
@@ -194,24 +194,9 @@ class CandidateController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'Conta excluída com sucesso!']);
-
-    public function show($id)
-    {
-
-        $candidate = Candidate::find($id);
-
-
-        if (!$candidate) {
-            return response()->json(['message' => 'Candidato não encontrado'], 404);
-        }
-
-        $candidate->photo_url = Storage::url($candidate->photo);
-
-        return response()->json([
-            'message' => 'Candidato encontrado com sucesso!',
-            'candidate' => $candidate,
-        ], 200);
     }
+
+
 
 
 

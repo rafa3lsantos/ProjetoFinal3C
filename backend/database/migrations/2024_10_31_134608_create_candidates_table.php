@@ -23,7 +23,6 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
-            $table->string('curriculum')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();
         });
@@ -32,11 +31,8 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-
     public function down(): void
     {
-        Schema::table('candidates', function (Blueprint $table) {
-            $table->dropColumn('curriculum_id');
-        });
+        Schema::dropIfExists('candidates');
     }
 };
