@@ -14,14 +14,22 @@ return new class extends Migration
 {
     Schema::create('curriculum', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('candidate_id')->constrained('candidates')->onDelete('cascade'); //se apagar o candidato, apaga o currículo
+        $table->string('name_candidate')->nullable();
+        $table->string('email')->nullable();
+        $table->string('phone')->nullable();
         $table->string('cep')->nullable();
         $table->string('address')->nullable();
         $table->string('state')->nullable();
         $table->string('city')->nullable();
-        $table->string('experience')->nullable();
+        $table->string('company')->nullable();
+        $table->string('position')->nullable();
+        $table->boolean('is_currently_working')->nullable();
+        $table->date('start_date')->nullable();
+        $table->date('end_date')->nullable();
+        $table->string('description_ativities')->nullable();
         $table->enum('formation', ['graduação', 'pos-graduação', 'mestrado', 'doutorado'])->nullable();
         $table->string('institution')->nullable();
+        $table->string('experience')->nullable();
         $table->enum('degree', ['tecnologo', 'licenciatura', 'bacharelado'])->nullable();
         $table->enum('status', ['completo', 'em andamento', 'incompleto'])->nullable();
         $table->string('course')->nullable();
@@ -36,13 +44,8 @@ return new class extends Migration
         $table->string('language')->nullable();
         $table->string('language_level')->nullable();
         $table->string('curriculum_attachment')->nullable();
-        $table->foreignId('curriculum_id')->nullable()->constrained('curriculum')->onDelete('set null');
+        $table->foreignId('candidate_id')->constrained('candidates')->onDelete('cascade'); //se apagar o candidato, apaga o currículo
         $table->timestamps();
-
-        $table->foreign('candidate_id')
-            ->references('id')->on('candidates')
-            ->onDelete('cascade');
-        
     });
 }
 
