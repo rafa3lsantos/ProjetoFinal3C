@@ -154,41 +154,34 @@ export default {
                     return;
                 }
 
-                if (this.usuario.perfilPictureFile) {
-                    const formData = new FormData();
-                    formData.append('image', this.usuario.perfilPictureFile);
+                const formData = new FormData();
+                formData.append('company_name', this.empresa.company_name);
+                formData.append('company_sector', this.empresa.company_sector);
+                formData.append('about_company', this.empresa.about_company);
 
-
-                    const response = await HttpService.post(
-                        '/candidate/upload-profile-image',
-                        formData,
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${this.token}`,
-                                'Content-Type': 'multipart/form-data',
-                            }
-                        }
-                    );
+                if (this.empresa.company_photo_file) {
+                    formData.append('company_photo', this.empresa.company_photo_file);
                 }
 
-                const response = await HttpService.put(
-                    `/candidate/update/${this.getCandidateId}`,
-                    this.usuario,
+                const response = await HttpService.post(
+                    `/company/update/${this.getCompanyId}`,
+                    formData,
                     {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
-                            'Content-Type': 'application/json'
-                        }
+                            'Content-Type': 'multipart/form-data',
+                        },
                     }
                 );
 
                 if (response.status === 200) {
                     alert('Informações da conta atualizadas com sucesso.');
+                    this.fetchCompany();
                 } else {
-                    alert('Erro ao atualizar as informações do candidato.');
+                    alert('Erro ao atualizar as informações da empresa.');
                 }
             } catch (error) {
-                console.error("Erro ao atualizar conta:", error);
+                console.error("Erro ao atualizar conta:", error.response?.data || error);
                 alert('Erro ao atualizar informações da conta.');
             }
         },

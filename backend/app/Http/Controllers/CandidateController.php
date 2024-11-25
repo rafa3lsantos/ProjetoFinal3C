@@ -117,7 +117,6 @@ class CandidateController extends Controller
             return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
         }
 
-        // Validação dos campos
         $arrayRequest = $request->validate([
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'gender' => 'sometimes|string|in:masculino,feminino,nao-binario,outro',

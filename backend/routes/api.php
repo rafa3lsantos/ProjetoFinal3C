@@ -72,8 +72,12 @@ Route::prefix('company')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::put('update/{id}', [CompanyController::class, 'update']);
+        Route::post('/upload-profile-image', [CompanyController::class, 'uploadProfileImage']);
+        Route::get('/profile-image/{id}', [CompanyController::class, 'getProfileImage']);
     });
 });
+
+
 
 // -- Jobs Routes --
 
