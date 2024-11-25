@@ -24,8 +24,8 @@ return new class extends Migration
         $table->string('company')->nullable();
         $table->string('position')->nullable();
         $table->boolean('is_currently_working')->nullable();
-        $table->date('start_date')->nullable();
-        $table->date('end_date')->nullable();
+        $table->date('start_date_work')->nullable();
+        $table->date('end_date_work')->nullable();
         $table->string('description_ativities')->nullable();
         $table->enum('formation', ['graduação', 'pos-graduação', 'mestrado', 'doutorado'])->nullable();
         $table->string('institution')->nullable();
@@ -33,8 +33,8 @@ return new class extends Migration
         $table->enum('degree', ['tecnologo', 'licenciatura', 'bacharelado'])->nullable();
         $table->enum('status', ['completo', 'em andamento', 'incompleto'])->nullable();
         $table->string('course')->nullable();
-        $table->date('start_date')->nullable();
-        $table->date('end_date')->nullable();
+        $table->date('start_date_course')->nullable();
+        $table->date('end_date_course')->nullable();
         $table->enum('certificate_type', ['conquista', 'certificado'])->nullable();
         $table->string('certificate_title')->nullable();
         $table->string('certificate_description')->nullable();
