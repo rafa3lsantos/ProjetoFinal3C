@@ -127,6 +127,8 @@ class CurriculumController extends Controller
             'candidate_id' => 'sometimes|exists:candidates,id',
         ];
 
+//wdqadasda
+
         $validatedData = $request->validate($rules);
 
         if ($request->hasFile('curriculum_attachment')) {
