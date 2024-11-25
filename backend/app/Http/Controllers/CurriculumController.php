@@ -94,10 +94,19 @@ class CurriculumController extends Controller
         }
 
         $rules = [
+            'name_candidate' => 'sometimes|string|min:3|max:255',
+            'email' => 'sometimes|string|email|max:255',
+            'phone' => 'sometimes|string|min:9|max:11',
             'cep' => 'sometimes|string|min:8|max:9',
             'address' => 'sometimes|string|min:3|max:255',
             'state' => 'sometimes|string|min:2|max:2',
             'city' => 'sometimes|string|min:3|max:255',
+            'company' => 'sometimes|string|min:3|max:255',
+            'position' => 'sometimes|string|min:3|max:255',
+            'is_currently_working' => 'sometimes|boolean',
+            'start_date' => 'sometimes|date',
+            'end_date' => 'sometimes|date|after_or_equal:start_date',
+            'description_ativities' => 'sometimes|string|min:3|max:255',
             'formation' => 'sometimes|string|in:graduação,pos-graduação,mestrado,doutorado',
             'institution' => 'sometimes|string|min:3|max:255',
             'experience' => 'sometimes|string|min:3|max:255',
@@ -115,6 +124,7 @@ class CurriculumController extends Controller
             'language' => 'sometimes|string|min:3|max:255',
             'language_level' => 'sometimes|string|min:3|max:255',
             'curriculum_attachment' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
+            'candidate_id' => 'sometimes|exists:candidates,id',
         ];
 
         $validatedData = $request->validate($rules);
