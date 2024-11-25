@@ -20,7 +20,6 @@ export default createStore({
       state.candidateId = candidateId;
       state.recruiterId = recruiterId;
       state.curriculumId = curriculumId;
-      state.photo = photo;
       state.email = email;
       localStorage.setItem('authToken', token);
       localStorage.setItem('userRole', role);
@@ -38,7 +37,6 @@ export default createStore({
       state.companyId = null;
       state.candidateId = null;
       state.recruiterId = null;
-      state.photo = null;
       state.curriculumId = null;
       state.email = null;
       localStorage.removeItem('authToken');
