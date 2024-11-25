@@ -17,6 +17,9 @@
                             <router-link to="/add-recrutador" class="list-group-item list-group-item-action">
                                 Adicionar Recrutador
                             </router-link>
+                            <router-link to="/recrutadores" class="list-group-item list-group-item-action">
+                                Recrutadores
+                            </router-link>
                         </div>
                     </div>
                 </div>

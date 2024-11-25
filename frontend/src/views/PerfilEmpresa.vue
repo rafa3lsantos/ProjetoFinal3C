@@ -15,6 +15,8 @@
                                 class="list-group-item list-group-item-action">Empresa</router-link>
                             <router-link to="/add-recrutador" class="list-group-item list-group-item-action">Adicionar
                                 Recrutador</router-link>
+                            <router-link to="/recrutadores" class="list-group-item list-group-item-action">
+                                Recrutadores</router-link>
                         </div>
                     </div>
                 </div>
@@ -45,7 +47,7 @@
                                                 placeholder="Faça um breve resumo sobre sua empresa"></textarea>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-4">
+                                    <div class="col-md-4">
                                         <div class="text-center">
                                             <img :src="profileImagePreview || empresa.company_photo || '../../public/user.png'"
                                                 alt="Imagem da Empresa" class="rounded-circle img-responsive mt-2"
@@ -59,7 +61,7 @@
                                             <small>Para melhores resultados, use uma imagem de pelo menos 128px por
                                                 128px em .jpg</small>
                                         </div>
-                                    </div> -->
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Salvar Informações</button>
                             </form>
@@ -87,9 +89,9 @@ export default {
                 company_name: '',
                 company_sector: '',
                 about_company: '',
-                // company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
+                company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
             },
-            // profileImagePreview: '',
+            profileImagePreview: '',
             errors: {},
             token: localStorage.getItem('authToken') || ''
         };
@@ -101,17 +103,17 @@ export default {
         ...mapGetters(['getCompanyId'])
     },
     methods: {
-        // onImageChange(event) {
-        //     const file = event.target.files[0];
-        //     if (file) {
-        //         this.profileImagePreview = URL.createObjectURL(file);
-        //         const reader = new FileReader();
-        //         reader.onload = () => {
-        //             this.empresa.company_photo = reader.result;
-        //         };
-        //         reader.readAsDataURL(file);
-        //     }
-        // },
+        onImageChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.profileImagePreview = URL.createObjectURL(file);
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.empresa.company_photo = reader.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
         validateFields() {
             this.errors = {};
             if (!this.empresa.company_name) {
@@ -167,7 +169,7 @@ export default {
                 this.empresa.company_name = user.company_name || '';
                 this.empresa.company_sector = user.company_sector || '';
                 this.empresa.about_company = user.about_company || '';
-                // this.empresa.company_photo = user.company_photo || null;
+                this.empresa.company_photo = user.company_photo || null;
             } catch (error) {
                 console.error('Erro ao carregar o perfil da empresa:', error);
             }
