@@ -1,11 +1,5 @@
 <template>
     <div>
-
-        <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-
-        </div>
-
-        
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">3Cvagas</a>
@@ -25,7 +19,6 @@
                     </ul>
                 </div>
 
-               
                 <div class="user ms-auto">
                     <div class="dropdown" @click="toggleDropdown">
                         <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
@@ -41,16 +34,14 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </nav>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import HttpService from '@/services/HttpService';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'Navbar',
@@ -61,14 +52,37 @@ export default {
             userImage: '../../public/user.png',
         };
     },
+    computed: {
+        ...mapGetters(['getCandidateId']),
+    },
     methods: {
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
+        async fetchUserImage() {
+            try {
+                const token = localStorage.getItem('authToken') || '';
+                const response = await HttpService.get(`/candidate/show/${this.getCandidateId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const user = response.data.candidate;
+                if (user.photo) {
+                    this.userImage = `http://127.0.0.1:8000/storage/${user.photo}`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar a imagem do usuário:', error);
+            }
+        },
         async handleLogout() {
             await this.$store.dispatch('logout');
             this.$router.push({ name: 'login' });
-        }
+        },
+    },
+    created() {
+        this.fetchUserImage();
     },
 };
 </script>
@@ -86,11 +100,6 @@ export default {
     .bd-placeholder-img-lg {
         font-size: 3.5rem;
     }
-}
-
-.pesquisa {
-    display: flex;
-    margin-right: 300px;
 }
 
 .user {
@@ -121,9 +130,5 @@ export default {
 
 .exit-color {
     color: #c01c1c;
-}
-
-.icon-location {
-    right: 50px;
 }
 </style>

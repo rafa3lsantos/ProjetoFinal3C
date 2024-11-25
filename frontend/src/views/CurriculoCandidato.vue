@@ -104,7 +104,7 @@ export default {
     async fetchCurriculum() {
       try {
         const userId = localStorage.getItem("candidateId");
-        const response = await HttpService.get(`/curriculum/show/${userId}`, {
+        const response = await HttpService.get(`/curriculum/show/${CandidateId}`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },

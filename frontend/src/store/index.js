@@ -12,7 +12,7 @@ export default createStore({
     email: localStorage.getItem('email') || null,
   },
   mutations: {
-    login(state, { token, role, companyId, candidateId, recruiterId,curriculumId, email }) {
+    login(state, { token, role, companyId, candidateId, recruiterId,curriculumId, email,}) {
       state.isAuthenticated = true;
       state.authToken = token;
       state.userRole = role;
@@ -28,6 +28,7 @@ export default createStore({
       localStorage.setItem('recruiterId', recruiterId);
       localStorage.setItem('curriculumId', curriculumId);
       localStorage.setItem('email', email);
+
     },
     logout(state) {
       state.isAuthenticated = false;
@@ -44,6 +45,7 @@ export default createStore({
       localStorage.removeItem('candidateId');
       localStorage.removeItem('recruiterId');
       localStorage.removeItem('curriculumId');
+
       localStorage.removeItem('email');
     },
   },

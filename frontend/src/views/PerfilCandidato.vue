@@ -113,7 +113,7 @@ export default {
                 { label: 'Prefiro não responder', value: 'sem-resposta' }
             ],
             errors: {},
-            token: localStorage.getItem('authToken') || ''
+            token: localStorage.getItem('authToken') || '',
         };
     },
     created() {
@@ -125,8 +125,9 @@ export default {
     methods: {
         onImageChange(event) {
             const file = event.target.files[0];
+            console.log(file);
             if (file) {
-                this.profileImagePreview = URL.createObjectURL(file);
+                this.usuario.perfilPictureFile = file;
                 const reader = new FileReader();
                 reader.onload = () => {
                     this.usuario.perfilPicture = reader.result;
@@ -134,6 +135,7 @@ export default {
                 reader.readAsDataURL(file);
             }
         },
+
         validateFields() {
             this.errors = {};
             if (!this.usuario.name_candidate) {
@@ -144,6 +146,7 @@ export default {
             }
             return Object.keys(this.errors).length === 0;
         },
+
         async sendUpdateRequest() {
             try {
                 if (!this.token) {
@@ -151,16 +154,35 @@ export default {
                     return;
                 }
 
-                const response = await HttpService.put(`/candidate/update/${this.getCandidateId}`, this.usuario, {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'application/json'
+                if (this.usuario.perfilPictureFile) {
+                    const formData = new FormData();
+                    formData.append('image', this.usuario.perfilPictureFile);
+
+
+                    const response = await HttpService.post(
+                        '/candidate/upload-profile-image',
+                        formData,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Content-Type': 'multipart/form-data',
+                            }
+                        }
+                    );
+                }
+
+                const response = await HttpService.put(
+                    `/candidate/update/${this.getCandidateId}`,
+                    this.usuario,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
                     }
-                });
+                );
 
-                console.log(response)
-
-                if (response.status == 200) {
+                if (response.status === 200) {
                     alert('Informações da conta atualizadas com sucesso.');
                 } else {
                     alert('Erro ao atualizar as informações do candidato.');
@@ -170,6 +192,7 @@ export default {
                 alert('Erro ao atualizar informações da conta.');
             }
         },
+
         async updateConta() {
             if (this.validateFields()) {
                 await this.sendUpdateRequest();
@@ -187,11 +210,23 @@ export default {
                 this.usuario.phone = user.phone || '';
                 this.usuario.gender = user.gender || '';
                 this.usuario.about_candidate = user.about_candidate || '';
-                this.usuario.perfilPicture = user.perfilPicture || this.usuario.perfilPicture;
+
+
+                if (user.photo) {
+                    console.log(user.photo);
+                    this.usuario.perfilPicture = `http://127.0.0.1:8000/storage/${user.photo}`;
+                } else {
+                    this.usuario.perfilPicture = this.usuario.perfilPicture;
+                }
             } catch (error) {
                 console.error('Erro ao carregar o perfil do usuário:', error);
             }
         },
+
+
+
+
+
         triggerFileInput() {
             this.$refs.fileInput.click();
         }
@@ -201,6 +236,8 @@ export default {
     }
 };
 </script>
+
+
 
 <style scoped>
 body {

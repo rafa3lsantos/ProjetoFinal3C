@@ -32,6 +32,8 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
         Route::put('/update-email', [CandidateController::class, 'updateEmail']);
         Route::delete('/delete', [CandidateController::class, 'deleteCandidate']);
         Route::get('/show/{id}', [CandidateController::class, 'show']);
+        Route::post('/upload-profile-image', [CandidateController::class, 'uploadProfileImage']);
+        Route::get('/profile-image/{id}', [CandidateController::class, 'getProfileImage']);
     });
 });
 
