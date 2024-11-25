@@ -3,71 +3,112 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Candidate;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
-
 
 class CandidateController extends Controller
 {
+    /**
+     * Registro de um novo candidato.
+     */
     public function store(Request $request)
     {
-        $arrayRequest = $request->validate([
+        $rules = [
             'name_candidate' => 'required|string|min:3|max:255',
-            'cpf' => 'required|string|min:11|max:14|unique:candidates',
-            'gender' => 'nullable|string|in:masculino,feminino,nao-binario,outro',
-            'phone' => 'nullable|string|min:11|max:14|unique:candidates',
-            'email' => 'required|string|min:3|max:255|unique:candidates',
-            'password' => 'required|string|min:6|max:255|confirmed',
-            'password_confirmation' => 'required|string|min:6|max:255',
-            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+            'email' => 'required|email|unique:candidates,email',
+            'password' => 'required|string|min:6|confirmed',
+            'cpf' => 'required|string|unique:candidates,cpf|max:14',
+            'gender' => 'required|string|in:masculino,feminino,outro',
+            'phone' => 'required|string|min:9|max:15',
+            'about_candidate' => 'nullable|string|max:2000',
+            'photo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+        ];
 
+        $validatedData = $request->validate($rules);
+
+        // Upload de foto, se fornecida
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-
-            $filePath = $file->storeAs('images', $filename, 'public');
-
-            $arrayRequest['photo'] = $filePath;
+            $filePath = $file->storeAs('candidates/photos', $filename, 'public');
+            $validatedData['photo'] = $filePath;
         }
 
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
-        $arrayRequest['password'] = Hash::make($arrayRequest['password']);
-        unset($arrayRequest['password_confirmation']);
-
-        $candidate = Candidate::create($arrayRequest);
+        $candidate = Candidate::create($validatedData);
 
         return response()->json([
-            'message' => 'Cadastrado com sucesso!',
+            'message' => 'Candidato registrado com sucesso!',
             'candidate' => $candidate,
         ], 201);
     }
 
+    /**
+     * Login do candidato.
+     */
     public function loginCandidate(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|string',
+        $request->validate([
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
+        $candidate = Candidate::where('email', $request->email)->first();
 
-        if (Auth::guard('candidate')->attempt($credentials)) {
-            $candidate = Auth::guard('candidate')->user();
-            $token = $candidate->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'message' => 'Candidato autenticado com sucesso!',
-                'token' => $token,
-                'candidate_id' => $candidate->id,
-                'curriculum_id' => $candidate->curriculum_id,
-            ], 200);
+        if (!$candidate || !Hash::check($request->password, $candidate->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['Credenciais inválidas.'],
+            ]);
         }
 
-        return response()->json(['message' => 'Falha na autenticação do candidato', 'error' => 'Credenciais inválidas'], 401);
+        $token = $candidate->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login realizado com sucesso!',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'candidate' => $candidate,
+        ]);
     }
 
+    /**
+     * Logout do candidato.
+     */
+    public function logout()
+    {
+        $user = Auth::guard('candidate')->user();
+
+        if ($user) {
+            $user->tokens()->delete();
+            return response()->json(['message' => 'Logout realizado com sucesso!']);
+        }
+
+        return response()->json(['message' => 'Usuário não autenticado.'], 401);
+    }
+
+    /**
+     * Visualizar informações do perfil do candidato autenticado.
+     */
+    public function show($id)
+    {
+        $candidate = Candidate::find($id);
+        if (!$candidate) {
+            return response()->json(['message' => 'Candidato não encontrada'], 404);
+        }
+
+        return response()->json([
+            'message' => 'candidato encontrado com sucesso!',
+            'candidate' => $candidate,
+        ], 200);
+    }
+
+    /**
+     * Atualizar informações do candidato.
+     */
     public function updateCandidate(Request $request)
     {
         $candidate = Auth::user();
@@ -141,17 +182,18 @@ class CandidateController extends Controller
     }
 
 
+
     public function deleteCandidate(Request $request)
     {
-        $candidate = Auth::user();
-        if (!$candidate) {
-            return response()->json(['message' => 'Candidato não encontrado ou não autenticado'], 401);
+        $user = Auth::guard('candidate')->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não autenticado.'], 401);
         }
 
-        $candidate->delete();
+        $user->delete();
 
-        return response()->json(['message' => 'Candidato deletado com sucesso'], 200);
-    }
+        return response()->json(['message' => 'Conta excluída com sucesso!']);
 
     public function show($id)
     {
@@ -216,7 +258,6 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Senha atualizada com sucesso!'], 200);
     }
-
 
     public function updateEmail(Request $request)
     {

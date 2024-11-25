@@ -59,9 +59,7 @@ class CurriculumController extends Controller
         }
 
         $validatedData['candidate_id'] = $user->id;
-
         $curriculum = Curriculum::create($validatedData);
-
         return response()->json([
             'message' => 'Currículo cadastrado com sucesso!',
             'curriculum' => $curriculum,
@@ -71,7 +69,6 @@ class CurriculumController extends Controller
     public function show($id)
     {
         $curriculum = Curriculum::find($id);
-        dd($curriculum);
 
         if (!$curriculum) {
             return response()->json(['message' => 'Currículo não encontrado.'], 404);
