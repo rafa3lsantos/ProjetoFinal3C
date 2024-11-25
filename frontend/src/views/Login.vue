@@ -101,7 +101,6 @@ export default {
                         role: 'candidato',
                         candidateId: candidateResponse.data.candidate_id,
                         curriculumId: candidateResponse.data.curriculum_id,
-                        
                     });
                     alert('Login realizado com sucesso!');
                     this.$router.push('/home-candidato');
