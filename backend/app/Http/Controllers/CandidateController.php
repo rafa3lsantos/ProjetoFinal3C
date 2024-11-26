@@ -65,8 +65,8 @@ class CandidateController extends Controller
             'token' => $token,
             'token_type' => 'Bearer',
             'candidate_id' => $candidate->id,
-        ],200);
 
+        ], 200);
     }
 
     /**
@@ -124,7 +124,6 @@ class CandidateController extends Controller
             'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'photo_base64' => 'sometimes|string',
         ]);
-
 
         $imageDirectory = base_path('../../../../frontend/public/images');
 

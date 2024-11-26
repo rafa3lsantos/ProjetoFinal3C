@@ -26,7 +26,6 @@ Route::post('candidate/register', [CandidateController::class, 'store']);
 
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::prefix('candidate')->group(function () {
-        Route::put('update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::put('/update/{id}', [CandidateController::class, 'updateCandidate']);
         Route::put('/update-password', [CandidateController::class, 'updatePassword']);
         Route::put('/update-email', [CandidateController::class, 'updateEmail']);
@@ -72,7 +71,7 @@ Route::prefix('company')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::put('update/{id}', [CompanyController::class, 'update']);
-        Route::post('/upload-profile-image', [CompanyController::class, 'uploadProfileImage']);
+        Route::post('upload-profile-image', [CompanyController::class, 'uploadProfileImage']);
         Route::get('/profile-image/{id}', [CompanyController::class, 'getProfileImage']);
     });
 });
