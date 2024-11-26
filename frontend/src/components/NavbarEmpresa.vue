@@ -45,34 +45,49 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import HttpService from '@/services/HttpService';
+import { mapGetters } from 'vuex';
 
 export default {
-    name: 'NavbarEmpresa',
+    name: 'Navbar',
     data() {
         return {
             isDropdownOpen: false,
+            arrowUser: '../../public/down.png',
+            userImage: '../../public/user.png',
         };
     },
     computed: {
-        ...mapGetters(['getUserImage', 'getArrowIcon']),
-        userImage() {
-            return this.getUserImage || '../../public/user.png';
-        },
-        arrowUser() {
-            return this.getArrowIcon || '../../public/down.png';
-        },
+        ...mapGetters(['getCompanyId']),
     },
     methods: {
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
+        async fetchUserImage() {
+            try {
+                const token = localStorage.getItem('authToken') || '';
+                const response = await HttpService.get(`/company/show/${this.getCompanyId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const company = response.data.company;
+                if (company.company_photo) {
+                    this.userImage = `http://127.0.0.1:8000/storage/${company.company_photo}`;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar a imagem do usuário:', error);
+            }
+        },
         async handleLogout() {
             await this.$store.dispatch('logout');
             this.$router.push({ name: 'login' });
         },
+    },
+    created() {
+        this.fetchUserImage();
     },
 };
 </script>
