@@ -149,42 +149,58 @@ export default {
 
         async sendUpdateRequest() {
             try {
+
                 if (!this.token) {
                     alert('Usuário não autenticado!');
                     return;
                 }
 
-                const formData = new FormData();
-                formData.append('company_name', this.empresa.company_name);
-                formData.append('company_sector', this.empresa.company_sector);
-                formData.append('about_company', this.empresa.about_company);
 
-                if (this.empresa.company_photo_file) {
-                    formData.append('company_photo', this.empresa.company_photo_file);
-                }
-
-                const response = await HttpService.post(
-                    `/company/update/${this.getCompanyId}`,
-                    formData,
+                const updateResponse = await HttpService.put(
+                    `/candidate/update/${this.getCandidateId}`,
+                    this.usuario,
                     {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
-                            'Content-Type': 'multipart/form-data',
+                            'Content-Type': 'application/json',
                         },
                     }
                 );
 
-                if (response.status === 200) {
-                    alert('Informações da conta atualizadas com sucesso.');
-                    this.fetchCompany();
-                } else {
-                    alert('Erro ao atualizar as informações da empresa.');
+                if (updateResponse.status !== 200) {
+                    alert('Erro ao atualizar as informações do candidato.');
+                    return;
                 }
+
+
+                if (this.usuario.perfilPictureFile) {
+                    const formData = new FormData();
+                    formData.append('image', this.usuario.perfilPictureFile);
+
+                    const uploadResponse = await HttpService.post(
+                        '/candidate/upload-profile-image',
+                        formData,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        }
+                    );
+
+                    if (uploadResponse.status !== 200) {
+                        alert('Erro ao fazer upload da imagem de perfil.');
+                        return;
+                    }
+                }
+
+                alert('Informações da conta atualizadas com sucesso.');
             } catch (error) {
-                console.error("Erro ao atualizar conta:", error.response?.data || error);
+                console.error("Erro ao atualizar conta:", error);
                 alert('Erro ao atualizar informações da conta.');
             }
         },
+
 
         async updateConta() {
             if (this.validateFields()) {

@@ -69,9 +69,9 @@ class CandidateController extends Controller
 
         return response()->json([
             'message' => 'Login realizado com sucesso!',
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
-            'candidate' => $candidate,
+            'candidate_id' => $candidate->id,
         ]);
     }
 
@@ -105,7 +105,7 @@ class CandidateController extends Controller
             'candidate' => $candidate,
         ], 200);
     }
-    
+
     /**
      * Atualizar informações do candidato.
      */
@@ -133,6 +133,7 @@ class CandidateController extends Controller
 
 
         $imageDirectory = base_path('../../../../frontend/public/images');
+        
         if ($request->hasFile('photo')) {
             try {
 

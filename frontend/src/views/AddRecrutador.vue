@@ -14,11 +14,11 @@
                             <router-link to="/perfil-empresa" class="list-group-item list-group-item-action">
                                 Empresa
                             </router-link>
-                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action">
-                                Adicionar Recrutador
+                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action"
+                                active-class="active">Adicionar Recrutador
                             </router-link>
-                            <router-link to="/recrutadores" class="list-group-item list-group-item-action">
-                                Recrutadores
+                            <router-link to="/recrutadores" class="list-group-item list-group-item-action"
+                                active-class="active">Recrutadores
                             </router-link>
                         </div>
                     </div>
