@@ -64,7 +64,7 @@ class CandidateController extends Controller
             'message' => 'Login realizado com sucesso!',
             'token' => $token,
             'token_type' => 'Bearer',
-            'candidate' => $candidate,
+            'candidate_id' => $candidate->id,
         ], 200);
     }
 
