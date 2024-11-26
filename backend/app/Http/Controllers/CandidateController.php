@@ -21,10 +21,6 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'password' => 'required|string|min:6|confirmed',
             'cpf' => 'required|string|unique:candidates,cpf|max:14',
-            'gender' => 'required|string|in:masculino,feminino,outro',
-            'phone' => 'required|string|min:9|max:15',
-            'about_candidate' => 'nullable|string|max:2000',
-            'photo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ];
 
         $validatedData = $request->validate($rules);
@@ -47,22 +43,19 @@ class CandidateController extends Controller
         ], 201);
     }
 
-    /**
-     * Login do candidato.
-     */
     public function loginCandidate(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        $candidate = Candidate::where('email', $request->email)->first();
+        $candidate = Candidate::where('email', $validatedData['email'])->first();
 
-        if (!$candidate || !Hash::check($request->password, $candidate->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Credenciais inválidas.'],
-            ]);
+        if (!$candidate || !Hash::check($validatedData['password'], $candidate->password)) {
+            return response()->json([
+                'message' => 'Credenciais inválidas.',
+            ], 401);
         }
 
         $token = $candidate->createToken('auth_token')->plainTextToken;
@@ -73,6 +66,9 @@ class CandidateController extends Controller
             'token_type' => 'Bearer',
             'candidate_id' => $candidate->id,
         ]);
+
+        ], 200);
+
     }
 
     /**
@@ -195,10 +191,6 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Conta excluída com sucesso!']);
     }
-
-
-
-
 
     public function logoutCandidate(Request $request)
     {
