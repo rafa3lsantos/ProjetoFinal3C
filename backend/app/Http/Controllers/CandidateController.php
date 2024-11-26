@@ -47,32 +47,29 @@ class CandidateController extends Controller
         ], 201);
     }
 
-    /**
-     * Login do candidato.
-     */
     public function loginCandidate(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        $candidate = Candidate::where('email', $request->email)->first();
+        $candidate = Candidate::where('email', $validatedData['email'])->first();
 
-        if (!$candidate || !Hash::check($request->password, $candidate->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Credenciais inválidas.'],
-            ]);
+        if (!$candidate || !Hash::check($validatedData['password'], $candidate->password)) {
+            return response()->json([
+                'message' => 'Credenciais inválidas.',
+            ], 401);
         }
 
         $token = $candidate->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login realizado com sucesso!',
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
             'candidate' => $candidate,
-        ]);
+        ], 200);
     }
 
     /**
@@ -105,7 +102,7 @@ class CandidateController extends Controller
             'candidate' => $candidate,
         ], 200);
     }
-    
+
     /**
      * Atualizar informações do candidato.
      */
