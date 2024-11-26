@@ -59,8 +59,11 @@ Route::prefix('recruiter')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:recruiter'])->group(function () {
         Route::put('update/{id}', [RecruiterController::class, 'update']);
+        Route::post('/upload-profile-image', [RecruiterController::class, 'uploadProfileImage']);
+        Route::get('/profile-image/{id}', [RecruiterController::class, 'getProfileImage']);
     });
 });
+
 
 // -- Company Routes --
 
