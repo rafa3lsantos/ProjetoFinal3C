@@ -18,19 +18,18 @@ class CompanyController extends Controller
             'company_phone' => 'nullable|string|max:255',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',
-            'company_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
         ]);
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
-        if ($request->hasFile('company_photo')) {
-            $file = $request->file('company_photo');
-            $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('images', $filename, 'public');
-            $arrayRequest['company_photo'] = $filePath;
-        }
+        // if ($request->hasFile('company_photo')) {
+        //     $file = $request->file('company_photo');
+        //     $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
+        //     $filePath = $file->storeAs('images', $filename, 'public');
+        //     $arrayRequest['company_photo'] = $filePath;
+        // }
 
 
         $company = Company::create($arrayRequest);
@@ -73,7 +72,6 @@ class CompanyController extends Controller
             'company_phone' => 'sometimes|string|min:10|max:14|unique:companies,company_phone,' . $company->id,
             'email' => 'sometimes|email|max:255',
             'password' => 'sometimes|string|min:8',
-            'company_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'photo_base64' => 'sometimes|string',
             'company_sector' => 'sometimes|string|min:3|max:255',
             'about_company' => 'sometimes|string|min:3|max:255',
@@ -81,17 +79,17 @@ class CompanyController extends Controller
 
         $imageDirectory = base_path('../../../../frontend/public/company_photos');
 
-        if ($request->hasFile('comapany_photo')) {
-            try {
+        // if ($request->hasFile('comapany_photo')) {
+        //     try {
 
-                $imageName = uniqid() . '.' . $request->file('comapany_photo')->getClientOriginalExtension();
-                $request->file('comapany_photo')->move($imageDirectory, $imageName);
+        //         $imageName = uniqid() . '.' . $request->file('comapany_photo')->getClientOriginalExtension();
+        //         $request->file('comapany_photo')->move($imageDirectory, $imageName);
 
-                $arrayRequest['company_photo'] = "images/$imageName";
-            } catch (\Exception $e) {
-                return response()->json(['message' => 'Erro ao salvar a imagem enviada.', 'error' => $e->getMessage()], 500);
-            }
-        }
+        //         $arrayRequest['company_photo'] = "images/$imageName";
+        //     } catch (\Exception $e) {
+        //         return response()->json(['message' => 'Erro ao salvar a imagem enviada.', 'error' => $e->getMessage()], 500);
+        //     }
+        // }
 
         if ($request->filled('photo_base64')) {
             $base64Image = $request->photo_base64;
@@ -149,6 +147,7 @@ class CompanyController extends Controller
 
     public function uploadProfileImage(Request $request)
     {
+        
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);

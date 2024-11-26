@@ -140,39 +140,52 @@ export default {
 
             return Object.keys(this.errors).length === 0;
         },
-
         async sendUpdateRequest() {
+
             try {
+
                 if (!this.token) {
                     alert('Usuário não autenticado!');
                     return;
                 }
 
-                const formData = new FormData();
-
-
-                formData.append('company_name', this.empresa.company_name);
-                formData.append('company_sector', this.empresa.company_sector);
-                formData.append('about_company', this.empresa.about_company);
-
-                if (this.empresa.company_photo_file) {
-                    formData.append('company_photo', this.empresa.company_photo_file);
-                }
 
                 const updateResponse = await HttpService.put(
                     `/company/update/${this.getCompanyId}`,
-                    formData,
+                    this.empresa,
                     {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
-                            'Content-Type': 'multipart/form-data',
+                            'Content-Type': 'application/json',
                         },
                     }
                 );
 
                 if (updateResponse.status !== 200) {
-                    alert('Erro ao atualizar as informações da empresa.');
+                    alert('Erro ao atualizar as informações do candidato.');
                     return;
+                }
+
+
+                if (this.empresa.company_photo) {
+                    const formData = new FormData();
+                    formData.append('image', this.empresa.company_photo_file);
+
+                    const uploadResponse = await HttpService.post(
+                        '/company/upload-profile-image',
+                        formData,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        }
+                    );
+
+                    if (uploadResponse.status !== 200) {
+                        alert('Erro ao fazer upload da imagem de perfil.');
+                        return;
+                    }
                 }
 
                 alert('Informações da conta atualizadas com sucesso.');
