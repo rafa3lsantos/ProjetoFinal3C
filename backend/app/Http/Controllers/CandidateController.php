@@ -21,10 +21,6 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'password' => 'required|string|min:6|confirmed',
             'cpf' => 'required|string|unique:candidates,cpf|max:14',
-            'gender' => 'required|string|in:masculino,feminino,outro',
-            'phone' => 'required|string|min:9|max:15',
-            'about_candidate' => 'nullable|string|max:2000',
-            'photo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ];
 
         $validatedData = $request->validate($rules);
@@ -105,7 +101,7 @@ class CandidateController extends Controller
             'candidate' => $candidate,
         ], 200);
     }
-    
+
     /**
      * Atualizar informações do candidato.
      */
@@ -194,10 +190,6 @@ class CandidateController extends Controller
 
         return response()->json(['message' => 'Conta excluída com sucesso!']);
     }
-
-
-
-
 
     public function logoutCandidate(Request $request)
     {
