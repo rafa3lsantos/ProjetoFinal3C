@@ -11,12 +11,14 @@
                             <h5 class="card-title mb-0">Configurações de Perfil Empresa</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/perfil-empresa"
-                                class="list-group-item list-group-item-action">Empresa</router-link>
-                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action">Adicionar
-                                Recrutador</router-link>
-                            <router-link to="/recrutadores"
-                                class="list-group-item list-group-item-action">Recrutadores</router-link>
+                            <router-link to="/perfil-empresa" class="list-group-item list-group-item-action"
+                                active-class="active">Empresa</router-link>
+
+                            <router-link to="/add-recrutador" class="list-group-item list-group-item-action"
+                                active-class="active">Adicionar Recrutador</router-link>
+
+                            <router-link to="/recrutadores" class="list-group-item list-group-item-action"
+                                active-class="active">Recrutadores</router-link>
                         </div>
                     </div>
                 </div>
@@ -55,17 +57,18 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-center">
-                                            <img :src="profileImagePreview || empresa.company_photo || placeholderPhoto"
-                                                alt="Imagem da Empresa" class="rounded-circle img-responsive mt-2"
-                                                width="128" height="128">
                                             <div class="mt-2">
-                                                <label class="btn btn-primary">
-                                                    <i class="fa fa-upload"></i>
-                                                    <input type="file" ref="fileInput" @change="onImageChange" hidden>
-                                                </label>
+                                                <img class="rounded-circle mt-5" width="150px"
+                                                    :src="empresa.company_photo" alt="Imagem de Perfil">
+
+                                                <input type="file" @change="onImageChange" style="display: none;"
+                                                    ref="fileInput" />
+                                                <button type="button" class="btn btn-primary mt-3"
+                                                    @click="triggerFileInput">Alterar Imagem</button>
+
                                             </div>
-                                            <small>Para melhores resultados, use uma imagem de pelo menos 128px por
-                                                128px em .jpg</small>
+                                            <small>Adicione uma foto de perfil para sua empresa. Se não selecionar,
+                                                será usada a imagem padrão.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -111,15 +114,17 @@ export default {
     methods: {
         onImageChange(event) {
             const file = event.target.files[0];
+            console.log(file);
             if (file) {
                 this.empresa.company_photo_file = file;
                 const reader = new FileReader();
                 reader.onload = () => {
-                    this.profileImagePreview = reader.result;
+                    this.empresa.company_photo = reader.result;
                 };
                 reader.readAsDataURL(file);
             }
         },
+
 
         validateFields() {
             this.errors = {};
@@ -143,50 +148,40 @@ export default {
                     return;
                 }
 
-                const updateData = {
-                    company_name: this.empresa.company_name,
-                    company_sector: this.empresa.company_sector,
-                    about_company: this.empresa.about_company,
-                    company_photo: this.profileImagePreview || this.empresa.company_photo,
-                };
-
                 const formData = new FormData();
+
+
+                formData.append('company_name', this.empresa.company_name);
+                formData.append('company_sector', this.empresa.company_sector);
+                formData.append('about_company', this.empresa.about_company);
+
                 if (this.empresa.company_photo_file) {
                     formData.append('company_photo', this.empresa.company_photo_file);
-                    await HttpService.post(
-                        '/company/upload-profile-image',
-                        formData,
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${this.token}`,
-                                'Content-Type': 'multipart/form-data',
-                            },
-                        }
-                    );
                 }
 
-                const response = await HttpService.put(
+                const updateResponse = await HttpService.put(
                     `/company/update/${this.getCompanyId}`,
-                    updateData,
+                    formData,
                     {
                         headers: {
                             'Authorization': `Bearer ${this.token}`,
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'multipart/form-data',
                         },
                     }
                 );
 
-                if (response.status === 200) {
-                    alert('Informações da conta atualizadas com sucesso.');
-                    this.fetchCompany();
-                } else {
+                if (updateResponse.status !== 200) {
                     alert('Erro ao atualizar as informações da empresa.');
+                    return;
                 }
+
+                alert('Informações da conta atualizadas com sucesso.');
             } catch (error) {
                 console.error("Erro ao atualizar conta:", error);
                 alert('Erro ao atualizar informações da conta.');
             }
         },
+
 
         async updateConta() {
             if (this.validateFields()) {
@@ -208,8 +203,9 @@ export default {
                 this.empresa.company_sector = company.company_sector || '';
                 this.empresa.about_company = company.about_company || '';
 
-                if (company.photo) {
-                    this.empresa.company_photo = `http://127.0.0.1:8000/storage/${company.photo}`;
+                if (company.company_photo) {
+                    console.log(company.company_photo);
+                    this.empresa.company_photo = `http://127.0.0.1:8000/storage/${company.company_photo}`;
                 }
             } catch (error) {
                 console.error('Erro ao carregar o perfil da empresa:', error);
