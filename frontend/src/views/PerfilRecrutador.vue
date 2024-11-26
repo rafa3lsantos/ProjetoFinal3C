@@ -18,7 +18,6 @@
                             <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">
                                 Minhas Vagas
                             </router-link>
-                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">Minhas vagas</router-link>
                         </div>
                     </div>
                 </div>
@@ -49,7 +48,7 @@
                                                     :key="index">
                                                     <input class="form-check-input" type="radio" :name="'gender'"
                                                         :id="option.value" :value="option.value"
-                                                        v-model="recruiter.gender">
+                                                        v-model="recruiter.recruiter_gender">
                                                     <label class="form-check-label" :for="option.value">{{ option.label
                                                         }}</label>
                                                 </div>
@@ -57,8 +56,24 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="phone">Telefone</label>
-                                            <input type="text" class="form-control" id="phone" v-model="recruiter.phone"
+                                            <input type="text" class="form-control" id="phone"
+                                                v-model="recruiter.recruiter_phone"
                                                 placeholder="Informe seu Telefone" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="text-center">
+                                            <div class="mt-2">
+                                                <img class="rounded-circle mt-5" width="150px"
+                                                    :src="recruiter.recruiter_photo" alt="Imagem de Perfil">
+                                                <input type="file" @change="onImageChange" style="display: none;"
+                                                    ref="fileInput" />
+                                                <button type="button" class="btn btn-primary mt-3"
+                                                    @click="triggerFileInput">Alterar Imagem</button>
+
+                                            </div>
+                                            <small>Adicione uma foto de perfil. Se não selecionar,
+                                                será usada a imagem padrão.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -71,6 +86,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
@@ -85,11 +101,13 @@ export default {
         return {
             recruiter: {
                 id: '',
-                recruiter_name: '',
                 email: '',
-                phone: '',
-                gender: '',
+                recruiter_name: '',
+                recruiter_phone: '',
+                recruiter_gender: '',
+                recruiter_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
             },
+            profileImagePreview: '',
             genderOptions: [
                 { label: 'Masculino', value: 'male' },
                 { label: 'Feminino', value: 'female' },
@@ -97,6 +115,7 @@ export default {
                 { label: 'Outro', value: 'other' },
                 { label: 'Prefiro não responder', value: 'prefer not to say' },
             ],
+            errors: {},
             token: localStorage.getItem('authToken') || ''
         };
     },
@@ -107,57 +126,107 @@ export default {
         ...mapGetters(['getRecruiterId'])
     },
     methods: {
+        onImageChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.recruiter.recruiter_photo_file = file;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    this.recruiter.recruiter_photo = reader.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        },
+
+
+
         async sendUpdateRequest() {
             try {
+
                 if (!this.token) {
                     alert('Usuário não autenticado!');
                     return;
                 }
 
-                const payload = {
-                    recruiter_name: this.recruiter.recruiter_name,
-                    email: this.recruiter.email,
-                    phone: this.recruiter.phone,
-                    gender: this.recruiter.gender,
-                };
 
-                const response = await HttpService.put(`/recruiter/update/${this.getRecruiterId}`, payload, {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'application/json'
+                const updateResponse = await HttpService.put(
+                    `/recruiter/update/${this.getRecruiterId}`,
+                    this.recruiter,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${this.token}`,
+                            'Content-Type': 'application/json',
+                        },
                     }
-                });
+                );
 
-                if (response.status === 200) {
-                    alert('Informações da conta atualizadas com sucesso.');
-                } else {
-                    alert('Erro ao atualizar as informações do recrutador.');
+                if (updateResponse.status !== 200) {
+                    alert('Erro ao atualizar as informações do candidato.');
+                    return;
                 }
+
+
+                if (this.recruiter.recruiter_photo_file) {
+                    const formData = new FormData();
+                    formData.append('image', this.recruiter.recruiter_photo_file);
+
+                    const uploadResponse = await HttpService.post(
+                        '/recruiter/upload-profile-image',
+                        formData,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${this.token}`,
+                                'Content-Type': 'multipart/form-data',
+                            },
+                        }
+                    );
+
+                    if (uploadResponse.status !== 200) {
+                        alert('Erro ao fazer upload da imagem de perfil.');
+                        return;
+                    }
+                }
+
+                alert('Informações da conta atualizadas com sucesso.');
             } catch (error) {
                 console.error("Erro ao atualizar conta:", error);
                 alert('Erro ao atualizar informações da conta.');
             }
         },
+
+
         async updateConta() {
+            console.log("Botão de salvar clicado");
             await this.sendUpdateRequest();
+
         },
+
+
         async fetchRecruiter() {
             try {
-                const recruiterId = this.getRecruiterId; 
-                const response = await HttpService.get(`/recruiter/show/${recruiterId}`, {
+                const response = await HttpService.get(`/recruiter/show/${this.getRecruiterId}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
                     }
                 });
                 const recruiter = response.data.recruiter;
-                this.recruiter.id = recruiterId;
                 this.recruiter.recruiter_name = recruiter.recruiter_name || '';
-                this.recruiter.phone = recruiter.recruiter_phone || '';
-                this.recruiter.gender = recruiter.recruiter_gender || '';
                 this.recruiter.email = recruiter.email || '';
+                this.recruiter.recruiter_phone = recruiter.recruiter_phone || '';
+                this.recruiter.recruiter_gender = recruiter.recruiter_gender || '';
+
+                if (recruiter.recruiter_photo) {
+                    console.log(recruiter.recruiter_photo);
+                    this.recruiter.recruiter_photo = `http://127.0.0.1:8000/storage/${recruiter.recruiter_photo}`;
+                }
             } catch (error) {
-                console.error('Erro ao carregar o perfil do recrutador:', error);
+                console.error('Erro ao carregar o perfil do usuário:', error);
             }
+        },
+
+
+        triggerFileInput() {
+            this.$refs.fileInput.click();
         }
     },
     mounted() {
@@ -165,6 +234,7 @@ export default {
     }
 };
 </script>
+
 
 <style scoped>
 body {

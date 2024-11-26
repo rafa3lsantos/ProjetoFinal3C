@@ -25,7 +25,7 @@ class CandidateController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        // Upload de foto, se fornecida
+
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();

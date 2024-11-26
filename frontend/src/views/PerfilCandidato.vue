@@ -70,7 +70,7 @@
                                                     @click="triggerFileInput">Alterar Imagem</button>
 
                                             </div>
-                                            <small>Adicione uma foto de perfil para seu recrutador. Se não selecionar,
+                                            <small>Adicione uma foto de perfil. Se não selecionar,
                                                 será usada a imagem padrão.</small>
                                         </div>
                                     </div>
@@ -231,11 +231,6 @@ export default {
                 console.error('Erro ao carregar o perfil do usuário:', error);
             }
         },
-
-
-
-
-
         triggerFileInput() {
             this.$refs.fileInput.click();
         }

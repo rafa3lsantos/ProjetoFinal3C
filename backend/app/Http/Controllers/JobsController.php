@@ -92,22 +92,21 @@ class JobsController extends Controller
             'jobs' => $jobs,
         ], 200);
     }
-    
+
     public function index()
     {
         $jobs = Jobs::all();
-
+    
         if (!$jobs) {
-
             return response()->json([
                 'message' => 'Não há empregos cadastrados!',
             ], 404);
         }
-
+    
         return response()->json([
             'message' => 'Empregos encontrados com sucesso!',
             'jobs' => $jobs,
         ], 200);
     }
+    
 }
-
