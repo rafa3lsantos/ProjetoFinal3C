@@ -1,30 +1,8 @@
 <template>
-    <div>
-        <NavbarRecrutador />
-
+    <NavbarRecrutador />
+    <div class="d-flex justify-content-center align-items-center" style="height: 90vh;">
         <div class="container p-0">
-            <div class="row">
-
-                <div class="col-md-5 col-xl-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Configurações de Perfil</h5>
-                        </div>
-                        <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/perfil-recrutador" class="list-group-item list-group-item-action">
-                                Conta
-                            </router-link>
-                            <router-link to="/add-vaga" class="list-group-item list-group-item-action">
-                                Adicionar Vaga
-                            </router-link>
-                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">
-                                Minhas Vagas
-                            </router-link>
-
-                        </div>
-                    </div>
-                </div>
-
+            <div class="row justify-content-center">
                 <div class="col-md-7 col-xl-8">
                     <div class="card">
                         <div class="card-header">
@@ -34,11 +12,10 @@
                             <form @submit.prevent="updateVaga">
                                 <div class="row">
                                     <div class="col-12">
-
                                         <div class="form-group">
                                             <label for="title">Título da Vaga</label>
                                             <input type="text" class="form-control" id="title" v-model="vaga.title"
-                                                placeholder="Título da vaga que será exibido">
+                                                placeholder="Título da vaga que será exibido" />
                                         </div>
 
                                         <div class="form-group">
@@ -47,7 +24,7 @@
                                                 <div class="form-check" v-for="(option, index) in modeloOptions"
                                                     :key="index">
                                                     <input class="form-check-input" type="radio" :id="`modelo-${index}`"
-                                                        :value="option.value" v-model="vaga.work_model">
+                                                        :value="option.value" v-model="vaga.work_model" />
                                                     <label class="form-check-label" :for="`modelo-${index}`">
                                                         {{ option.label }}
                                                     </label>
@@ -61,7 +38,7 @@
                                                 <div class="form-check" v-for="(option, index) in tipoOptions"
                                                     :key="index">
                                                     <input class="form-check-input" type="radio" :id="`tipo-${index}`"
-                                                        :value="option.value" v-model="vaga.job_type">
+                                                        :value="option.value" v-model="vaga.job_type" />
                                                     <label class="form-check-label" :for="`tipo-${index}`">
                                                         {{ option.label }}
                                                     </label>
@@ -72,21 +49,30 @@
                                         <div class="form-group">
                                             <label for="state">Estado</label>
                                             <input type="text" class="form-control" id="state" v-model="vaga.jobs_state"
-                                                placeholder="Estado da vaga">
+                                                placeholder="Estado da vaga" />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="city">Cidade</label>
                                             <input type="text" class="form-control" id="city" v-model="vaga.jobs_city"
-                                                placeholder="Cidade da vaga">
+                                                placeholder="Cidade da vaga" />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="description">Sobre a Vaga</label>
                                             <textarea rows="4" class="form-control" id="description"
                                                 v-model="vaga.jobs_description"
-                                                placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber.">
-                                            </textarea>
+                                                placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber."></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status">Status da Vaga</label>
+                                            <select class="form-control" id="status" v-model="vaga.jobs_status">
+                                                <option v-for="(status, index) in statusOptions" :key="index"
+                                                    :value="status.value">
+                                                    {{ status.label }}
+                                                </option>
+                                            </select>
                                         </div>
 
                                         <button type="submit" class="btn btn-primary">Salvar Informações</button>
@@ -117,6 +103,7 @@ export default {
                 jobs_state: '',
                 jobs_city: '',
                 jobs_description: '',
+                jobs_status: '',
                 recruiter_id: '',
                 company_id: '',
             },
@@ -131,44 +118,55 @@ export default {
                 { label: 'Temporário', value: 'temporary' },
                 { label: 'Estágio', value: 'internship' },
             ],
-            token: localStorage.getItem('authToken') || ''
+            statusOptions: [
+                { label: 'Em andamento', value: 'in_progress' },
+                { label: 'Em análise', value: 'under_review' },
+                { label: 'Finalizada', value: 'finished' },
+            ],
+            token: localStorage.getItem('authToken') || '',
         };
     },
     computed: {
-        ...mapGetters(['getRecruiterId', 'getCompanyId'])
+        ...mapGetters(['getRecruiterId', 'getCompanyId']),
     },
     methods: {
-
         async fetchVaga() {
             try {
+                if (!this.$route.params.id) {
+                    alert('ID da vaga não encontrado!');
+                    return;
+                }
+
                 const response = await HttpService.get(`/jobs/show/${this.$route.params.id}`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`,
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                    },
                 });
 
-                if (response.status === 200) {
-                    const vagaData = response.data.job;
+
+                if (response.status === 200 && response.data.jobs) {
+                    const vagaData = response.data.jobs;
                     this.vaga = {
                         ...this.vaga,
-                        title: vagaData.title,
-                        work_model: vagaData.work_model,
-                        job_type: vagaData.job_type,
-                        jobs_state: vagaData.jobs_state,
-                        jobs_city: vagaData.jobs_city,
-                        jobs_description: vagaData.jobs_description,
-                        recruiter_id: vagaData.recruiter_id,
-                        company_id: vagaData.company_id,
+                        title: vagaData.title || '',
+                        work_model: vagaData.work_model || '',
+                        job_type: vagaData.job_type || '',
+                        jobs_state: vagaData.jobs_state || '',
+                        jobs_city: vagaData.jobs_city || '',
+                        jobs_description: vagaData.jobs_description || '',
+                        jobs_status: vagaData.jobs_status || '',
+                        recruiter_id: vagaData.recruiter_id || '',
+                        company_id: vagaData.company_id || '',
                     };
                 } else {
-                    alert('Erro ao carregar a vaga.');
+                    alert('Erro ao carregar a vaga. Verifique a resposta da API.');
                 }
             } catch (error) {
                 console.error('Erro ao carregar a vaga:', error);
+                alert('Erro ao carregar a vaga. Tente novamente.');
             }
         },
-
 
         async updateVaga() {
             if (!this.validateFields()) return;
@@ -180,8 +178,8 @@ export default {
                 const response = await HttpService.put(`/jobs/update/${this.$route.params.id}`, this.vaga, {
                     headers: {
                         Authorization: `Bearer ${this.token}`,
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/json',
+                    },
                 });
 
                 if (response.status === 200) {
@@ -196,31 +194,22 @@ export default {
             }
         },
 
+
         validateFields() {
-            if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.jobs_description) {
+            if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.jobs_description || !this.vaga.jobs_status) {
                 alert('Preencha todos os campos!');
                 return false;
             }
             return true;
         },
-
-        clearForm() {
-            this.vaga = {
-                title: '',
-                work_model: '',
-                job_type: '',
-                jobs_state: '',
-                jobs_city: '',
-                jobs_description: ''
-            };
-        }
     },
 
     mounted() {
         this.fetchVaga();
-    }
+    },
 };
 </script>
+
 
 <style scoped>
 body {
@@ -229,7 +218,6 @@ body {
 }
 
 .card {
-    margin-bottom: 1.5rem;
     box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
 }
 

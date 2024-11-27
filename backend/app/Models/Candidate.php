@@ -21,7 +21,6 @@ class Candidate extends Authenticatable
         'birthdate',
         'gender',
         'phone',
-        'curriculum',
         'photo'
     ];
 

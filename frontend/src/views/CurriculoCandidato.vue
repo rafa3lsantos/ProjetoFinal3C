@@ -103,18 +103,25 @@ export default {
   methods: {
     async fetchCurriculum() {
       try {
-        const userId = localStorage.getItem("candidateId");
-        const response = await HttpService.get(`/curriculum/show/${CandidateId}`, {
+        const response = await HttpService.get(`/curriculum/show/${this.getCurriculumId}`, {
           headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
+            Authorization: `Bearer ${this.token}`
+          }
         });
-        this.curriculum = response.data;
+        const curriculo = response.data.curriculum;
+        this.curriculo.name = user.name || '';
+        this.curriculo.email = user.email || '';
+        this.curriculo.cep = user.cep || '';
+        this.curriculo.address = user.address || '';
+        this.curriculo.state = user.state || '';
+        this.curriculo.city = user.city || '';
+
       } catch (error) {
-        console.error("Erro ao buscar currículo:", error);
-        alert("Erro ao buscar os dados do currículo.");
       }
     },
+
+
+
     async updateCurriculum() {
       try {
         const payload = { ...this.curriculum };

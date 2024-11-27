@@ -47,19 +47,20 @@
                                     <div class="mt-3">
                                         <span class="text-muted d-block"><i class="fa fa-building"
                                                 aria-hidden="true"></i>
-                                            <a href="#" target="_blank" class="text-muted"> {{ empresa.company_name
-                                                }}</a></span>
+                                            <a href="#" target="_blank" class="text-muted"> {{ vaga.company_name }}</a>
+                                        </span>
                                         <span class="text-muted d-block"><i class="fa fa-briefcase"
                                                 aria-hidden="true"></i>
-                                            <a href="#" target="_blank" class="text-muted"> {{
-                                                translateWorktype(vaga.job_type) }}</a></span>
+                                            {{ translateWorktype(vaga.job_type) }}
+                                        </span>
                                         <span class="text-muted d-block"><i class="fa fa-map-marker"
                                                 aria-hidden="true"></i>
-                                            {{ vaga.jobs_city }} - {{ vaga.jobs_state }}</span>
+                                            {{ vaga.jobs_city }} - {{ vaga.jobs_state }}
+                                        </span>
                                         <p>{{ truncateDescription(vaga.jobs_description) }}</p>
                                     </div>
                                     <div class="mt-3">
-                                        <a href="#" class="btn btn-primary">Editar</a>
+                                        <a href="#" class="btn btn-primary">Ver Vaga</a>
                                     </div>
                                 </div>
                             </div>
@@ -70,6 +71,7 @@
             </div>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -83,13 +85,6 @@ export default {
         return {
             vagas: [],
             filteredVagas: [],
-            companies: {},
-            empresa: {
-                id: '',
-                company_name: '',
-                company_sector: '',
-                about_company: '',
-            },
             searchTerm: '',
             selectedWorkModel: '',
             selectedJobType: '',
@@ -102,24 +97,22 @@ export default {
         ...mapGetters(['getAuthToken'])
     },
     methods: {
-
         translateWorkModel(model) {
             const translations = {
                 remote: 'Remoto',
                 presential: 'Presencial',
                 hybrid: 'Híbrido',
             };
-            return translations[model];
+            return translations[model] || 'Modelo Desconhecido';
         },
-
-        translateWorktype(model) {
+        translateWorktype(type) {
             const translations = {
                 effective: 'Efetivo',
                 freelancer: 'Freelancer',
                 temporary: 'Temporário',
                 internship: 'Estágio',
             };
-            return translations[model];
+            return translations[type] || 'Tipo Desconhecido';
         },
         truncateDescription(description, limit = 200) {
             if (!description) return '';
@@ -129,16 +122,17 @@ export default {
         },
         async fetchVagas() {
             try {
-                const response = await HttpService.get('/jobs/show', {
+                const response = await HttpService.get('/jobs/indexForCandidates', {
                     headers: {
                         Authorization: `Bearer ${this.getAuthToken}`,
                         'Content-Type': 'application/json'
                     }
                 });
 
+                console.log('Resposta da API:', response);
                 if (response.status === 200) {
-                    console.log('Vagas retornadas:', response.data.jobs);
                     this.vagas = response.data.jobs;
+                    console.log('Vagas recebidas:', this.vagas);
                     this.filteredVagas = [...this.vagas];
                 } else {
                     alert('Erro ao carregar as vagas.');
@@ -147,7 +141,6 @@ export default {
                 console.error('Erro ao carregar as vagas:', error);
             }
         },
-
         applyFilters() {
             this.filteredVagas = this.vagas.filter(vaga => {
                 const matchesSearchTerm = this.searchTerm
@@ -166,10 +159,12 @@ export default {
                 return matchesSearchTerm && matchesWorkModel && matchesJobType;
             });
         },
-
     },
 };
 </script>
+
+
+
 
 <style scoped>
 body {
@@ -202,4 +197,17 @@ body {
 a {
     text-decoration: none;
 }
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+}
+
 </style>

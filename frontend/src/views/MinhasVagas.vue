@@ -13,7 +13,7 @@
                             <input type="text" class="form-control" v-model="searchTerm"
                                 placeholder="Pesquisar por título ou descrição">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select class="form-select" v-model="selectedWorkModel">
                                 <option value="">Modelo de Trabalho</option>
                                 <option value="remote">Remoto</option>
@@ -21,7 +21,7 @@
                                 <option value="hybrid">Híbrido</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select class="form-select" v-model="selectedJobType">
                                 <option value="">Tipo de Trabalho</option>
                                 <option value="effective">Efetivo</option>
@@ -30,6 +30,15 @@
                                 <option value="internship">Estágio</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <select class="form-select" v-model="selectedJobStatus">
+                                <option value="">Status</option>
+                                <option value="in_progress">Em andamento</option>
+                                <option value="under_review">Em análise</option>
+                                <option value="finished">Finalizada</option>
+                            </select>
+                        </div>
+
                         <div class="col-md-2">
                             <button class="btn btn-primary w-100" @click="applyFilters">Filtrar</button>
                         </div>
@@ -42,6 +51,9 @@
                                 <div class="card-body p-4">
                                     <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">
                                         {{ translateWorkModel(vaga.work_model) }}
+                                    </span>
+                                    <span class="badge rounded-pill bg-secondary float-md-end mb-3 mb-sm-0">
+                                        {{ translateJobStatus(vaga.jobs_status) }}
                                     </span>
                                     <h5>{{ vaga.title }}</h5>
                                     <div class="mt-3">
@@ -59,7 +71,8 @@
                                         <p>{{ truncateDescription(vaga.jobs_description) }}</p>
                                     </div>
                                     <div class="mt-3">
-                                        <a href="#" class="btn btn-primary" @click="editVaga(vaga)">Editar</a>
+                                        <a  href="#" class="btn btn-primary"
+                                            @click="editVaga(vaga)">Editar</a>
                                     </div>
                                 </div>
                             </div>
@@ -93,6 +106,7 @@ export default {
             searchTerm: '',
             selectedWorkModel: '',
             selectedJobType: '',
+            selectedJobStatus: '',
         };
     },
     created() {
@@ -103,14 +117,13 @@ export default {
         ...mapGetters(['getAuthToken', 'getRecruiterId', 'getCompanyId'])
     },
     methods: {
-
         translateWorkModel(model) {
             const translations = {
                 remote: 'Remoto',
                 presential: 'Presencial',
                 hybrid: 'Híbrido',
             };
-            return translations[model];
+            return translations[model] || 'Modelo Desconhecido';
         },
 
         translateWorktype(model) {
@@ -120,8 +133,18 @@ export default {
                 temporary: 'Temporário',
                 internship: 'Estágio',
             };
-            return translations[model];
+            return translations[model] || 'Tipo Desconhecido';
         },
+
+        translateJobStatus(status) {
+            const translations = {
+                in_progress: 'Em andamento',
+                under_review: 'Em análise',
+                finished: 'Finalizada',
+            };
+            return translations[status] || 'Status Desconhecido';
+        },
+
         truncateDescription(description, limit = 200) {
             if (!description) return '';
             return description.length > limit
@@ -140,6 +163,8 @@ export default {
 
                 if (response.status === 200) {
                     this.vagas = response.data.jobs;
+
+   
                     this.filteredVagas = [...this.vagas];
                 } else {
                     alert('Erro ao carregar as vagas.');
@@ -148,9 +173,6 @@ export default {
                 console.error('Erro ao carregar as vagas:', error);
             }
         },
-
-
-
 
         async fetchCompany() {
             try {
@@ -168,6 +190,7 @@ export default {
                 console.error('Erro ao carregar o perfil da empresa:', error);
             }
         },
+
         applyFilters() {
             this.filteredVagas = this.vagas.filter(vaga => {
                 const matchesSearchTerm = this.searchTerm
@@ -183,16 +206,20 @@ export default {
                     ? vaga.job_type === this.selectedJobType
                     : true;
 
-                return matchesSearchTerm && matchesWorkModel && matchesJobType;
+                const matchesJobStatus = this.selectedJobStatus
+                    ? vaga.jobs_status === this.selectedJobStatus
+                    : true;
+
+                return matchesSearchTerm && matchesWorkModel && matchesJobType && matchesJobStatus;
             });
         },
+
         editVaga(vaga) {
             this.$router.push({
                 name: 'UpdateVaga',
                 params: { id: vaga.id },
             });
         },
-
     },
     mounted() {
         this.empresa.id = this.getCompanyId;
@@ -230,5 +257,9 @@ body {
 
 a {
     text-decoration: none;
+}
+
+.badge {
+    margin-right: 10px;
 }
 </style>

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Applications;
 
 class Jobs extends Model
 {
@@ -22,10 +21,6 @@ class Jobs extends Model
         'company_id',
     ];
 
-    public function jobs() { 
-        return $this->hasMany(Jobs::class);
-    }
-
     public function applications()
     {
         return $this->hasMany(Applications::class);
@@ -33,6 +28,6 @@ class Jobs extends Model
 
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

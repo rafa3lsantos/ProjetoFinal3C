@@ -58,6 +58,10 @@ class CandidateController extends Controller
             ], 401);
         }
 
+        // Carregar o currículo associado ao candidato
+        $curriculum = $candidate->curriculum;
+
+        // Gerar o token
         $token = $candidate->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -65,9 +69,11 @@ class CandidateController extends Controller
             'token' => $token,
             'token_type' => 'Bearer',
             'candidate_id' => $candidate->id,
+            'curriculum_id' => $candidate->curriculum ? $candidate->curriculum->id : null,
 
         ], 200);
     }
+
 
     /**
      * Logout do candidato.
