@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Jobs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\HTMLPurifier_Config;
+use App\Http\Controllers\HTMLPurifier;
+
+
 
 class JobsController extends Controller
 {
@@ -27,6 +31,11 @@ class JobsController extends Controller
             'jobs_status' => 'sometimes|string|in:in_progress, under_review, finished',
             'jobs_description' => 'required|string',
         ]);
+
+
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $arrayRequest['jobs_description'] = $purifier->purify($arrayRequest['jobs_description']);
 
         $arrayRequest['company_id'] = $recruiter->company_id;
         $arrayRequest['recruiter_id'] = $recruiter->id;

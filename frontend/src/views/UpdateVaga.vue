@@ -62,13 +62,6 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="description">Sobre a Vaga</label>
-                                                <textarea rows="4" class="form-control" id="description"
-                                                    v-model="vaga.jobs_description"
-                                                    placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber."></textarea>
-                                            </div>
-
-                                            <div class="form-group">
                                                 <label for="status">Status da Vaga</label>
                                                 <select class="form-control" id="status" v-model="vaga.jobs_status">
                                                     <option v-for="(status, index) in statusOptions" :key="index"
@@ -77,8 +70,17 @@
                                                     </option>
                                                 </select>
                                             </div>
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <label for="about_candidate">Sobre você</label>
+                                                    <textarea rows="6" class="form-control" id="about_candidate"
+                                                        v-model="vaga.jobs_description"
+                                                        placeholder="Faça um breve resumo sobre você"></textarea>
+                                                </div>
+                                            </div>
+
                                             <button @click="goBack" class="btn btn-secondary w-20">Voltar</button>
-                                            <button type="submit" class="btn btn-primary w-20">Salvar
+                                            <button type="submit" class="salvar btn btn-primary w-20">Salvar
                                                 Informações</button>
                                         </div>
                                     </div>
@@ -257,6 +259,10 @@ textarea.form-control {
 
 .form-group {
     margin-bottom: 20px;
+}
+
+.salvar {
+    margin-left: 20px;
 }
 
 @media (max-width: 576px) {

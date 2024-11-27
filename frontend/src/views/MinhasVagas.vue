@@ -262,4 +262,8 @@ a {
 .badge {
     margin-right: 10px;
 }
+
+i{
+    margin-right:5px;
+}
 </style>
