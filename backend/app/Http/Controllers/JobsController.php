@@ -36,8 +36,6 @@ class JobsController extends Controller
         return response()->json([
             'message' => 'Emprego criado com sucesso!',
             'jobs' => $jobs,
-            'recruiter' => $recruiter,
-            'company' => $recruiter->company->id,
         ], 201);
     }
 
@@ -51,7 +49,7 @@ class JobsController extends Controller
             ], 403);
         }
 
-        $job = Jobs::where('id', $id)->where('company_id', $recruiter->company->id)->first(); //Moacir que fez pa nois
+        $job = Jobs::where('id', $id)->where('company_id', $recruiter->company->id)->first();
 
         if (!$job) {
             return response()->json([
@@ -65,7 +63,7 @@ class JobsController extends Controller
             'job_type' => 'nullable|string|in:effective,freelancer,temporary,internship',
             'jobs_state' => 'nullable|string|max:255',
             'jobs_city' => 'nullable|string|max:255',
-            'jobs_status' => 'sometimes|string|in:in_progress, under_review, finished',
+            'jobs_status' => 'nullable|string|in:in_progress,under_review,finished',
             'jobs_description' => 'nullable|string',
         ]);
 
@@ -79,7 +77,8 @@ class JobsController extends Controller
 
     public function show($id)
     {
-        $jobs = Jobs::find($id);
+
+        $jobs = Jobs::with('company')->find($id);
 
         if (!$jobs) {
             return response()->json([
@@ -90,24 +89,69 @@ class JobsController extends Controller
         return response()->json([
             'message' => 'Emprego encontrado com sucesso!',
             'jobs' => $jobs,
+            'company_name' => $jobs->company->name ?? 'Empresa não cadastrada',
         ], 200);
     }
-    
-    public function index()
+
+    public function indexForCandidates()
     {
-        $jobs = Jobs::all();
+        $jobs = Jobs::with('company')
+            ->where('jobs_status', 'in_progress')
+            ->orWhere('jobs_status', 'under_review')
+            ->get();
 
-        if (!$jobs) {
-
+        if ($jobs->isEmpty()) {
             return response()->json([
-                'message' => 'Não há empregos cadastrados!',
+                'message' => 'Não há vagas disponíveis!',
             ], 404);
         }
 
         return response()->json([
-            'message' => 'Empregos encontrados com sucesso!',
-            'jobs' => $jobs,
+            'message' => 'Vagas disponíveis!',
+            'jobs' => $jobs->map(function ($job) {
+                return [
+                    'id' => $job->id,
+                    'title' => $job->title,
+                    'work_model' => $job->work_model,
+                    'job_type' => $job->job_type,
+                    'jobs_state' => $job->jobs_state,
+                    'jobs_city' => $job->jobs_city,
+                    'jobs_status' => $job->jobs_status,
+                    'jobs_description' => $job->jobs_description,
+                    'company_name' => $job->company ? $job->company->name : 'Empresa não cadastrada',
+                ];
+            }),
+        ], 200);
+    }
+
+
+    public function indexForRecruiters()
+    {
+        $jobs = Jobs::with('company')
+            ->where('recruiter_id', Auth::id())
+            ->get();
+
+        if ($jobs->isEmpty()) {
+            return response()->json([
+                'message' => 'Você não criou nenhuma vaga!',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Vagas encontradas!',
+            'jobs' => $jobs->map(function ($job) {
+                return [
+                    'id' => $job->id,
+                    'title' => $job->title,
+                    'work_model' => $job->work_model,
+                    'job_type' => $job->job_type,
+                    'jobs_state' => $job->jobs_state,
+                    'jobs_city' => $job->jobs_city,
+                    'jobs_status' => $job->jobs_status,
+                    'jobs_description' => $job->jobs_description,
+                    'company_name' => $job->company ? $job->company->name : 'Empresa não cadastrada',
+                ];
+            }),
         ], 200);
     }
 }
-

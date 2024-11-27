@@ -27,8 +27,8 @@
                 <div class="user ms-auto">
                     <div class="dropdown" @click="toggleDropdown">
                         <img :src="arrowUser" alt="Ícone de seta" class="rounded-circle user-icon arrow" width="15" />
-                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="40"
-                            height="40" />
+                        <img :src="userImage" alt="Foto do Usuário" class="rounded-circle user-icon" width="50"
+                            height="50" />
                         <div v-if="isDropdownOpen" class="dropdown-menu custom-dropdown show text-center">
                             <router-link to="/perfil-empresa" class="dropdown-item">Perfil Empresa</router-link>
                             <router-link to="/add-recrutador" class="dropdown-item">Adicionar Recrutador</router-link>

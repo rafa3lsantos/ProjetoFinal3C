@@ -125,25 +125,13 @@ export default {
                     descricao: ''
                 }
             ],
-            errors: {},
             token: localStorage.getItem("authToken") || "",
         };
     },
     computed: {
-        ...mapGetters(["getCandidateId"]),
+        ...mapGetters(["getCurriculumId"]),
     },
     methods: {
-        validateFields() {
-            this.errors = {};
-            let isValid = true;
-            this.experiencias.forEach((experiencia, index) => {
-                if (!experiencia.empresa || !experiencia.cargo) {
-                    this.errors[`experiencia${index}`] = "Empresa e Cargo são obrigatórios.";
-                    isValid = false;
-                }
-            });
-            return isValid;
-        },
         adicionarExperiencia() {
             this.experiencias.push({
                 empresa: '',
@@ -154,46 +142,26 @@ export default {
                 descricao: ''
             });
         },
-        async updateExperience() {
-            if (this.validateFields()) {
-                try {
-                    const response = await HttpService.put(
-                        `/curriculum/update/${this.getCurriculumId}`,
-                        {
-                            curriculum: {
-                                experiencias: this.experiencias,
-                            },
-                        },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${this.token}`,
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
-                    console.log(response);
+        async saveCurriculum() {
+            // Verificando os dados antes de enviar
+            console.log('Dados do currículo antes do envio:', {
+                name_candidate: this.name_candidate,
+                email: this.email,
+                phone: this.phone,
+                experience: this.experience,
+                // ... outros campos relevantes
+            });
 
-                    if (response.status === 200) {
-                        alert("Experiências atualizadas com sucesso.");
-                    } else {
-                        alert("Erro ao atualizar as experiências.");
-                    }
-                } catch (error) {
-                    console.error("Erro ao atualizar as experiências:", error);
-                    alert("Erro ao salvar os dados.");
-                }
-            } else {
-                alert("Por favor, preencha todos os campos obrigatórios.");
-            }
-        },
-
-
-        async fetchUserProfile() {
             try {
                 const response = await HttpService.put(
                     `/curriculum/update/${this.getCurriculumId}`,
                     {
-                        experiencias: this.experiencias,
+                        curriculum: {
+                            name_candidate: this.name_candidate,
+                            email: this.email,
+                            phone: this.phone,
+                            experience: this.experience,
+                        }
                     },
                     {
                         headers: {
@@ -203,22 +171,39 @@ export default {
                     }
                 );
 
+                console.log('Resposta do servidor:', response.data);
+            } catch (error) {
+                console.error("Erro ao salvar o currículo:", error);
+            }
+        },
 
+
+        async updateExperience() {
+            await this.saveCurriculum();
+        },
+        async fetchUserProfile() {
+            try {
+                const response = await HttpService.get(
+                    `/curriculum/${this.getCurriculumId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                        },
+                    }
+                );
                 const user = response.data.curriculo;
                 this.experiencias = user.experiencias || this.experiencias;
             } catch (error) {
-                console.error("Erro ao carregar o perfil do usuário:", error);
-                alert("Erro ao carregar o perfil.");
+                console.error("Erro ao buscar o perfil do usuário:", error);
+                alert("Erro ao carregar as informações do currículo.");
             }
         },
     },
     mounted() {
         this.fetchUserProfile();
-    },
+    }
 };
 </script>
-
-
 
 <style scoped>
 body {
@@ -231,36 +216,11 @@ body {
     box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
 }
 
-.card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid #e5e9f2;
-    border-radius: .2rem;
-}
-
-.card-header:first-child {
-    border-radius: calc(.2rem - 1px) calc(.2rem - 1px) 0 0;
-}
-
 .card-header {
     border-bottom-width: 1px;
-}
-
-.card-header {
     padding: .75rem 1.25rem;
-    margin-bottom: 0;
-    color: inherit;
     background-color: #fff;
     border-bottom: 1px solid #e5e9f2;
-}
-
-.save {
-    margin-top: 20px;
 }
 
 .genero-options {
@@ -272,26 +232,12 @@ body {
     margin-right: 15px;
 }
 
-.form-check:last-child {
-    margin-right: 0;
-}
-
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 30px;
 }
 
-.disabled-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.disabled-link:hover {
-    color: #0056b3;
-}
-
-.form-group textarea {
-    height: 80px;
+.text-center small {
+    display: block;
+    margin-top: 10px;
 }
 </style>
