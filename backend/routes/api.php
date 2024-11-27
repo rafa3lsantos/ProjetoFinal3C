@@ -89,7 +89,11 @@ Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(fun
     Route::get('index', [JobsController::class, 'indexForRecruiters']);
 });
 
-Route::get('jobs/indexForCandidates', [JobsController::class, 'indexForCandidates']);
+Route::get('jobs/show/{id}', [JobsController::class, 'show']);
+Route::get('jobs/show', [JobsController::class, 'show']);
+
+
+Route::get('jobs/InProgress', [JobsController::class, 'indexInProgress']);
 
 
 // -- Applications Routes --
