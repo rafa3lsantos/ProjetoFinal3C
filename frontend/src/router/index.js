@@ -24,6 +24,7 @@ import AnexarCurriculo from '../views/AnexarCurriculo.vue';
 import ConEcer from '../views/ConEcer.vue';
 import Skills from '../views/Skills.vue';
 import Formacao from '../views/Formacao.vue';
+import VerVaga from '../views/VerVaga.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -261,6 +262,16 @@ const router = createRouter({
       component: AnexarCurriculo,
       meta: {
         title: 'Anexar Currículo',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/ver-vaga/:id',
+      name: 'ver-vaga',
+      component: VerVaga,
+      meta: {
+        title: 'Ver Vaga',
         requiresAuth: true,
         userType: 'candidato',
       },

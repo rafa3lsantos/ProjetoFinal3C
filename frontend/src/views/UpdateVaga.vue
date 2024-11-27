@@ -1,84 +1,89 @@
 <template>
-    <NavbarRecrutador />
-    <div class="d-flex justify-content-center align-items-center" style="height: 90vh;">
-        <div class="container p-0">
-            <div class="row justify-content-center">
-                <div class="col-md-7 col-xl-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Editar Vaga</h5>
-                        </div>
-                        <div class="card-body">
-                            <form @submit.prevent="updateVaga">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <label for="title">Título da Vaga</label>
-                                            <input type="text" class="form-control" id="title" v-model="vaga.title"
-                                                placeholder="Título da vaga que será exibido" />
-                                        </div>
+    <div>
+        <NavbarRecrutador />
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+            <div class="container p-3">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Editar Vaga</h5>
+                            </div>
+                            <div class="card-body">
+                                <form @submit.prevent="updateVaga">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="title">Título da Vaga</label>
+                                                <input type="text" class="form-control" id="title" v-model="vaga.title"
+                                                    placeholder="Título da vaga que será exibido" />
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label>Modelo de Trabalho</label>
-                                            <div class="modelo-options py-2">
-                                                <div class="form-check" v-for="(option, index) in modeloOptions"
-                                                    :key="index">
-                                                    <input class="form-check-input" type="radio" :id="`modelo-${index}`"
-                                                        :value="option.value" v-model="vaga.work_model" />
-                                                    <label class="form-check-label" :for="`modelo-${index}`">
-                                                        {{ option.label }}
-                                                    </label>
+                                            <div class="form-group">
+                                                <label>Modelo de Trabalho</label>
+                                                <div class="modelo-options py-2">
+                                                    <div class="form-check" v-for="(option, index) in modeloOptions"
+                                                        :key="index">
+                                                        <input class="form-check-input" type="radio"
+                                                            :id="`modelo-${index}`" :value="option.value"
+                                                            v-model="vaga.work_model" />
+                                                        <label class="form-check-label" :for="`modelo-${index}`">
+                                                            {{ option.label }}
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label>Tipo de Trabalho</label>
-                                            <div class="tipo-options py-2">
-                                                <div class="form-check" v-for="(option, index) in tipoOptions"
-                                                    :key="index">
-                                                    <input class="form-check-input" type="radio" :id="`tipo-${index}`"
-                                                        :value="option.value" v-model="vaga.job_type" />
-                                                    <label class="form-check-label" :for="`tipo-${index}`">
-                                                        {{ option.label }}
-                                                    </label>
+                                            <div class="form-group">
+                                                <label>Tipo de Trabalho</label>
+                                                <div class="tipo-options py-2">
+                                                    <div class="form-check" v-for="(option, index) in tipoOptions"
+                                                        :key="index">
+                                                        <input class="form-check-input" type="radio"
+                                                            :id="`tipo-${index}`" :value="option.value"
+                                                            v-model="vaga.job_type" />
+                                                        <label class="form-check-label" :for="`tipo-${index}`">
+                                                            {{ option.label }}
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="state">Estado</label>
-                                            <input type="text" class="form-control" id="state" v-model="vaga.jobs_state"
-                                                placeholder="Estado da vaga" />
-                                        </div>
+                                            <div class="form-group">
+                                                <label for="state">Estado</label>
+                                                <input type="text" class="form-control" id="state"
+                                                    v-model="vaga.jobs_state" placeholder="Estado da vaga" />
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label for="city">Cidade</label>
-                                            <input type="text" class="form-control" id="city" v-model="vaga.jobs_city"
-                                                placeholder="Cidade da vaga" />
-                                        </div>
+                                            <div class="form-group">
+                                                <label for="city">Cidade</label>
+                                                <input type="text" class="form-control" id="city"
+                                                    v-model="vaga.jobs_city" placeholder="Cidade da vaga" />
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label for="description">Sobre a Vaga</label>
-                                            <textarea rows="4" class="form-control" id="description"
-                                                v-model="vaga.jobs_description"
-                                                placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber."></textarea>
-                                        </div>
+                                            <div class="form-group">
+                                                <label for="description">Sobre a Vaga</label>
+                                                <textarea rows="4" class="form-control" id="description"
+                                                    v-model="vaga.jobs_description"
+                                                    placeholder="Descrição detalhada da vaga, que o candidato gostaria de saber."></textarea>
+                                            </div>
 
-                                        <div class="form-group">
-                                            <label for="status">Status da Vaga</label>
-                                            <select class="form-control" id="status" v-model="vaga.jobs_status">
-                                                <option v-for="(status, index) in statusOptions" :key="index"
-                                                    :value="status.value">
-                                                    {{ status.label }}
-                                                </option>
-                                            </select>
+                                            <div class="form-group">
+                                                <label for="status">Status da Vaga</label>
+                                                <select class="form-control" id="status" v-model="vaga.jobs_status">
+                                                    <option v-for="(status, index) in statusOptions" :key="index"
+                                                        :value="status.value">
+                                                        {{ status.label }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <button @click="goBack" class="btn btn-secondary w-20">Voltar</button>
+                                            <button type="submit" class="btn btn-primary w-20">Salvar
+                                                Informações</button>
                                         </div>
-
-                                        <button type="submit" class="btn btn-primary">Salvar Informações</button>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -86,6 +91,8 @@
         </div>
     </div>
 </template>
+
+
 
 <script>
 import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
@@ -167,8 +174,8 @@ export default {
                 alert('Erro ao carregar a vaga. Tente novamente.');
             }
         },
-
         async updateVaga() {
+            console.log('Dados enviados:', this.vaga);
             if (!this.validateFields()) return;
 
             this.vaga.recruiter_id = this.getRecruiterId;
@@ -182,6 +189,7 @@ export default {
                     },
                 });
 
+                console.log('Resposta da API:', response);
                 if (response.status === 200) {
                     alert('Vaga atualizada com sucesso!');
                     this.$router.push('/minhas-vagas');
@@ -189,7 +197,7 @@ export default {
                     alert('Erro ao atualizar a vaga. Tente novamente.');
                 }
             } catch (error) {
-                console.error('Erro ao atualizar a vaga:', error);
+                console.error('Erro ao atualizar a vaga:', error.response);
                 alert('Erro ao atualizar a vaga.');
             }
         },
@@ -202,6 +210,9 @@ export default {
             }
             return true;
         },
+        goBack() {
+            this.$router.push('/minhas-vagas');
+        },
     },
 
     mounted() {
@@ -213,23 +224,22 @@ export default {
 
 <style scoped>
 body {
-    margin-top: 20px;
     background: #F0F8FF;
 }
 
 .card {
-    box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);
+    box-shadow: 0 1px 15px 1px rgba(52, 40, 104, 0.08);
+    border-radius: 8px;
 }
 
 .card-header {
-    border-bottom-width: 1px;
-    padding: .75rem 1.25rem;
-    background-color: #fff;
     border-bottom: 1px solid #e5e9f2;
+    background-color: #fff;
+    padding: 1rem;
 }
 
 .form-control {
-    width: 65%;
+    width: 100%;
     max-width: 100%;
     box-sizing: border-box;
 }
@@ -242,13 +252,24 @@ textarea.form-control {
 .tipo-options {
     display: flex;
     flex-wrap: wrap;
-}
-
-.form-check {
-    margin-right: 15px;
+    gap: 10px;
 }
 
 .form-group {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 576px) {
+    .card {
+        padding: 1rem;
+    }
+
+    .btn-primary {
+        font-size: 0.9rem;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+    }
 }
 </style>

@@ -154,4 +154,35 @@ class JobsController extends Controller
             }),
         ], 200);
     }
+
+    public function indexInProgress()
+    {
+        $jobs = Jobs::with('company')
+            ->whereIn('jobs_status', ['in_progress', 'under_review'])
+            ->get();
+
+        if ($jobs->isEmpty()) {
+            return response()->json([
+                'message' => 'Não há vagas em andamento!',
+                'jobs' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Vagas em andamento!',
+            'jobs' => $jobs->map(function ($job) {
+                return [
+                    'id' => $job->id,
+                    'title' => $job->title,
+                    'work_model' => $job->work_model,
+                    'job_type' => $job->job_type,
+                    'jobs_state' => $job->jobs_state,
+                    'jobs_city' => $job->jobs_city,
+                    'jobs_status' => $job->jobs_status,
+                    'jobs_description' => $job->jobs_description,
+                    'company_name' => $job->company ? $job->company->name : 'Empresa não cadastrada',
+                ];
+            }),
+        ], 200);
+    }
 }
