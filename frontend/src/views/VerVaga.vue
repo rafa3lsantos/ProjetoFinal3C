@@ -2,53 +2,59 @@
     <div>
         <Navbar />
         <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
             <div class="container p-3">
                 <div class="row justify-content-center">
                     <div class="col-12 col-md-10 col-lg-8">
                         <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Detalhes da Vaga</h5>
-                            </div>
                             <div class="card-body">
                                 <div v-if="vaga">
                                     <div class="row">
                                         <div class="col-12">
-                                            
-                                            <div class="form-group">
-                                                <p class="tittle">{{ vaga.title }}</p>
+                                            <div class="card-header">
+                                                <h5 class="card-title mb-0">{{ vaga.title }}</h5>
+                                            </div>
+
+                                            <div class="first form-group">
+                                                <span class="text-muted d-flex align-items-center">
+                                                    <i class="fa fa-building" aria-hidden="true"></i>
+                                                    <p class="mb-0 ml-2">{{ vaga.company_name }}</p>
+                                                </span>
                                             </div>
 
                                             <div class="form-group">
-                                                <p>{{ getModeloLabel(vaga.work_model)}}</p>
+                                                <span class="text-muted d-flex align-items-center">
+                                                    <i class="fa fa-briefcase" aria-hidden="true"></i>
+                                                    <p class="mb-0 ml-2">{{ getTipoLabel(vaga.job_type) }}</p>
+                                                </span>
                                             </div>
 
                                             <div class="form-group">
-                                                <label>Tipo de Trabalho</label>
-                                                <p>{{ getTipoLabel(vaga.job_type) }}</p>
+                                                <span class="text-muted d-flex align-items-center">
+                                                    <i class="fa fa-map-pin" aria-hidden="true"></i>
+                                                    <p class="mb-0 ml-2">{{ getModeloLabel(vaga.work_model) }}</p>
+                                                </span>
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="state">Estado</label>
-                                                <p>{{ vaga.jobs_state }}</p>
+                                                <span class="text-muted d-flex align-items-center">
+                                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                                    <p class="mb-0 ml-2">{{ vaga.jobs_city }} - {{ vaga.jobs_state }}
+                                                    </p>
+                                                </span>
+                                            </div>
+                                            <div class="form-group">
+                                                <div v-html="vaga.jobs_description"></div>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label for="city">Cidade</label>
-                                                <p>{{ vaga.jobs_city }}</p>
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label for="description">Sobre a Vaga</label>
-                                                <p>{{ vaga.jobs_description }}</p>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="status">Status da Vaga</label>
-                                                <p>{{ getStatusLabel(vaga.jobs_status) }}</p>
-                                            </div>
                                         </div>
                                     </div>
                                     <button @click="goBack" class="btn btn-secondary w-20">Voltar</button>
+                                    
+                                    <button @click="candidatar" class="candidatar btn btn-primary w-40">Candidar-se</button>
+                                    
+
                                 </div>
                                 <div v-else>
                                     <p>Carregando dados da vaga...</p>
@@ -61,6 +67,7 @@
         </div>
     </div>
 </template>
+
 
 <script>
 import Navbar from '@/components/Navbar.vue';
@@ -191,5 +198,17 @@ button {
 
 .tittle {
     font-size: 30px;
+}
+
+.first {
+    margin-top: 25px;
+}
+
+i {
+    margin-right: 5px;
+}
+
+.candidatar{
+margin-left: 20px;
 }
 </style>
