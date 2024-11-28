@@ -22,9 +22,16 @@ class Company extends Authenticatable
         'company_photo',
         'company_sector',
         'about_company',
+        'recruiter_id',
     ];
 
-    public function companies() { 
+    public function companies()
+    {
         return $this->hasMany(Company::class);
+    }
+
+    public function recruiter()
+    {
+        return $this->belongsTo(Recruiter::class, 'recruiter_id');
     }
 }

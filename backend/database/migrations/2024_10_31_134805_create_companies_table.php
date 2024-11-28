@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('company_photo')->nullable();
             $table->string('company_sector')->nullable();
             $table->string('about_company')->nullable();
+            $table->foreignId('recruiter_id');
+            $table->foreign('recruiter_id')->references('id')->on('recruiters'); 
             $table->timestamps();
         });
     }
