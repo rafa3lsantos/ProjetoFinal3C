@@ -24,6 +24,46 @@ return new class extends Migration
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('photo')->nullable();
+
+            $table->string('phone')->nullable();
+            $table->string('cep')->nullable();
+            $table->string('address')->nullable();
+            $table->string('state', 2)->nullable();
+            $table->string('city')->nullable();
+
+
+            $table->string('company')->nullable();
+            $table->string('position')->nullable();
+            $table->boolean('is_currently_working')->nullable();
+            $table->date('start_date_work')->nullable();
+            $table->date('end_date_work')->nullable();
+            $table->string('description_ativities')->nullable();
+
+
+            $table->enum('formation', ['graduação', 'pos-graduação', 'mestrado', 'doutorado'])->nullable();
+            $table->string('institution')->nullable();
+            $table->string('experience')->nullable();
+            $table->enum('degree', ['tecnologo', 'licenciatura', 'bacharelado'])->nullable();
+            $table->enum('status', ['completo', 'em andamento', 'incompleto'])->nullable();
+            $table->string('course')->nullable();
+            $table->date('start_date_course')->nullable();
+            $table->date('end_date_course')->nullable();
+            $table->enum('certificate_type', ['conquista', 'certificado'])->nullable();
+            $table->string('certificate_title')->nullable();
+            $table->string('certificate_description')->nullable();
+            $table->string('certificate_institution')->nullable();
+
+
+            $table->string('soft_skills')->nullable();
+            $table->string('hard_skills')->nullable();
+
+
+            $table->string('language')->nullable();
+            $table->string('language_level')->nullable();
+
+
+            $table->string('curriculum_attachment')->nullable();
+
             $table->timestamps();
         });
     }

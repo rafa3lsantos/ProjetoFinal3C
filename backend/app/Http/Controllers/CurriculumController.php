@@ -46,7 +46,7 @@ class CurriculumController extends Controller
             'language' => 'sometimes|string|min:3|max:255',
             'language_level' => 'sometimes|string|min:3|max:255',
             'curriculum_attachment' => 'sometimes|file|mimes:pdf,doc,docx|max:2048',
-            'candidate_id' => 'sometimes|exists:candidates,id',
+            ''
         ];
 
         $validatedData = $request->validate($rules);
