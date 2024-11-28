@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('new_password')->nullable();
             $table->string('about_candidate')->nullable();
             $table->string('cpf')->unique();
-
             $table->date('birthdate')->nullable();
             $table->enum('gender', ['masculino', 'feminino', 'nao-binario', 'outro'])->nullable();
             $table->string('phone')->unique()->nullable();
@@ -29,19 +28,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('state', 2)->nullable();
             $table->string('city')->nullable();
-
-
-
-            $table->string('soft_skills')->nullable();
-            $table->string('hard_skills')->nullable();
-
-
-            $table->string('language')->nullable();
-            $table->string('language_level')->nullable();
-
-
             $table->string('curriculum_attachment')->nullable();
-
             $table->timestamps();
         });
     }
