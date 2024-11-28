@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
+            $table->string('soft_skill');
+            $table->string('hard_skill');
+            $table->foreignId('candidate_id')->constrained('candidates');
             $table->timestamps();
         });
     }
