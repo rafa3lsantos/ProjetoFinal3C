@@ -26,34 +26,21 @@ class Candidate extends Authenticatable
         'address',
         'state',
         'city',
-        'company',
-        'position',
-        'is_currently_working',
-        'start_date_work',
-        'end_date_work',
-        'description_ativities',
-        'formation',
-        'institution',
-        'experience',
-        'degree',
-        'status',
-        'course',
-        'start_date_course',
-        'end_date_course',
-        'certificate_type',
-        'certificate_title',
-        'certificate_description',
-        'certificate_institution',
-        'soft_skills',
-        'hard_skills',
-        'language',
-        'language_level',
-        'curriculum_attachment',
     ];
 
     public function curriculum()
     {
         return $this->hasOne(Curriculum::class);
+    }
+
+    public function professionalExperiences()
+    {
+        return $this->hasMany(ProfessionalExperience::class);
+    }
+
+    public function formations()
+    {
+        return $this->hasMany(Formation::class);
     }
 
 }
