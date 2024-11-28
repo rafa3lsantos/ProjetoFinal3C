@@ -10,9 +10,15 @@ class Certificate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
-        'file',
+        'tipo',
+        'titulo',
+        'descricao',
+        'anexar_conquista',
         'candidate_id',
     ];
+
+    public function candidate()
+    {
+        return $this->belongsTo(Candidate::class);
+    }
 }

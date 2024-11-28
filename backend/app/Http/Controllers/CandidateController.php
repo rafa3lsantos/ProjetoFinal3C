@@ -96,6 +96,7 @@ class CandidateController extends Controller
     public function show($id)
     {
         $candidate = Candidate::find($id);
+        
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrada'], 404);
         }

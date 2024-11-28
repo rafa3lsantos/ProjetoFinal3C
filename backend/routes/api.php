@@ -6,6 +6,9 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CurriculumController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\ApplicationsController;
+use App\Http\Controllers\SkillsController;
+use App\Http\Controllers\CertificatesController;
+use App\Http\Controllers\LanguagesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -106,3 +109,37 @@ Route::prefix('applications')->group(function () {
         Route::get('viewCandidates/{jobId}', [ApplicationsController::class, 'viewCandidates']);
     });
 });
+
+
+// -- Skills Routes --
+
+Route::prefix('skills')->group(function () {
+    Route::get('/show/{id}', [SkillsController::class, 'show']);
+    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+        Route::post('/store', [SkillsController::class, 'store']);
+        Route::put('/update/{id}', [SkillsController::class, 'update']);
+    });
+});
+
+// -- Languages Routes --
+
+Route::prefix('languages')->group(function () {
+    Route::get('/show/{id}', [LanguagesController::class, 'show']);
+    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+        Route::post('/store', [LanguagesController::class, 'store']);
+        Route::put('/update/{id}', [LanguagesController::class, 'update']);
+    });
+});
+
+// -- Certificates Routes --
+
+Route::prefix('certificates')->group(function () {
+    Route::get('/show/{id}', [CertificatesController::class, 'show']);
+    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+        Route::post('/store', [CertificatesController::class, 'store']);
+        Route::put('/update/{id}', [CertificatesController::class, 'update']);
+    });
+});
+
+
+
