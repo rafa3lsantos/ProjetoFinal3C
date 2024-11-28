@@ -4,6 +4,9 @@ use App\Http\Controllers\RecruiterController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CurriculumController;
+use App\Http\Controllers\FormationController;
+use App\Http\Controllers\ProfessionalExperienceController;
+
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\ApplicationsController;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +50,21 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     });
 });
 
+// -- Formation Routes --
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/formation/register', [FormationController::class, 'store']);
+    Route::put('/formation/{id}', [FormationController::class, 'update']);
+});
+    Route::get('formation/{id}', [FormationController::class, 'show']);
+
+
+// -- Professional Experience Routes --
+Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
+    Route::post('professional-experience/register', [ProfessionalExperienceController::class, 'store']);
+    Route::put('professional-experience/update/{id}', [ProfessionalExperienceController::class, 'update']);
+});
+Route::get('professional-experience/show', [ProfessionalExperienceController::class, 'show']);
+
 // -- Recruiter Routes --
 
 Route::prefix('recruiter')->group(function () {
@@ -63,7 +81,6 @@ Route::prefix('recruiter')->group(function () {
         Route::get('/profile-image/{id}', [RecruiterController::class, 'getProfileImage']);
     });
 });
-
 
 // -- Company Routes --
 
