@@ -57,7 +57,9 @@
                                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                                             {{ vaga.jobs_city }} - {{ vaga.jobs_state }}
                                         </span>
+
                                         <p>{{ truncateDescription(vaga.jobs_description) }}</p>
+                                        
                                     </div>
                                     <div class="mt-3">
                                         <button @click="viewVaga(vaga)" class="btn btn-primary">Ver Vaga</button>

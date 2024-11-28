@@ -44,16 +44,17 @@
                                                 </span>
                                             </div>
                                             <div class="form-group">
-                                                <div v-html="vaga.jobs_description"></div>
+                                                <div v-html="formattedDescription(vaga.jobs_description)"></div>
                                             </div>
 
 
                                         </div>
                                     </div>
                                     <button @click="goBack" class="btn btn-secondary w-20">Voltar</button>
-                                    
-                                    <button @click="candidatar" class="candidatar btn btn-primary w-40">Candidar-se</button>
-                                    
+
+                                    <button @click="candidatar"
+                                        class="candidatar btn btn-primary w-40">Candidar-se</button>
+
 
                                 </div>
                                 <div v-else>
@@ -147,6 +148,9 @@ export default {
         goBack() {
             this.$router.push('/vagas');
         },
+        formattedDescription(description) {
+            return description ? description.replace(/\n/g, "<br>") : '';
+        },
     },
     mounted() {
         this.fetchVaga();
@@ -208,7 +212,7 @@ i {
     margin-right: 5px;
 }
 
-.candidatar{
-margin-left: 20px;
+.candidatar {
+    margin-left: 20px;
 }
 </style>
