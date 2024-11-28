@@ -20,14 +20,12 @@ class CompanyController extends Controller
             'password' => 'required|string|min:8',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
-            'recruiter_id' => 'nullable|exists:recruiters,id',
         ]);
 
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
 
-        $arrayRequest['recruiter_id'] = $request->recruiter_id ?? NULL;
 
         try {
 
@@ -41,11 +39,6 @@ class CompanyController extends Controller
             $company->about_company = $request->about_company;
 
 
-            if ($request->has('recruiter_id') && Auth::check()) {
-                $company->recruiter_id = Auth::id();
-            } else {
-                $company->recruiter_id = null;
-            }
 
             $company->save();
 
@@ -96,10 +89,10 @@ class CompanyController extends Controller
             'about_company' => 'sometimes|string|min:3|max:255',
         ]);
 
-        // Path to store company photos
+
         $imageDirectory = base_path('../../../../frontend/public/company_photos');
 
-        // If company photo is uploaded as base64
+
         if ($request->filled('photo_base64')) {
             $base64Image = $request->photo_base64;
 
@@ -127,7 +120,7 @@ class CompanyController extends Controller
             }
         }
 
-        // If a new password is provided, hash it
+
         if (isset($arrayRequest['password'])) {
             $arrayRequest['password'] = Hash::make($arrayRequest['password']);
         }
@@ -188,31 +181,18 @@ class CompanyController extends Controller
 
         return response()->json(['message' => 'Empresa não possui imagem de perfil'], 404);
     }
-
     public function indexForCompany()
     {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'Usuário não autenticado.',
-            ], 401);
-        }
-
-        $company = $user->company;
+        $company = Auth::guard('sanctum')->user();
 
         if (!$company) {
-            return response()->json([
-                'message' => 'Empresa não encontrada ou acesso não autorizado.',
-            ], 403);
+            return response()->json(['message' => 'Usuário não autenticado.'], 401);
         }
 
         $recruiters = $company->recruiters;
 
         if ($recruiters->isEmpty()) {
-            return response()->json([
-                'message' => 'Nenhum recrutador cadastrado para esta empresa.',
-            ], 404);
+            return response()->json(['message' => 'Nenhum recrutador cadastrado para esta empresa.'], 404);
         }
 
         return response()->json([
@@ -220,9 +200,15 @@ class CompanyController extends Controller
             'recruiters' => $recruiters->map(function ($recruiter) {
                 return [
                     'id' => $recruiter->id,
-                    'name' => $recruiter->name,
+                    'name' => $recruiter->recruiter_name,
+                    'cpf' => $recruiter->recruiter_cpf,
+                    'gender' => $recruiter->recruiter_gender,
+                    'phone' => $recruiter->recruiter_phone,
+                    'birthdate' => $recruiter->recruiter_birthdate,
                     'email' => $recruiter->email,
-                    'profile_image' => $recruiter->profile_image ?? 'Imagem não disponível',
+                    'profile_image' => $recruiter->recruiter_photo
+                        ? asset('storage/' . $recruiter->recruiter_photo)
+                        : 'Imagem não disponível',
                 ];
             }),
         ], 200);

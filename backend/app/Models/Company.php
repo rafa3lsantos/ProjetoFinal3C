@@ -30,8 +30,8 @@ class Company extends Authenticatable
         return $this->hasMany(Company::class);
     }
 
-    public function recruiter()
+    public function recruiters()
     {
-        return $this->belongsTo(Recruiter::class, 'recruiter_id');
+        return $this->hasMany(Recruiter::class);
     }
 }

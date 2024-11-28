@@ -28,10 +28,6 @@ class Candidate extends Authenticatable
         'city',
     ];
 
-    public function curriculum()
-    {
-        return $this->hasOne(Curriculum::class);
-    }
 
     public function professionalExperiences()
     {
