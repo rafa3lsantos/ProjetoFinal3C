@@ -20,25 +20,44 @@ class CompanyController extends Controller
             'password' => 'required|string|min:8',
             'company_sector' => 'nullable|string|max:255',
             'about_company' => 'nullable|string|max:255',
+            'recruiter_id' => 'nullable|exists:recruiters,id',
         ]);
+
 
         $arrayRequest['password'] = Hash::make($arrayRequest['password']);
 
-        // if ($request->hasFile('company_photo')) {
-        //     $file = $request->file('company_photo');
-        //     $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
-        //     $filePath = $file->storeAs('images', $filename, 'public');
-        //     $arrayRequest['company_photo'] = $filePath;
-        // }
+
+        $arrayRequest['recruiter_id'] = $request->recruiter_id ?? NULL;
+
+        try {
+
+            $company = new Company();
+            $company->company_name = $request->company_name;
+            $company->company_cnpj = $request->company_cnpj;
+            $company->company_phone = $request->company_phone;
+            $company->email = $request->email;
+            $company->password = $arrayRequest['password'];
+            $company->company_sector = $request->company_sector;
+            $company->about_company = $request->about_company;
 
 
-        $company = Company::create($arrayRequest);
+            if ($request->has('recruiter_id') && Auth::check()) {
+                $company->recruiter_id = Auth::id();
+            } else {
+                $company->recruiter_id = null;
+            }
 
-        return response()->json([
-            'message' => 'Empresa criada com sucesso!',
-            'company' => $company,
-        ], 201);
+            $company->save();
+
+            return response()->json([
+                'message' => 'Empresa criada com sucesso!',
+                'company' => $company,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao criar a empresa.', 'error' => $e->getMessage()], 500);
+        }
     }
+
 
     public function loginCompany(Request $request)
     {
@@ -77,20 +96,10 @@ class CompanyController extends Controller
             'about_company' => 'sometimes|string|min:3|max:255',
         ]);
 
+        // Path to store company photos
         $imageDirectory = base_path('../../../../frontend/public/company_photos');
 
-        // if ($request->hasFile('comapany_photo')) {
-        //     try {
-
-        //         $imageName = uniqid() . '.' . $request->file('comapany_photo')->getClientOriginalExtension();
-        //         $request->file('comapany_photo')->move($imageDirectory, $imageName);
-
-        //         $arrayRequest['company_photo'] = "images/$imageName";
-        //     } catch (\Exception $e) {
-        //         return response()->json(['message' => 'Erro ao salvar a imagem enviada.', 'error' => $e->getMessage()], 500);
-        //     }
-        // }
-
+        // If company photo is uploaded as base64
         if ($request->filled('photo_base64')) {
             $base64Image = $request->photo_base64;
 
@@ -118,18 +127,18 @@ class CompanyController extends Controller
             }
         }
 
-        try {
-            if (isset($arrayRequest['password'])) {
-                $arrayRequest['password'] = Hash::make($arrayRequest['password']);
-            }
+        // If a new password is provided, hash it
+        if (isset($arrayRequest['password'])) {
+            $arrayRequest['password'] = Hash::make($arrayRequest['password']);
+        }
 
+        try {
             $company->update($arrayRequest);
             return response()->json(['message' => 'Empresa atualizada com sucesso', 'data' => $arrayRequest], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Erro ao atualizar as informações da empresa.', 'error' => $e->getMessage()], 500);
         }
     }
-
 
     public function show($id)
     {
@@ -147,7 +156,6 @@ class CompanyController extends Controller
 
     public function uploadProfileImage(Request $request)
     {
-        
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -166,7 +174,6 @@ class CompanyController extends Controller
         return response()->json(['message' => 'Erro ao fazer upload da imagem.'], 400);
     }
 
-
     public function getProfileImage($id)
     {
         $company = Company::find($id);
@@ -180,5 +187,44 @@ class CompanyController extends Controller
         }
 
         return response()->json(['message' => 'Empresa não possui imagem de perfil'], 404);
+    }
+
+    public function indexForCompany()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuário não autenticado.',
+            ], 401);
+        }
+
+        $company = $user->company;
+
+        if (!$company) {
+            return response()->json([
+                'message' => 'Empresa não encontrada ou acesso não autorizado.',
+            ], 403);
+        }
+
+        $recruiters = $company->recruiters;
+
+        if ($recruiters->isEmpty()) {
+            return response()->json([
+                'message' => 'Nenhum recrutador cadastrado para esta empresa.',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Recrutadores encontrados!',
+            'recruiters' => $recruiters->map(function ($recruiter) {
+                return [
+                    'id' => $recruiter->id,
+                    'name' => $recruiter->name,
+                    'email' => $recruiter->email,
+                    'profile_image' => $recruiter->profile_image ?? 'Imagem não disponível',
+                ];
+            }),
+        ], 200);
     }
 }

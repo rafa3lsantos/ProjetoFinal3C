@@ -25,6 +25,7 @@ import ConEcer from '../views/ConEcer.vue';
 import Skills from '../views/Skills.vue';
 import Formacao from '../views/Formacao.vue';
 import VerVaga from '../views/VerVaga.vue';
+import Recrutadores from '../views/Recrutadores.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -276,7 +277,16 @@ const router = createRouter({
         userType: 'candidato',
       },
     },
-
+    {
+      path: '/recrutadores',
+      name: 'recrutadores',
+      component: Recrutadores,
+      meta: {
+        title: 'Recrutadores',
+        requiresAuth: true,
+        userType: 'empresa',
+      },
+    },
   ],
 });
 

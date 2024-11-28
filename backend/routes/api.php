@@ -68,6 +68,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
 });
 Route::get('professional-experience/show', [ProfessionalExperienceController::class, 'show']);
 
+
 // -- Recruiter Routes --
 
 Route::prefix('recruiter')->group(function () {
@@ -91,6 +92,7 @@ Route::prefix('company')->group(function () {
     Route::post('register', [CompanyController::class, 'store']);
     Route::post('login', [CompanyController::class, 'loginCompany']);
     Route::get('show/{id}', [CompanyController::class, 'show']);
+    Route::get('index-for-company', [CompanyController::class, 'indexForCompany']);
 
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::put('update/{id}', [CompanyController::class, 'update']);
