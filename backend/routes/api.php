@@ -101,8 +101,6 @@ Route::prefix('company')->group(function () {
     });
 });
 
-
-
 // -- Jobs Routes --
 
 Route::prefix('jobs')->middleware(['auth:sanctum', 'role:recruiter'])->group(function () {

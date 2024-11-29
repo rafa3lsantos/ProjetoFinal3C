@@ -21,6 +21,8 @@ class LanguagesController extends Controller
             'level' => 'required|string|in:beginner,intermediate,advanced,fluent',
         ]);
 
+        $arrayRequest['candidate_id'] = $candidate->id;
+
         $language = Languages::create($arrayRequest);
 
         return response()->json([
