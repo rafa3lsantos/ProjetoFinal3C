@@ -43,37 +43,6 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     });
 });
 
-// -- Curriculum Routes --
-
-// Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-//     Route::prefix('curriculum')->group(function () {
-//         Route::post('/register', [CurriculumController::class, 'store']);
-//         Route::put('/update/{id}', [CurriculumController::class, 'updateCurriculum']);
-//         Route::delete('/delete', [CurriculumController::class, 'delete']);
-//         Route::get('/show/{id}', [CurriculumController::class, 'show']);
-//     });
-// });
-
-// -- Formation Routes --
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/formation/register', [FormationController::class, 'store']);
-    Route::put('/formation/update/{id}', [FormationController::class, 'update']);
-    Route::get('/formations/{Id}', [FormationController::class, 'index']);
-});
-Route::get('formation/{id}', [FormationController::class, 'show']);
-
-
-
-// -- Professional Experience Routes --
-Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-    Route::post('experience/register', [ProfessionalExperienceController::class, 'store']);
-    Route::put('professional-experience/update/{id}', [ProfessionalExperienceController::class, 'update']);
-});
-
-Route::get('professional-experiences', [ProfessionalExperienceController::class, 'index']);
-
-
-
 // -- Recruiter Routes --
 
 Route::prefix('recruiter')->group(function () {
@@ -132,33 +101,3 @@ Route::prefix('applications')->group(function () {
     });
 });
 
-
-// -- Skills Routes --
-
-Route::prefix('skills')->group(function () {
-    Route::get('/show/{id}', [SkillsController::class, 'show']);
-    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-        Route::post('/store', [SkillsController::class, 'store']);
-        Route::put('/update/{id}', [SkillsController::class, 'update']);
-    });
-});
-
-// -- Languages Routes --
-
-Route::prefix('languages')->group(function () {
-    Route::get('/show/{id}', [LanguagesController::class, 'show']);
-    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-        Route::post('/store', [LanguagesController::class, 'store']);
-        Route::put('/update/{id}', [LanguagesController::class, 'update']);
-    });
-});
-
-// -- Certificates Routes --
-
-Route::prefix('certificates')->group(function () {
-    Route::get('/show/{id}', [CertificatesController::class, 'show']);
-    Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-        Route::post('/store', [CertificatesController::class, 'store']);
-        Route::put('/update/{id}', [CertificatesController::class, 'update']);
-    });
-});
