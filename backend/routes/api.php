@@ -43,17 +43,6 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     });
 });
 
-// -- Curriculum Routes --
-
-// Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-//     Route::prefix('curriculum')->group(function () {
-//         Route::post('/register', [CurriculumController::class, 'store']);
-//         Route::put('/update/{id}', [CurriculumController::class, 'updateCurriculum']);
-//         Route::delete('/delete', [CurriculumController::class, 'delete']);
-//         Route::get('/show/{id}', [CurriculumController::class, 'show']);
-//     });
-// });
-
 // -- Formation Routes --
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/formation/register', [FormationController::class, 'store']);
