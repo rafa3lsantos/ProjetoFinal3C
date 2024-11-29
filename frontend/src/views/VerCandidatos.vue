@@ -62,7 +62,7 @@
                                             <div class="row pt-1">
                                                 <div class="col-6 mb-3">
                                                     <h6>Gênero</h6>
-                                                    <p class="text-muted">{{candidate.gender }}</p>
+                                                    <p class="text-muted">{{ candidate.gender }}</p>
 
                                                 </div>
                                                 <div class="col-6 mb-3">
@@ -70,7 +70,8 @@
                                                     <p class="text-muted">{{ formatDate(candidate.birthdate) }}</p>
                                                 </div>
 
-                                                <button class="btn btn-secondary w-30" @click="verCurriculo(candidate)">Ver Currículo</button>
+                                                <button class="btn btn-secondary w-30"
+                                                    @click="verCurriculo(candidate)">Ver Currículo</button>
                                             </div>
                                         </div>
                                     </div>
@@ -137,8 +138,8 @@ export default {
             searchTerm: "",
             defaultPhoto: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
             isLoading: false,
-            showModal: false, // Controla a visibilidade do modal
-            selectedCandidate: null, // Armazena os dados do candidato selecionado
+            showModal: false,
+            selectedCandidate: null,
         };
     },
     created() {
@@ -170,8 +171,9 @@ export default {
         },
 
         applyFilters() {
+
             this.filteredCandidates = this.candidates.filter((candidate) =>
-                candidate.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                candidate.name_candidate.toLowerCase().includes(this.searchTerm.toLowerCase())
             );
         },
 
@@ -203,6 +205,7 @@ export default {
     },
 };
 </script>
+
 
 <style scoped>
 .gradient-custom {
