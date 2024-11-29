@@ -28,39 +28,39 @@
               <h5 class="card-title mb-0">Dados Pessoais</h5>
             </div>
             <div class="card-body">
-              <form @submit.prevent="updateCurriculum">
+              <form @submit.prevent="updateUsuario">
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <label for="nomeCandidato">Nome Completo</label>
-                    <input type="text" class="form-control" id="nomeCandidato" v-model="curriculum.name"
-                      placeholder="Digite seu nome">
+                    <input type="text" class="form-control" id="nomeCandidato" v-model="usuario.name"
+                      placeholder="Digite seu nome" required>
                   </div>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="emailCandidato">Email</label>
-                  <input type="email" class="form-control" id="emailCandidato" v-model="curriculum.email"
-                    placeholder="Email">
+                  <input type="email" class="form-control" id="emailCandidato" v-model="usuario.email"
+                    placeholder="Email" required>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="cepCandidato">CEP</label>
-                  <input type="text" class="form-control" id="cepCandidato" v-model="curriculum.cep"
-                    placeholder="Digite seu CEP">
+                  <input type="text" class="form-control" id="cepCandidato" v-model="usuario.cep"
+                    placeholder="Digite seu CEP" required>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="enderecoCandidato">Endereço</label>
-                  <input type="text" class="form-control" id="enderecoCandidato" v-model="curriculum.address"
-                    placeholder="Digite seu endereço">
+                  <input type="text" class="form-control" id="enderecoCandidato" v-model="usuario.address"
+                    placeholder="Digite seu endereço" required>
                 </div>
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <label for="estadoCandidato">Estado</label>
-                    <input type="text" class="form-control" id="estadoCandidato" v-model="curriculum.state"
-                      placeholder="Digite seu estado">
+                    <input type="text" class="form-control" id="estadoCandidato" v-model="usuario.state"
+                      placeholder="Sigla" maxlength="2" required>
                   </div>
                   <div class="form-group col-md-6">
                     <label for="cidadeCandidato">Cidade</label>
-                    <input type="text" class="form-control" id="cidadeCandidato" v-model="curriculum.city"
-                      placeholder="Digite sua cidade">
+                    <input type="text" class="form-control" id="cidadeCandidato" v-model="usuario.city"
+                      placeholder="Digite sua cidade" required>
                   </div>
                 </div>
 
@@ -77,6 +77,8 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import HttpService from "../services/HttpService";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 export default {
   name: "CurriculoCandidato",
@@ -85,7 +87,7 @@ export default {
   },
   data() {
     return {
-      curriculum: {
+      usuario: {
         id: null,
         name: "",
         email: "",
@@ -98,53 +100,76 @@ export default {
     };
   },
   created() {
-    this.fetchCurriculum();
+    this.fetchUserProfile();
   },
   methods: {
-    async fetchCurriculum() {
-      try {
-        const response = await HttpService.get(`/curriculum/show/${this.getCurriculumId}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`
-          }
-        });
-        const curriculo = response.data.curriculum;
-        this.curriculo.name = user.name || '';
-        this.curriculo.email = user.email || '';
-        this.curriculo.cep = user.cep || '';
-        this.curriculo.address = user.address || '';
-        this.curriculo.state = user.state || '';
-        this.curriculo.city = user.city || '';
+    showToast(type, message) {
+      let backgroundColor = type === "success" ? "#28a745" : "#dc3545";
+      Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: backgroundColor,
+        color: "white",
+        close: true,
+      }).showToast();
+    },
 
+    async fetchUserProfile() {
+      try {
+        const candidateId = this.usuario.id || localStorage.getItem("candidateId");
+        const response = await HttpService.get(`/candidate/show/${candidateId}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+
+        const user = response.data.candidate;
+        this.usuario.name = user.name_candidate || "";
+        this.usuario.email = user.email || "";
+        this.usuario.cep = user.cep || "";
+        this.usuario.address = user.address || "";
+        this.usuario.state = user.state || "";
+        this.usuario.city = user.city || "";
       } catch (error) {
+        console.error("Erro ao carregar o perfil do usuário:", error);
       }
     },
 
-
-
-    async updateCurriculum() {
+    async updateUsuario() {
       try {
-        const payload = { ...this.curriculum };
-        const response = await HttpService.post(`/curriculum/register`, payload, {
+        const id = this.usuario.id || localStorage.getItem("candidateId");
+
+        const payload = {
+          name_candidate: this.usuario.name,
+          email: this.usuario.email,
+          cep: this.usuario.cep,
+          address: this.usuario.address,
+          state: this.usuario.state,
+          city: this.usuario.city,
+        };
+
+        const response = await HttpService.put(`/candidate/update/${id}`, payload, {
           headers: {
             Authorization: `Bearer ${this.token}`,
             "Content-Type": "application/json",
           },
         });
+
         if (response.status === 200) {
-          alert("Currículo atualizado com sucesso!");
+          this.showToast("success", "Currículo atualizado com sucesso!");
         } else {
-          alert("Erro ao atualizar o currículo.");
+          this.showToast("error", "Erro ao atualizar o currículo.");
         }
       } catch (error) {
         console.error("Erro ao atualizar o currículo:", error);
-        alert("Erro ao atualizar o currículo.");
+        this.showToast("error", "Erro ao atualizar o currículo.");
       }
     },
   },
 };
 </script>
-
 
 
 <style scoped>
