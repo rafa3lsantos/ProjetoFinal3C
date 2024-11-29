@@ -15,27 +15,27 @@ class FormationController extends Controller
 
     // Método para criar uma nova formação
     public function store(Request $request)
-{
-    $validatedData = $request->validate([
-        'formation' => 'required|string',
-        'institution' => 'required|string',
-        'experience' => 'required|string',
-        'degree' => 'required|string',
-        'status' => 'required|string',
-        'course' => 'required|string',
-        'start_date_course' => 'required|date',
-        'end_date_course' => 'nullable|date',
-        'certificate_type' => 'nullable|string',
-        'certificate_title' => 'nullable|string',
-        'certificate_description' => 'nullable|string',
-        'certificate_institution' => 'nullable|string',
-        'candidate_id' => 'required|exists:candidates,id', // Validação para candidate_id
-    ]);
+    {
+        $validatedData = $request->validate([
+            'formation' => 'required|string|in:graduação,pos-graduação,mestrado,doutorado',
+            'institution' => 'required|string',
+            'experience' => 'required|string',
+            'degree' => 'required|string|in:tecnologo,licenciatura,bacharelado',
+            'status' => 'required|string|in:completo, em andamento, incompleto',
+            'course' => 'required|string',
+            'start_date_course' => 'required|date',
+            'end_date_course' => 'nullable|date',
+            'certificate_type' => 'nullable|string|in:conquista, certificado',
+            'certificate_title' => 'nullable|string',
+            'certificate_description' => 'nullable|string',
+            'certificate_institution' => 'nullable|string',
+            'candidate_id' => 'required|exists:candidates,id', // Validação para candidate_id
+        ]);
 
-    $formation = Formation::create($validatedData);
+        $formation = Formation::create($validatedData);
 
-    return response()->json($formation, 201);
-}
+        return response()->json($formation, 201);
+    }
 
     // Método para atualizar uma formação existente
     public function update(Request $request, $id)
@@ -46,25 +46,25 @@ class FormationController extends Controller
             return response()->json(['error' => 'Formação não encontrada'], 404);
         }
 
-        $arrayRequest = $request->validate([
-            'formation' => 'required|string|max:255',
-            'institution' => 'required|string|max:255',
-            'experience' => 'required|string|max:500',
-            'degree' => 'required|string|in:tecnologo,licenciatura,bacharelado',
-            'status' => 'required|string|in:completo,em andamento,incompleto',
-            'course' => 'required|string|max:255',
-            'start_date_course' => 'required|date',
-            'end_date_course' => 'required|date|after_or_equal:start_date_course',
-            'certificate_type' => 'required|string|in:conquista,certificado',
-            'certificate_title' => 'required|string|max:255',
-            'certificate_description' => 'required|string|max:500',
-            'certificate_institution' => 'required|string|max:255',
+        $validatedData = $request->validate([
+            'formation' => 'sometimes|string|in:graduação,pos-graduação,mestrado,doutorado',
+            'institution' => 'sometimes|string',
+            'experience' => 'sometimes|string',
+            'degree' => 'sometimes|string|in:tecnologo,licenciatura,bacharelado',
+            'status' => 'sometimes|string|in:completo, em andamento, incompleto',
+            'course' => 'sometimes|string',
+            'start_date_course' => 'sometimes|date',
+            'end_date_course' => 'nullable|date',
+            'certificate_type' => 'nullable|string|in:conquista, certificado',
+            'certificate_title' => 'nullable|string',
+            'certificate_description' => 'nullable|string',
+            'certificate_institution' => 'nullable|string',
         ]);
 
-        $formation->update($arrayRequest);
+        $formation->update($validatedData);
 
         return response()->json([
-            'message' => 'Formation updated successfully',
+            'message' => 'Formação atualizada com sucesso',
             'formation' => $formation,
         ]);
     }
