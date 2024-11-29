@@ -26,7 +26,7 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">CPF</label>
-                                                <input type="text" v-model="cpf" class="form-control" required 
+                                                <input type="text" v-model="cpf" class="form-control" required
                                                     @input="formatCPF" maxlength="14" />
                                             </div>
 
@@ -110,6 +110,7 @@ export default {
             }
 
             try {
+
                 const response = await HttpService.post('candidate/register', {
                     name_candidate: this.name_candidate,
                     cpf: this.cpf,
@@ -120,13 +121,33 @@ export default {
                 console.log(response);
 
                 alert('Registro concluído com sucesso!');
-                this.$router.push('/home-candidato');
+
+
+                const loginResponse = await HttpService.post('candidate/login', {
+                    email: this.email,
+                    password: this.password,
+                });
+
+
+                this.$store.dispatch('login', {
+                    token: loginResponse.data.token,
+                    role: 'candidato',
+                    candidateId: loginResponse.data.candidate_id,
+                    curriculumId: loginResponse.data.curriculum_id,
+                });
+
+                console.log("Login bem-sucedido: ", loginResponse);
+
+                this.$nextTick(() => {
+
+                    this.$router.push('/curriculo-inicio');
+                });
+
             } catch (error) {
+                console.error("Erro ao registrar o candidato:", error);
                 if (error.response && error.response.data) {
-                    console.error("Erro ao registrar o candidato:", error.response.data);
                     alert(`Erro: ${error.response.data.message || 'Verifique os dados e tente novamente.'}`);
                 } else {
-                    console.error("Erro ao registrar o candidato:", error);
                     alert('Erro ao registrar. Verifique os dados e tente novamente.');
                 }
             }
@@ -138,7 +159,9 @@ export default {
             input = input.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
             this.cpf = input.substring(0, 14);
         }
-    }
+    },
+
+
 };
 </script>
 

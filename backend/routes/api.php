@@ -63,7 +63,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // -- Professional Experience Routes --
 Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
-    Route::post('professional-experience/register', [ProfessionalExperienceController::class, 'store']);
+    Route::post('experience/register', [ProfessionalExperienceController::class, 'store']);
     Route::put('professional-experience/update/{id}', [ProfessionalExperienceController::class, 'update']);
 });
 Route::get('professional-experience/show', [ProfessionalExperienceController::class, 'show']);

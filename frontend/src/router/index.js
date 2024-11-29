@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store/index.js';
-import Curriculo from '../views/CurriculoCandidato.vue';
+import Curriculo from '../views/UpdateCurriculoCandidato.vue';
 import HomeCandidato from '../views/HomeCandidato.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
@@ -18,14 +18,18 @@ import PerfilRecrutador from '../views/PerfilRecrutador.vue';
 import MinhasVagas from '../views/MinhasVagas.vue';
 import UpdateVaga from '../views/UpdateVaga.vue';
 import Vagas from '../views/Vagas.vue';
-import ExProfissional from '../views/ExProfissional.vue';
-import Idioma from '../views/Idioma.vue';
-import AnexarCurriculo from '../views/AnexarCurriculo.vue';
-import ConEcer from '../views/ConEcer.vue';
-import Skills from '../views/Skills.vue';
-import Formacao from '../views/Formacao.vue';
+import UpdateExProfissional from '../views/UpdateExProfissional.vue';
+import UpdateIdioma from '../views/UpdateIdioma.vue';
+import AnexarCurriculo from '../views/UpdateAnexarCurriculo.vue';
+import UpdateConEcer from '../views/UpdateConEcer.vue';
+import UpdateSkills from '../views/UpdateSkills.vue';
+import UpdateFormacao from '../views/UpdateFormacao.vue';
 import VerVaga from '../views/VerVaga.vue';
 import Recrutadores from '../views/Recrutadores.vue';
+import CurriculoInicio from '../views/CurriculoInicio.vue';
+import ExProfissional from '../views/ExProfissional.vue';
+import Formacao from '../views/Formacao.vue';
+import Skills from '../views/Skills.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -208,9 +212,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/experiencia-profissional',
-      name: 'experiencia-profissional',
-      component: ExProfissional,
+      path: '/update-experiencia-profissional',
+      name: 'update experiencia-profissional',
+      component: UpdateExProfissional,
       meta: {
         title: 'Experiência Profissional',
         requiresAuth: true,
@@ -218,9 +222,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/formacao',
-      name: 'formacao',
-      component: Formacao,
+      path: '/update-formacao',
+      name: 'updateformacao',
+      component: UpdateFormacao,
       meta: {
         title: 'Formação',
         requiresAuth: true,
@@ -228,9 +232,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/conquistas-certificados',
-      name: 'conquistas-certificados',
-      component: ConEcer,
+      path: '/update-conquistas-certificados',
+      name: 'update conquistas-certificados',
+      component: UpdateConEcer,
       meta: {
         title: 'Conquistas ou Certificados',
         requiresAuth: true,
@@ -238,9 +242,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/skills',
-      name: 'skills',
-      component: Skills,
+      path: '/update-skills',
+      name: 'update skills',
+      component: UpdateSkills,
       meta: {
         title: 'Skills',
         requiresAuth: true,
@@ -248,9 +252,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/idiomas',
-      name: 'idiomas',
-      component: Idioma,
+      path: '/update-idiomas',
+      name: 'update idiomas',
+      component: UpdateIdioma,
       meta: {
         title: 'Idiomas',
         requiresAuth: true,
@@ -285,6 +289,46 @@ const router = createRouter({
         title: 'Recrutadores',
         requiresAuth: true,
         userType: 'empresa',
+      },
+    },
+    {
+      path: '/curriculo-inicio',
+      name: 'curriculo-inicio',
+      component: CurriculoInicio,
+      meta: {
+        title: 'Currículo Inicial',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/experiencia-profissional',
+      name: 'ex-profissional',
+      component: ExProfissional,
+      meta: {
+        title: 'Experiência Profissional',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/formacao',
+      name: 'formacao',
+      component: Formacao,
+      meta: {
+        title: 'Formação',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/skills',
+      name: 'skills',
+      component: Skills,
+      meta: {
+        title: 'Skills',
+        requiresAuth: true,
+        userType: 'candidato',
       },
     },
   ],

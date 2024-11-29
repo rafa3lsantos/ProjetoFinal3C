@@ -7,21 +7,22 @@ use App\Models\Formation;
 
 class FormationController extends Controller
 {
-    // Middleware para garantir autenticação (caso necessário)
+
     public function __construct()
     {
-        $this->middleware('auth'); // Adicione isso se a autenticação for obrigatória
+        $this->middleware('auth');
     }
 
-    // Método para criar uma nova formação
+
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'formation' => 'required|string|in:graduação,pos-graduação,mestrado,doutorado',
             'institution' => 'required|string',
-            'experience' => 'required|string',
+            'experience' => 'nullable|string',
             'degree' => 'required|string|in:tecnologo,licenciatura,bacharelado',
-            'status' => 'required|string|in:completo, em andamento, incompleto',
+            'status' => 'required|string|in:completo,em andamento,incompleto',
             'course' => 'required|string',
             'start_date_course' => 'required|date',
             'end_date_course' => 'nullable|date',
@@ -29,15 +30,38 @@ class FormationController extends Controller
             'certificate_title' => 'nullable|string',
             'certificate_description' => 'nullable|string',
             'certificate_institution' => 'nullable|string',
-            'candidate_id' => 'required|exists:candidates,id', // Validação para candidate_id
+            'candidate_id' => 'required|exists:candidates,id',
         ]);
 
-        $formation = Formation::create($validatedData);
+        try {
 
-        return response()->json($formation, 201);
+            $formation = Formation::create([
+                'formation' => $validatedData['formation'],
+                'institution' => $validatedData['institution'],
+                'degree' => $validatedData['degree'],
+                'status' => $validatedData['status'],
+                'course' => $validatedData['course'],
+                'start_date_course' => $validatedData['start_date_course'],
+                'end_date_course' => $validatedData['end_date_course'] ?? null,
+                'certificate_type' => $validatedData['certificate_type'] ?? null,
+                'certificate_title' => $validatedData['certificate_title'] ?? null,
+                'certificate_description' => $validatedData['certificate_description'] ?? null,
+                'certificate_institution' => $validatedData['certificate_institution'] ?? null,
+                'candidate_id' => $validatedData['candidate_id'],
+            ]);
+
+
+            return response()->json($formation, 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'error' => 'Erro ao salvar a formação. Tente novamente mais tarde.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    // Método para atualizar uma formação existente
+
     public function update(Request $request, $id)
     {
         $formation = Formation::find($id);
@@ -69,7 +93,7 @@ class FormationController extends Controller
         ]);
     }
 
-    // Método para exibir uma formação específica
+
     public function show($id)
     {
         $formation = Formation::find($id);
