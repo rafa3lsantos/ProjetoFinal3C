@@ -14,7 +14,6 @@
                                     <div class="card-body p-4 p-lg-5 text-black">
 
                                         <form @submit.prevent="registerCandidate">
-
                                             <h5 class="fw-normal mb-2 pb-3" style="letter-spacing: 1px;">Registre-se:
                                             </h5>
 
@@ -69,7 +68,6 @@
                                                 <router-link to="/login"
                                                     class="fw-bold text-body"><u>Login</u></router-link>
                                             </p>
-
                                         </form>
 
                                     </div>
@@ -85,6 +83,8 @@
 
 <script>
 import HttpService from '../services/HttpService';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     data() {
@@ -98,19 +98,40 @@ export default {
         };
     },
     methods: {
+        showSuccessToast(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#28a745",
+                color: "white",
+                close: true,
+            }).showToast();
+        },
+        showErrorToast(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#dc3545",
+                color: "white",
+                close: true,
+            }).showToast();
+        },
         async registerCandidate() {
             if (!this.termsAccepted) {
-                alert('Você deve aceitar os termos de serviço.');
+                this.showErrorToast("Você deve aceitar os termos de serviço.");
                 return;
             }
 
             if (this.password !== this.password_confirmation) {
-                alert('As senhas não coincidem.');
+                this.showErrorToast("As senhas não coincidem.");
                 return;
             }
 
             try {
-
                 const response = await HttpService.post('candidate/register', {
                     name_candidate: this.name_candidate,
                     cpf: this.cpf,
@@ -118,16 +139,12 @@ export default {
                     password: this.password,
                     password_confirmation: this.password_confirmation,
                 });
-                console.log(response);
-
-                alert('Registro concluído com sucesso!');
-
+                this.showSuccessToast("Registro concluído com sucesso!");
 
                 const loginResponse = await HttpService.post('candidate/login', {
                     email: this.email,
                     password: this.password,
                 });
-
 
                 this.$store.dispatch('login', {
                     token: loginResponse.data.token,
@@ -136,32 +153,19 @@ export default {
                     curriculumId: loginResponse.data.curriculum_id,
                 });
 
-                console.log("Login bem-sucedido: ", loginResponse);
-
-                this.$nextTick(() => {
-
-                    this.$router.push('/home-candidato');
-                });
-
+                this.$router.push('/home-candidato');
             } catch (error) {
                 console.error("Erro ao registrar o candidato:", error);
-                if (error.response && error.response.data) {
-                    alert(`Erro: ${error.response.data.message || 'Verifique os dados e tente novamente.'}`);
-                } else {
-                    alert('Erro ao registrar. Verifique os dados e tente novamente.');
-                }
+                this.showErrorToast("Erro ao registrar. Verifique os dados e tente novamente.");
             }
         },
-
         formatCPF(event) {
             let input = event.target.value;
             input = input.replace(/\D/g, '');
             input = input.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
             this.cpf = input.substring(0, 14);
-        }
+        },
     },
-
-
 };
 </script>
 

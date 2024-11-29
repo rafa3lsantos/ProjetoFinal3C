@@ -9,24 +9,12 @@
                             <h5 class="card-title mb-0">Currículo</h5>
                         </div>
                         <div class="list-group list-group-flush" role="tablist">
-                            <router-link to="/curriculo" class="list-group-item list-group-item-action">
-                                Dados Pessoais
-                            </router-link>
-                            <router-link to="/experiencia-profissional" class="list-group-item list-group-item-action">
-                                Experiência Profissional
-                            </router-link>
-                            <router-link to="/formacao" class="list-group-item list-group-item-action">
-                                Formação
-                            </router-link>
-                            <router-link to="/certificados" class="list-group-item list-group-item-action">
-                                Certificados
-                            </router-link>
-                            <router-link to="/skills" class="list-group-item list-group-item-action">
-                                Skills
-                            </router-link>
-                            <router-link to="/idiomas" class="list-group-item list-group-item-action">
-                                Idiomas
-                            </router-link>
+                            <router-link to="/curriculo" class="list-group-item list-group-item-action">Experiência
+                                Profissional</router-link>
+                            <router-link to="/update-formacao"
+                                class="list-group-item list-group-item-action">Formação</router-link>
+                            <router-link to="/update-idiomas"
+                                class="list-group-item list-group-item-action">Idiomas</router-link>
                         </div>
                     </div>
                 </div>
