@@ -59,6 +59,31 @@
                                                 placeholder="Informe seu Telefone" @input="formatPhone"
                                                 maxlength="15" />
                                         </div>
+
+                                        <div class="form-group">
+                                            <label for="cep">CEP</label>
+                                            <input type="text" class="form-control" id="cep" v-model="usuario.cep"
+                                                placeholder="Informe seu CEP" @input="formatCEP" maxlength="9" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="address">Endereço</label>
+                                            <input type="text" class="form-control" id="address"
+                                                v-model="usuario.address" placeholder="Informe seu Endereço" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="state">state</label>
+                                            <input type="text" class="form-control" id="state" v-model="usuario.state"
+                                                placeholder="Sigla do estado" maxlength="2" />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="city">Cidade</label>
+                                            <input type="text" class="form-control" id="city" v-model="usuario.city"
+                                                placeholder="Informe sua cidade" />
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="text-center">
@@ -105,6 +130,10 @@ export default {
                 about_candidate: '',
                 phone: '',
                 gender: '',
+                cep: '',
+                address: '',
+                state: '',
+                city: '',
                 perfilPicture: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
             },
             profileImagePreview: '',
@@ -232,6 +261,10 @@ export default {
                 this.usuario.phone = user.phone || '';
                 this.usuario.gender = user.gender || '';
                 this.usuario.about_candidate = user.about_candidate || '';
+                this.usuario.cep = user.cep || '';
+                this.usuario.address = user.address || '';
+                this.usuario.state = user.state || '';
+                this.usuario.city = user.city || '';
 
                 if (user.photo) {
                     this.usuario.perfilPicture = `http://127.0.0.1:8000/storage/${user.photo}`;
@@ -250,7 +283,17 @@ export default {
 
         triggerFileInput() {
             this.$refs.fileInput.click();
-        }
+        },
+
+        formatCEP(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{5})(\d{3})/, '$1-$2');
+            this.usuario.cep = input.substring(0, 9);
+        },
+
+
+
     },
     mounted() {
         this.usuario.id = this.getCandidateId;
