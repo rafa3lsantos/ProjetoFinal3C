@@ -56,7 +56,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
 // -- Formation Routes --
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/formation/register', [FormationController::class, 'store']);
-    Route::put('/formation/{id}', [FormationController::class, 'update']);
+    Route::put('/formation/update/{id}', [FormationController::class, 'update']);
 });
     Route::get('formation/{id}', [FormationController::class, 'show']);
 
