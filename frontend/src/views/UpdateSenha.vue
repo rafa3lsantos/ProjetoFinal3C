@@ -67,6 +67,8 @@
 import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: {
@@ -101,7 +103,7 @@ export default {
             return Object.keys(this.errors).length === 0;
         },
 
-        salvarSenha() {
+        async salvarSenha() {
             if (this.validateFields()) {
                 const data = {
                     password: this.senhaAtual,
@@ -109,22 +111,31 @@ export default {
                     new_password_confirmation: this.password_confirmation
                 };
 
-                HttpService.put(`/candidate/update-password`, data, {
-                    headers: {
-                        'Authorization': `Bearer ${this.getAuthToken}`
-                    }
-                })
-                .then(() => {
-                    alert('Senha alterada com sucesso.');
-                })
-                .catch(error => {
+                try {
+                    const response = await HttpService.put(`/candidate/update-password`, data, {
+                        headers: {
+                            'Authorization': `Bearer ${this.getAuthToken}`
+                        }
+                    });
+
+                    Toastify({
+                        text: "Senha alterada com sucesso.",
+                        backgroundColor: "green",
+                        position: "center", // Centraliza a notificação
+                        duration: 3000,
+                    }).showToast();
+                } catch (error) {
                     console.error("Erro ao alterar senha:", error);
-                    if (error.response && error.response.data.message) {
-                        alert(error.response.data.message);
-                    } else {
-                        alert('Erro ao atualizar a senha. Por favor, tente novamente.');
-                    }
-                });
+                    const errorMessage = error.response && error.response.data.message
+                        ? error.response.data.message
+                        : 'Erro ao atualizar a senha. Por favor, tente novamente.';
+                    Toastify({
+                        text: errorMessage,
+                        backgroundColor: "red",
+                        position: "center", // Centraliza a notificação
+                        duration: 3000,
+                    }).showToast();
+                }
             }
         }
     }

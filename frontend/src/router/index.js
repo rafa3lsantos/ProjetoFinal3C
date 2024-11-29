@@ -25,6 +25,7 @@ import ConEcer from '../views/ConEcer.vue';
 import Skills from '../views/Skills.vue';
 import Formacao from '../views/Formacao.vue';
 import VerVaga from '../views/VerVaga.vue';
+import Recrutadores from '../views/Recrutadores.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -276,7 +277,16 @@ const router = createRouter({
         userType: 'candidato',
       },
     },
-
+    {
+      path: '/recrutadores',
+      name: 'recrutadores',
+      component: Recrutadores,
+      meta: {
+        title: 'Recrutadores',
+        requiresAuth: true,
+        userType: 'empresa',
+      },
+    },
   ],
 });
 
@@ -286,7 +296,10 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userRole;
 
-  if (to.path === '/login' && isAuthenticated) {
+  if (to.path === '/') {
+    if (!isAuthenticated) {
+      return next({ name: 'login' });
+    }
     if (userRole === 'candidato') {
       return next({ name: 'home-candidato' });
     } else if (userRole === 'empresa') {
@@ -300,14 +313,8 @@ router.beforeEach((to, from, next) => {
     if (!isAuthenticated) {
       return next({ name: 'login' });
     }
-
-
-    if (to.path.startsWith('/home-candidato') && userRole !== 'candidato') {
-      return next({ name: 'home-empresa' });
-    } else if (to.path.startsWith('/home-empresa') && userRole !== 'empresa') {
-      return next({ name: 'home-candidato' });
-    } else if (to.path.startsWith('/home-recrutador') && userRole !== 'recrutador') {
-      return next({ name: 'home-candidato' });
+    if (to.meta.userType && to.meta.userType !== userRole) {
+      return next({ name: 'login' });
     }
   }
 

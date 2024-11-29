@@ -26,19 +26,14 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">CPF</label>
-                                                <input type="text" v-model="cpf" class="form-control" required />
+                                                <input type="text" v-model="cpf" class="form-control" required 
+                                                    @input="formatCPF" maxlength="14" />
                                             </div>
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
                                                 <input type="email" v-model="email" class="form-control" required />
                                             </div>
-                                            <!-- 
-                                            <div class="form-outline mb-2">
-                                                <label class="form-label">Telefone</label>
-                                                <input type="text" v-model="phone"
-                                                    class="form-control" required />
-                                            </div> -->
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Crie sua senha</label>
@@ -100,7 +95,6 @@ export default {
             password: '',
             password_confirmation: '',
             termsAccepted: false,
-            // phone: '',
         };
     },
     methods: {
@@ -122,7 +116,6 @@ export default {
                     email: this.email,
                     password: this.password,
                     password_confirmation: this.password_confirmation,
-                    // phone: this.phone,
                 });
                 console.log(response);
 
@@ -137,6 +130,13 @@ export default {
                     alert('Erro ao registrar. Verifique os dados e tente novamente.');
                 }
             }
+        },
+
+        formatCPF(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            this.cpf = input.substring(0, 14);
         }
     }
 };

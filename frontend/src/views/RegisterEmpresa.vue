@@ -26,13 +26,14 @@
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">CNPJ</label>
-                                                <input type="text" v-model="company_cnpj" class="form-control" required />
+                                                <input type="text" v-model="company_cnpj" class="form-control" required
+                                                    @input="formatCNPJ" maxlength="18" />
                                             </div>
+
 
                                             <div class="form-outline mb-2">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" v-model="email" class="form-control"
-                                                    required />
+                                                <input type="email" v-model="email" class="form-control" required />
                                             </div>
 
                                             <div class="form-outline mb-2">
@@ -130,6 +131,12 @@ export default {
                     alert('Erro ao registrar. Verifique os dados e tente novamente.');
                 }
             }
+        },
+        formatCNPJ(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+            this.company_cnpj = input.substring(0, 18);
         }
     }
 };

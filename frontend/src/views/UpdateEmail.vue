@@ -55,6 +55,8 @@
 import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css'; 
 
 export default {
     components: {
@@ -104,14 +106,36 @@ export default {
                     );
 
                     if (response.status === 200) {
-                        alert('Email atualizado com sucesso.');
+                        Toastify({
+                            text: "Email atualizado com sucesso.",
+                            backgroundColor: "green",
+                            position: "center", // Centraliza a notificação
+                            duration: 3000,
+                        }).showToast();
                     } else {
-                        alert('Erro ao atualizar o email.');
+                        Toastify({
+                            text: "Erro ao atualizar o email.",
+                            backgroundColor: "red",
+                            position: "center", // Centraliza a notificação
+                            duration: 3000,
+                        }).showToast();
                     }
                 } catch (error) {
                     console.error('Erro ao atualizar email:', error);
-                    alert('Erro ao salvar os dados.');
+                    Toastify({
+                        text: "Erro ao salvar os dados.",
+                        backgroundColor: "red",
+                        position: "center", // Centraliza a notificação
+                        duration: 3000,
+                    }).showToast();
                 }
+            } else {
+                Toastify({
+                    text: "Por favor, informe um email válido.",
+                    backgroundColor: "orange",
+                    position: "center", // Centraliza a notificação
+                    duration: 3000,
+                }).showToast();
             }
         },
         async fetchUserProfile() {

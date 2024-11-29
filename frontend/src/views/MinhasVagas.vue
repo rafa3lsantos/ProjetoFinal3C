@@ -266,4 +266,11 @@ a {
 i{
     margin-right:5px;
 }
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+}
 </style>

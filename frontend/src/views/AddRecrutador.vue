@@ -15,10 +15,12 @@
                                 Empresa
                             </router-link>
                             <router-link to="/add-recrutador" class="list-group-item list-group-item-action"
-                                active-class="active">Adicionar Recrutador
+                                active-class="active">
+                                Adicionar Recrutador
                             </router-link>
                             <router-link to="/recrutadores" class="list-group-item list-group-item-action"
-                                active-class="active">Recrutadores
+                                active-class="active">
+                                Recrutadores
                             </router-link>
                         </div>
                     </div>
@@ -45,12 +47,12 @@
                                         <div class="form-group">
                                             <label for="recruiter_cpf">CPF</label>
                                             <input type="text" v-model="recruiter_cpf" class="form-control"
-                                                placeholder="000.000.000-00" />
+                                                placeholder="000.000.000-00" @input="formatCPF" maxlength="14" />
                                         </div>
                                         <div class="form-group">
                                             <label for="recruiter_phone">Telefone</label>
                                             <input type="text" v-model="recruiter_phone" class="form-control"
-                                                placeholder="(XX) XXXXX-XXXX" />
+                                                placeholder="(XX) XXXXX-XXXX" @input="formatPhone" maxlength="15" />
                                         </div>
                                         <div class="form-group">
                                             <label>Gênero</label>
@@ -96,6 +98,8 @@
 import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: {
@@ -124,21 +128,47 @@ export default {
         ...mapGetters(['getCompanyId']),
     },
     methods: {
+        showToast(type, message) {
+            if (!message) message = type === 'success' ? 'Operação bem-sucedida!' : 'Erro desconhecido.';
+
+
+            let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
+
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColor,
+                color: 'white',
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
         async registerRecruiter() {
-            if (!this.recruiter_name || !this.recruiter_cpf || !this.email || !this.password || !this.recruiter_birthdate || !this.recruiter_phone) {
-                alert('Preencha todos os campos obrigatórios!');
+            if (
+                !this.recruiter_name ||
+                !this.recruiter_cpf ||
+                !this.email ||
+                !this.password ||
+                !this.recruiter_birthdate ||
+                !this.recruiter_phone
+            ) {
+                this.showToast('error', 'Preencha todos os campos obrigatórios!');
                 return;
             }
 
             if (this.password !== this.password_confirmation) {
-                alert('As senhas não coincidem!');
+                this.showToast('error', 'As senhas não coincidem!');
                 return;
             }
 
             try {
                 const token = localStorage.getItem('authToken');
                 if (!token) {
-                    alert('Usuário não autenticado!');
+                    this.showToast('error', 'Usuário não autenticado!');
                     return;
                 }
 
@@ -160,21 +190,39 @@ export default {
                     },
                 });
 
-                if (response.data.success) {
-                    alert('Recrutador cadastrado com sucesso!');
+
+                if (response.status === 201) {
+
+                    this.showToast('success', 'Recrutador criado com sucesso!');
                     this.$router.push('/perfil-empresa');
                 } else {
-                    alert('Erro ao cadastrar recrutador. Tente novamente!');
+
+                    this.showToast('error', response.data.message || 'Erro ao cadastrar recrutador. Tente novamente!');
                 }
             } catch (error) {
                 console.error('Erro ao registrar recrutador:', error);
-                alert('Erro no servidor. Tente novamente mais tarde!');
+
+                this.showToast('error', 'Erro no servidor. Tente novamente mais tarde!');
             }
+        },
+
+
+        formatCPF(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            this.recruiter_cpf = input.substring(0, 14);
+        },
+
+        formatPhone(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            this.recruiter_phone = input.substring(0, 15);
         },
     },
 };
 </script>
-
 
 <style scoped>
 body {
