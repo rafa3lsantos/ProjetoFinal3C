@@ -72,6 +72,8 @@
 <script>
 import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
+import Toastify from 'toastify-js';
+import "toastify-js/src/toastify.css";
 
 export default {
     components: { Navbar },
@@ -85,7 +87,13 @@ export default {
         async fetchVaga() {
             try {
                 if (!this.$route.params.id) {
-                    alert('ID da vaga não encontrado!');
+                    Toastify({
+                        text: 'ID da vaga não encontrado!',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#f44336",
+                    }).showToast();
                     return;
                 }
 
@@ -96,19 +104,76 @@ export default {
                     },
                 });
 
-                console.log(response.data); // Verifique o que está sendo retornado pela API
-
                 if (response.status === 200 && response.data.jobs) {
-                    const vagaData = response.data.jobs;
-                    this.vaga = {
-                        ...vagaData, // Atualiza toda a vaga diretamente
-                    };
+                    this.vaga = response.data.jobs;
+                    Toastify({
+                        text: 'Vaga carregada com sucesso!',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#4caf50",
+                    }).showToast();
                 } else {
-                    alert('Erro ao carregar a vaga. Verifique a resposta da API.');
+                    Toastify({
+                        text: 'Erro ao carregar a vaga. Verifique a resposta da API.',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#f44336",
+                    }).showToast();
                 }
             } catch (error) {
                 console.error('Erro ao carregar a vaga:', error);
-                alert('Erro ao carregar a vaga. Tente novamente.');
+                Toastify({
+                    text: 'Erro ao carregar a vaga. Tente novamente.',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#f44336",
+                }).showToast();
+            }
+        },
+
+        async candidatar() {
+            try {
+                if (!this.vaga?.id) {
+                    Toastify({
+                        text: 'ID da vaga não está disponível.',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "#f44336",
+                    }).showToast();
+                    return;
+                }
+
+                const response = await HttpService.post('/applications/applyToJob', {
+                    job_id: this.vaga.id
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.status === 201) {
+                    Toastify({
+                        text: response.data.message || 'Candidatura realizada com sucesso!',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#4caf50",
+                    }).showToast();
+                }
+            } catch (error) {
+                console.error('Erro ao candidatar-se:', error);
+                Toastify({
+                    text: 'Erro ao se candidatar. Tente novamente.',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#f44336",
+                }).showToast();
             }
         },
 
@@ -129,50 +194,12 @@ export default {
             };
             return types[job_type] || 'Não especificado';
         },
-        getStatusLabel(jobs_status) {
-            const statuses = {
-                in_progress: 'Em andamento',
-                under_review: 'Em análise',
-                finished: 'Finalizada',
-            };
-            return statuses[jobs_status] || 'Não especificado';
-        },
         goBack() {
             this.$router.push('/vagas');
         },
         formattedDescription(description) {
             return description ? description.replace(/\n/g, "<br>") : '';
         },
-
-        async candidatar() {
-            try {
-                console.log('ID da vaga antes de candidatar:', this.vaga.id);
-
-                if (!this.vaga.id) {
-                    alert('ID da vaga não está disponível.');
-                    return;
-                }
-
-                const response = await HttpService.post('/applications/applyToJob', {
-                    job_id: this.vaga.id
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${this.token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.status === 201) {
-                    alert(response.data.message);
-                }
-            } catch (error) {
-                console.error('Erro ao candidatar-se:', error);
-                alert('Erro ao se candidatar. Tente novamente.');
-            }
-        }
-
-
-
     },
     mounted() {
         this.fetchVaga();

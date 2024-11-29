@@ -163,6 +163,7 @@ export default {
 
 .card {
     overflow: hidden;
+    
 }
 
 .rounded-circle {
