@@ -30,6 +30,7 @@ import CurriculoInicio from '../views/CurriculoInicio.vue';
 import ExProfissional from '../views/ExProfissional.vue';
 import Formacao from '../views/Formacao.vue';
 import Skills from '../views/Skills.vue';
+import Idioma from '../views/Idioma.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -327,6 +328,16 @@ const router = createRouter({
       component: Skills,
       meta: {
         title: 'Skills',
+        requiresAuth: true,
+        userType: 'candidato',
+      },
+    },
+    {
+      path: '/idioma',
+      name: 'idioma',
+      component: Idioma,
+      meta: {
+        title: 'Idioma',
         requiresAuth: true,
         userType: 'candidato',
       },

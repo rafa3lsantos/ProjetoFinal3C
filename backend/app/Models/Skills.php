@@ -10,9 +10,15 @@ class Skills extends Model
     use HasFactory;
 
     protected $fillable = [
-        'soft_skill',
-        'hard_skill',
+        'soft_skills', 
+        'hard_skills', 
         'candidate_id',
+    ];
+
+
+    protected $casts = [
+        'soft_skills' => 'array',  
+        'hard_skills' => 'array', 
     ];
 
     public function candidate()

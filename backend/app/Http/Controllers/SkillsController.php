@@ -8,36 +8,45 @@ use Illuminate\Support\Facades\Auth;
 
 class SkillsController extends Controller
 {
-   public function store(Request $request)
-   {
-        $candidate = Auth::user();
+    public function store(Request $request)
+    {
+        try {
+            $candidate = Auth::user();
 
-        if(!$candidate) {            
-           return response()->json(['message' => 'Você nao tem permissão para realizar esta operação'], 401);
+            if (!$candidate) {
+                return response()->json(['message' => 'Você não tem permissão para realizar esta operação'], 401);
+            }
+
+            $arrayRequest = $request->validate([
+                'soft_skills' => 'nullable|array',
+                'hard_skills' => 'nullable|array',
+            ]);
+
+            $arrayRequest['candidate_id'] = $candidate->id;
+
+            $skill = Skills::create($arrayRequest);
+
+            return response()->json([
+                'message' => 'Skill adicionada com sucesso!',
+                'skill' => $skill,
+                'candidate_id' => $candidate->id,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao adicionar skill.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $arrayRequest = $request->validate([
-           'soft_skill' => 'required',
-           'hard_skill' => 'required',
-        ]);
-
-        $arrayRequest['candidate_id'] = $candidate->id;
-
-        $skill = Skills::create($arrayRequest);
-
-        return response()->json([
-            'message' => 'Skill adicionada com sucesso!',
-            'skill' => $skill,
-            'candidate_id' => $candidate->id,
-        ], 201);
     }
-    
+
+
+
     public function update(Request $request, $id)
     {
         $candidate = Auth::user();
 
-        if(!$candidate) {            
-           return response()->json(['message' => 'Você nao tem permissão para realizar esta operação'], 401);
+        if (!$candidate) {
+            return response()->json(['message' => 'Você nao tem permissão para realizar esta operação'], 401);
         }
 
         $skill = Skills::where('id', $id)->where('candidate_id', $candidate->id)->first();

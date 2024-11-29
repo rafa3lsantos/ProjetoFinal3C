@@ -14,10 +14,8 @@
               <router-link to="/experiencia-profissional" class="list-group-item list-group-item-action">Experiência
                 Profissional</router-link>
               <router-link to="/formacao" class="list-group-item list-group-item-action">Formação</router-link>
-              <router-link to="/conquistas-certificados"
-                class="list-group-item list-group-item-action">Certificados</router-link>
               <router-link to="/skills" class="list-group-item list-group-item-action">Skills</router-link>
-              <router-link to="/idiomas" class="list-group-item list-group-item-action">Idiomas</router-link>
+              <router-link to="/idioma" class="list-group-item list-group-item-action">Idiomas</router-link>
             </div>
           </div>
         </div>

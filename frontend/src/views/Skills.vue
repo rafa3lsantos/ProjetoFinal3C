@@ -7,9 +7,8 @@
                         <div class="card" style="border-radius: 1rem;">
                             <div class="row g-0">
                                 <div class="card-body">
-                                    <h5 class="fw-normal mb-2 pb-3" style="letter-spacing: 1px;">Formação Acadêmica:
-                                    </h5>
-                                    <form>
+                                    <h5 class="fw-normal mb-2 pb-3" style="letter-spacing: 1px;">Habilidades:</h5>
+                                    <form @submit.prevent="registerSkills">
                                         <div class="form-group">
                                             <label for="softSkills">Soft Skills</label>
                                             <div class="input-group">
@@ -56,26 +55,6 @@
                 </div>
             </div>
         </section>
-
-        <div v-if="showModal" class="modal fade show" style="display: block;" tabindex="-1"
-            aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Deseja adicionar mais formações?</h5>
-                        <button type="button" class="btn-close" @click="closeModal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Você deseja adicionar mais formações ou prosseguir?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="addAnotherFormation">Adicionar mais
-                            formação</button>
-                        <button type="button" class="btn btn-primary" @click="proceed">Prosseguir</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -91,16 +70,10 @@ import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
-            formacoes: [{
-                formation: '',
-                institution: '',
-                degree: '',
-                course: '',
-                start_date_course: '',
-                end_date_course: '',
-                status: '',
-                candidate_id: ''
-            }],
+            newSoftSkill: '',
+            newHardSkill: '',
+            softSkills: [],
+            hardSkills: [],
             token: localStorage.getItem('authToken') || '',
             showModal: false,
         };
@@ -111,51 +84,44 @@ export default {
     },
 
     methods: {
-        openModal() {
-            this.showModal = true;
+
+        addSoftSkill() {
+            if (this.newSoftSkill.trim() !== '') {
+                this.softSkills.push(this.newSoftSkill);
+                this.newSoftSkill = '';
+            }
         },
 
-        closeModal() {
-            this.showModal = false;
+        removeSoftSkill(index) {
+            this.softSkills.splice(index, 1);
         },
 
-        async addAnotherFormation() {
+
+        addHardSkill() {
+            if (this.newHardSkill.trim() !== '') {
+                this.hardSkills.push(this.newHardSkill);
+                this.newHardSkill = '';
+            }
+        },
+
+
+        removeHardSkill(index) {
+            this.hardSkills.splice(index, 1);
+        },
+
+        async registerSkills() {
             try {
-                if (this.formacoes.length === 0) {
-                    this.showToast('error', 'Nenhuma formação encontrada para enviar.');
-                    return;
-                }
-
-                const formacao = this.formacoes[0];
-
                 if (!this.token) {
                     this.showToast('error', 'Usuário não autenticado!');
                     return;
                 }
 
-                formacao.candidate_id = this.getCandidateId;
+                const data = {
+                    soft_skills: this.softSkills,
+                    hard_skills: this.hardSkills,
+                };
 
-                console.log('Dados da formação a serem enviados:', {
-                    formation: formacao.formation,
-                    institution: formacao.institution,
-                    degree: formacao.degree,
-                    course: formacao.course,
-                    start_date_course: formacao.start_date_course,
-                    end_date_course: formacao.end_date_course,
-                    status: formacao.status,
-                    candidate_id: formacao.candidate_id,
-                });
-
-                const response = await HttpService.post('/formation/register', {
-                    formation: formacao.formation,
-                    institution: formacao.institution,
-                    degree: formacao.degree,
-                    course: formacao.course,
-                    start_date_course: formacao.start_date_course,
-                    end_date_course: formacao.end_date_course,
-                    status: formacao.status,
-                    candidate_id: formacao.candidate_id,
-                }, {
+                const response = await HttpService.post('/skills/store', data, {
                     headers: {
                         'Authorization': `Bearer ${this.token}`,
                         'Content-Type': 'application/json',
@@ -163,65 +129,18 @@ export default {
                 });
 
                 if (response.status === 201) {
-                    this.showToast('success', 'Formação registrada com sucesso.');
-
-                    this.formacoes = [{
-                        formation: '',
-                        institution: '',
-                        degree: '',
-                        course: '',
-                        start_date_course: '',
-                        end_date_course: '',
-                        status: '',
-                        candidate_id: ''
-                    }];
-                    this.closeModal();
+                    this.showToast('success', 'Skills registradas com sucesso.');
+                    this.$router.push('/idioma');
                 } else {
-                    this.showToast('error', 'Erro ao registrar formação.');
+                    this.showToast('error', 'Erro ao registrar skills.');
                 }
             } catch (error) {
-                console.error('Erro ao registrar formação:', error);
-                this.showToast('error', 'Erro ao registrar formação.');
+                this.showToast('error', 'Erro ao registrar skills.');
             }
         },
 
-        async proceed() {
-            try {
-                if (!this.token) {
-                    this.showToast('error', 'Usuário não autenticado!');
-                    return;
-                }
 
-                const formacao = this.formacoes[0];
 
-                formacao.candidate_id = this.getCandidateId;
-
-                const response = await HttpService.post('/formation/register', {
-                    formation: formacao.formation,
-                    institution: formacao.institution,
-                    degree: formacao.degree,
-                    course: formacao.course,
-                    start_date_course: formacao.start_date_course,
-                    end_date_course: formacao.end_date_course,
-                    status: formacao.status,
-                    candidate_id: formacao.candidate_id,
-                }, {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.status === 201) {
-                    this.showToast('success', 'Formação registrada com sucesso.');
-                    this.$router.push('/next-step');
-                } else {
-                    this.showToast('error', 'Erro ao registrar formação.');
-                }
-            } catch (error) {
-                this.showToast('error', 'Erro ao registrar formação.');
-            }
-        },
 
         showToast(type, message) {
             let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
@@ -237,6 +156,7 @@ export default {
     }
 };
 </script>
+
 
 
 
@@ -279,5 +199,9 @@ body {
 .nota {
     font-size: 12px;
     font-style: italic;
+}
+
+.badge {
+    color: black;
 }
 </style>
