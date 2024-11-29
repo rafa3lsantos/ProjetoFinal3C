@@ -21,6 +21,8 @@ class SkillsController extends Controller
            'hard_skill' => 'required',
         ]);
 
+        $arrayRequest['candidate_id'] = $candidate->id;
+
         $skill = Skills::create($arrayRequest);
 
         return response()->json([

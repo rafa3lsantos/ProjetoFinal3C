@@ -22,6 +22,8 @@ class CertificatesController extends Controller
             'descricao' => 'required|string',
         ]);
 
+        $arrayRequest['candidate_id'] = $candidate->id;
+
         $certificate = Certificate::create($arrayRequest);
 
         return response()->json([
