@@ -13,10 +13,13 @@
 
               <div class="box-card">
                 <div class="card-body">
-                  <h6>Experiência Profissional <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                  <h6>Experiência Profissional</h6>
                   <ul>
+                    <li v-if="experiences.length === 0">Nenhuma experiência encontrada.</li>
                     <li v-for="experience in experiences" :key="experience.id" class="mt-2">
-                      <strong>{{ experience.job_title }}</strong> - {{ experience.company_name }} <br />
+                      <strong>{{ experience.job_title }}</strong> - {{ experience.company_name }}
+                      <i class="fa-regular fa-pen-to-square edit-icon" @click="openModal(experience, 'experience')"></i>
+                      <br />
                       <small>{{ experience.start_date }} até {{ experience.end_date || "Atualmente" }}</small> <br />
                       <p>{{ experience.description }}</p>
                     </li>
@@ -24,28 +27,70 @@
                 </div>
               </div>
 
-              <!-- Card Formação -->
               <div class="box-card">
                 <div class="card-body">
-                  <h6>Formação <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                  <h6>Formação</h6>
+                  <ul>
+                    <li v-if="formations.length === 0">Nenhuma formação encontrada.</li>
+                    <li v-for="formation in formations" :key="formation.id" class="mt-2">
+                      <strong>{{ formation.degree }}</strong> - {{ formation.institution }}
+                      <i class="fa-regular fa-pen-to-square edit-icon" @click="openModal(formation, 'formation')"></i>
+                      <br />
+                      <small>{{ formation.start_date }} até {{ formation.end_date || "Atualmente" }}</small> <br />
+                      <p>{{ formation.description }}</p>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
-              <!-- Card Skills -->
               <div class="box-card">
                 <div class="card-body">
-                  <h6>Skills <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                  <h6>Skills</h6>
+                  <ul>
+                    <li v-if="skills.length === 0">Nenhuma habilidade encontrada.</li>
+                    <li v-for="skill in skills" :key="skill.id" class="mt-2">
+                      <strong>Soft Skills:</strong> {{ skill.soft_skills.join(", ") }} <br />
+                      <strong>Hard Skills:</strong> {{ skill.hard_skills.join(", ") }}
+                      <i class="fa-regular fa-pen-to-square edit-icon" @click="openModal(skill, 'skill')"></i>
+                    </li>
+                  </ul>
                 </div>
               </div>
-
-              <!-- Card Idioma -->
-              <div class="box-card">
-                <div class="card-body">
-                  <h6>Idioma <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
-                </div>
-              </div>
-
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div v-if="showModal" class="modal fade show" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ modalTitle }}</h5>
+            <button type="button" class="close" @click="closeModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="updateData">
+              <div v-if="modalType === 'skill'">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="soft_skills">Soft Skills</label>
+                    <input type="text" class="form-control" v-model="selectedData.soft_skills"
+                      placeholder="Ex: Comunicação, Trabalho em equipe">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="hard_skills">Hard Skills</label>
+                    <input type="text" class="form-control" v-model="selectedData.hard_skills"
+                      placeholder="Ex: JavaScript, PHP">
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
           </div>
         </div>
       </div>
@@ -58,6 +103,7 @@ import Navbar from "@/components/Navbar.vue";
 import HttpService from "../services/HttpService";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import axios from "axios";
 
 export default {
   name: "CurriculoCandidato",
@@ -76,12 +122,20 @@ export default {
         city: "",
       },
       experiences: [],
+      formations: [],
+      skills: [],
+      selectedData: null,
       token: localStorage.getItem("authToken") || "",
+      showModal: false,
+      modalTitle: "",
+      modalType: "",
     };
   },
   created() {
     this.fetchUserProfile();
     this.fetchProfessionalExperiences();
+    this.fetchFormations();
+    this.fetchSkills();
   },
   methods: {
     showToast(type, message) {
@@ -120,25 +174,108 @@ export default {
 
     async fetchProfessionalExperiences() {
       try {
-        const response = await HttpService.get(`/professional-experiences`, {
+        const candidateId = localStorage.getItem("candidateId");
+        if (!candidateId) {
+          console.warn("ID do candidato não encontrado.");
+          return;
+        }
+
+        const response = await HttpService.get(`/professional-experiences?candidateId=${candidateId}`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         });
 
         if (response.status === 200) {
-          this.experiences = response.data.professionalExperience || [];
+          this.experiences = response.data.professionalExperiences || [];
         } else {
           console.warn("Nenhuma experiência profissional encontrada.");
         }
       } catch (error) {
         console.error("Erro ao buscar experiências profissionais:", error);
       }
-    }
+    },
 
-  },
+    async fetchFormations() {
+      try {
+        const candidateId = this.usuario.id;
+        const response = await axios.get(`/formations/${candidateId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+          },
+        });
+
+        
+        if (response.status === 200) {
+          this.formations = response.data.formations || [];
+        } else {
+          console.warn("Nenhuma formação encontrada.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar formações:", error);
+      }
+    },
+
+    async fetchSkills() {
+      try {
+        const candidateId = this.usuario.id;
+        const response = await axios.get(`/skills/show/${candidateId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          this.skills = response.data.skills || [];
+        } else {
+          console.warn("Nenhuma habilidade encontrada.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar habilidades:", error);
+      }
+    },
+
+    openModal(data, type) {
+      this.selectedData = { ...data };
+      this.modalType = type;
+      this.modalTitle = type === 'skill' ? 'Editar Habilidades' : 'Editar Informação';
+      this.showModal = true;
+    },
+
+    closeModal() {
+      this.showModal = false;
+      this.selectedData = null;
+    },
+
+    async updateData() {
+      try {
+        const url = this.modalType === 'skill'
+          ? `/skills/update/${this.selectedData.id}`
+          : `/formation/update/${this.selectedData.id}`;
+
+        const response = await HttpService.put(url, this.selectedData, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          this.showToast("success", "Dados atualizados com sucesso!");
+          this.showModal = false;
+          this.fetchSkills();
+          this.fetchFormations();
+        } else {
+          this.showToast("error", "Erro ao atualizar os dados.");
+        }
+      } catch (error) {
+        this.showToast("error", "Erro ao atualizar os dados.");
+        console.error(error);
+      }
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 body {
@@ -210,5 +347,115 @@ body {
 
 .edit-icon:hover {
   color: #0056b3;
+}
+
+
+.modal-content {
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.modal-header {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header .close {
+  color: white;
+  font-size: 1.5rem;
+  opacity: 1;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+.modal-header .close:hover {
+  color: #0056b3;
+}
+
+.modal-body {
+  padding: 30px;
+  font-size: 1.1rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+button.close {
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+}
+
+button.save {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+  border: none;
+}
+
+button.save:hover {
+  background-color: #0056b3;
+}
+
+.modal-dialog {
+  max-width: 800px;
+  margin: 30px auto;
+}
+
+.modal-content {
+  background-color: #ffffff;
+}
+
+
+@media (max-width: 768px) {
+  .modal-content {
+    border-radius: 5px;
+  }
+
+  .modal-header {
+    font-size: 1rem;
+    padding: 15px;
+  }
+
+  .modal-body {
+    font-size: 1rem;
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 15px;
+  }
+
+  button.save {
+    font-size: 1rem;
+  }
+}
+
+.form-row {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.espaço {
+  margin-right: 20px;
+}
+
+.form-group .form-check {
+  margin-left: 20px;
 }
 </style>

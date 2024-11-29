@@ -67,6 +67,7 @@ class ProfessionalExperienceController extends Controller
             return response()->json(['error' => 'Candidato não autenticado'], 401);
         }
 
+
         $arrayRequest = $request->validate([
             'company' => 'sometimes|string',
             'position' => 'sometimes|string',
@@ -76,27 +77,36 @@ class ProfessionalExperienceController extends Controller
             'description_ativities' => 'sometimes|string',
         ]);
 
+
         $professionalExperience = ProfessionalExperience::find($id);
+
+
+        if (!$professionalExperience) {
+            return response()->json(['error' => 'Experiência profissional não encontrada'], 404);
+        }
+
+
+        if ($professionalExperience->candidate_id !== $candidate->id) {
+            return response()->json(['error' => 'Você não tem permissão para atualizar essa experiência'], 403);
+        }
+
 
         $professionalExperience->update($arrayRequest);
 
         return response()->json([
-            'message' => 'Professional experience updated successfully',
+            'message' => 'Experiência profissional atualizada com sucesso',
             'professionalExperience' => $professionalExperience
         ]);
     }
 
+
     public function index()
     {
-        $candidate = Auth::user();
 
-        if (!$candidate) {
-            return response()->json([
-                'error' => 'Usuário não autenticado.',
-            ], 401);
-        }
+        $candidateId = request()->input('candidateId');
 
-        $experiences = $candidate->professionalExperience->map(function ($experience) {
+
+        $experiences = ProfessionalExperience::where('candidate_id', $candidateId)->get()->map(function ($experience) {
             return [
                 'id' => $experience->id,
                 'job_title' => $experience->position,
