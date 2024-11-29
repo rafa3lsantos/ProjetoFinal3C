@@ -8,24 +8,26 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfessionalExperienceController extends Controller
 {
-
-    public function store(Request $request){
-
+    public function store(Request $request)
+    {
         $candidate = Auth::user();
 
-        if(!$candidate){
+        if (!$candidate) {
             return response()->json(['error' => 'Candidato não autenticado'], 401);
         }
 
+        // Validação da requisição
         $arrayRequest = $request->validate([
             'company' => 'sometimes|string',
             'position' => 'sometimes|string',
             'is_currently_working' => 'sometimes|boolean',
             'start_date_work' => 'sometimes|date',
-            'end_date_work' => 'sometimes|date',
+            'end_date_work' => 'sometimes|date|after_or_equal:start_date_work',
             'description_ativities' => 'sometimes|string',
         ]);
 
+        // Criar a experiência profissional com o ID do candidato autenticado
+        $arrayRequest['candidate_id'] = $candidate->id;
         $professionalExperience = ProfessionalExperience::create($arrayRequest);
 
         return response()->json([
@@ -34,45 +36,52 @@ class ProfessionalExperienceController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id){
-
+    public function update(Request $request, $id)
+    {
         $candidate = Auth::user();
 
-        if(!$candidate){
+        if (!$candidate) {
             return response()->json(['error' => 'Candidato não autenticado'], 401);
         }
 
+        // Verificar se a experiência profissional existe
+        $professionalExperience = ProfessionalExperience::find($id);
+        if (!$professionalExperience) {
+            return response()->json(['error' => 'Professional experience not found'], 404);
+        }
+
+        // Validação da requisição
         $arrayRequest = $request->validate([
             'company' => 'sometimes|string',
             'position' => 'sometimes|string',
             'is_currently_working' => 'sometimes|boolean',
             'start_date_work' => 'sometimes|date',
-            'end_date_work' => 'sometimes|date',
+            'end_date_work' => 'sometimes|date|after_or_equal:start_date_work',
             'description_ativities' => 'sometimes|string',
         ]);
 
-        $professionalExperience = ProfessionalExperience::find($id);
-
+        // Atualizar a experiência profissional
         $professionalExperience->update($arrayRequest);
 
         return response()->json([
             'message' => 'Professional experience updated successfully',
             'professionalExperience' => $professionalExperience
         ]);
-
-        
     }
 
-    public function show(){
+    public function show($id)
+    {
+        $professionalExperience = ProfessionalExperience::find($id);
 
-        $candidate = Auth::user();
-
-        if(!$candidate->professionalExperience){
-            return response()->json(['error' => 'Professional experience not registered'], 401);
+        if (!$professionalExperience) {
+            return response()->json(['error' => 'Experiência profissional não encontrada'], 404);
         }
 
         return response()->json([
-            'professionalExperience' => $candidate->professionalExperience
+            'professionalExperience' => $professionalExperience,
         ]);
     }
+
 }
+
+

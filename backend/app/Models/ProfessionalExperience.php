@@ -19,8 +19,8 @@ class ProfessionalExperience extends Model
         'candidate_id',
     ];
 
-    public function curriculum()
+    public function candidate()
     {
-        return $this->belongsTo(Curriculum::class);
+        return $this->belongsTo(Candidate::class);
     }
 }

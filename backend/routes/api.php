@@ -54,11 +54,11 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
 // });
 
 // -- Formation Routes --
+Route::get('formation/{id}', [FormationController::class, 'show']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/formation/register', [FormationController::class, 'store']);
     Route::put('/formation/update/{id}', [FormationController::class, 'update']);
 });
-    Route::get('formation/{id}', [FormationController::class, 'show']);
 
 
 // -- Professional Experience Routes --
@@ -66,7 +66,7 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::post('professional-experience/register', [ProfessionalExperienceController::class, 'store']);
     Route::put('professional-experience/update/{id}', [ProfessionalExperienceController::class, 'update']);
 });
-Route::get('professional-experience/show', [ProfessionalExperienceController::class, 'show']);
+Route::get('professional-experience/show/{id}', [ProfessionalExperienceController::class, 'show']);
 
 
 // -- Recruiter Routes --
