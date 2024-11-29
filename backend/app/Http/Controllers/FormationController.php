@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Formation;
+use App\Http\Controllers\Auth;
 
 class FormationController extends Controller
 {
@@ -105,5 +106,30 @@ class FormationController extends Controller
         return response()->json([
             'formation' => $formation,
         ]);
+    }
+
+    public function index($candidateId)
+    {
+        $formations = Formation::where('candidate_id', $candidateId)->get()->map(function ($formation) {
+            return [
+                'id' => $formation->id,
+                'formation' => $formation->formation,
+                'institution' => $formation->institution,
+                'experience' => $formation->experience,
+                'degree' => $formation->degree,
+                'status' => $formation->status,
+                'course' => $formation->course,
+                'start_date_course' => $formation->start_date_course,
+                'end_date_course' => $formation->end_date_course,
+                'certificate_type' => $formation->certificate_type,
+                'certificate_title' => $formation->certificate_title,
+                'certificate_description' => $formation->certificate_description,
+                'certificate_institution' => $formation->certificate_institution,
+            ];
+        });
+
+        return response()->json([
+            'formations' => $formations,
+        ], 200);
     }
 }
