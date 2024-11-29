@@ -13,6 +13,7 @@ use App\Http\Controllers\SkillsController;
 use App\Http\Controllers\CertificatesController;
 use App\Http\Controllers\LanguagesController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rules\Can;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +59,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/formation/register', [FormationController::class, 'store']);
     Route::put('/formation/update/{id}', [FormationController::class, 'update']);
 });
-    Route::get('formation/{id}', [FormationController::class, 'show']);
+Route::get('formation/{id}', [FormationController::class, 'show']);
 
 
 // -- Professional Experience Routes --
@@ -66,7 +67,8 @@ Route::middleware(['auth:sanctum', 'role:candidate'])->group(function () {
     Route::post('experience/register', [ProfessionalExperienceController::class, 'store']);
     Route::put('professional-experience/update/{id}', [ProfessionalExperienceController::class, 'update']);
 });
-Route::get('professional-experience/show', [ProfessionalExperienceController::class, 'show']);
+
+Route::get('professional-experiences', [CandidateController::class, 'indexpro']);
 
 
 // -- Recruiter Routes --
@@ -92,7 +94,7 @@ Route::prefix('company')->group(function () {
     Route::post('register', [CompanyController::class, 'store']);
     Route::post('login', [CompanyController::class, 'loginCompany']);
     Route::get('show/{id}', [CompanyController::class, 'show']);
-    
+
     Route::middleware(['auth:sanctum', 'role:company'])->group(function () {
         Route::get('index-for-company', [CompanyController::class, 'indexForCompany']);
         Route::put('update/{id}', [CompanyController::class, 'update']);
@@ -157,7 +159,3 @@ Route::prefix('certificates')->group(function () {
         Route::put('/update/{id}', [CertificatesController::class, 'update']);
     });
 });
-
-
-
-

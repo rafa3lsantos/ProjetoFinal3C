@@ -82,7 +82,7 @@ class CandidateController extends Controller
     public function show($id)
     {
         $candidate = Candidate::find($id);
-        
+
         if (!$candidate) {
             return response()->json(['message' => 'Candidato não encontrada'], 404);
         }
@@ -283,5 +283,32 @@ class CandidateController extends Controller
         }
 
         return response()->json(['message' => 'Candidato não possui imagem de perfil'], 404);
+    }
+
+
+    public function indexpro()
+    {
+        $candidate = Auth::user();
+
+        if (!$candidate) {
+            return response()->json([
+                'error' => 'Usuário não autenticado.',
+            ], 401);
+        }
+
+        $experiences = $candidate->professionalExperience->map(function ($experience) {
+            return [
+                'id' => $experience->id,
+                'job_title' => $experience->position,
+                'company_name' => $experience->company,
+                'start_date' => $experience->start_date_work,
+                'end_date' => $experience->end_date_work,
+                'description' => $experience->description_ativities,
+            ];
+        });
+
+        return response()->json([
+            'professionalExperiences' => $experiences,
+        ], 200);
     }
 }

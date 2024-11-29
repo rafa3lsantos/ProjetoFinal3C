@@ -31,6 +31,7 @@ import ExProfissional from '../views/ExProfissional.vue';
 import Formacao from '../views/Formacao.vue';
 import Skills from '../views/Skills.vue';
 import Idioma from '../views/Idioma.vue';
+import VerCandidatos from  '../views/VerCandidatos.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -340,6 +341,16 @@ const router = createRouter({
         title: 'Idioma',
         requiresAuth: true,
         userType: 'candidato',
+      },
+    },
+    {
+      path: '/ver-candidatos/:id',
+      name: 'ver-candidatos',
+      component: VerCandidatos,
+      meta: {
+        title: 'Ver Candidatos',
+        requiresAuth: true,
+        userType: 'recrutador',
       },
     },
   ],

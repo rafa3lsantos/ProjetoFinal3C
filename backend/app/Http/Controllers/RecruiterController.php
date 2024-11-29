@@ -201,4 +201,6 @@ class RecruiterController extends Controller
 
         return response()->json(['message' => 'Recrutador não possui imagem de perfil'], 404);
     }
+
+
 }

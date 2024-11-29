@@ -1,46 +1,51 @@
 <template>
   <div>
     <Navbar />
-
-    <div class="container p-0">
-      <div class="row">
-
-        <div class="col-md-7 col-xl-8">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="card-title mb-0">Meu Currículo</h5>
-            </div>
-
-            <div class="box-card">
-              <div class="card-body">
-                <h6>Dados Pessoais <i class="fas fa-edit edit-icon"></i></h6>
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+      <div class="container p-3">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-10 col-lg-8">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">Meu Currículo</h5>
               </div>
-            </div>
 
-            <div class="box-card">
-              <div class="card-body">
-                <h6>Experiência Profissional <i class="fas fa-edit edit-icon"></i></h6>
+              <div class="box-card">
+                <div class="card-body">
+                  <h6>Experiência Profissional <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                  <ul>
+                    <li v-for="experience in experiences" :key="experience.id" class="mt-2">
+                      <strong>{{ experience.job_title }}</strong> - {{ experience.company_name }} <br />
+                      <small>{{ experience.start_date }} até {{ experience.end_date || "Atualmente" }}</small> <br />
+                      <p>{{ experience.description }}</p>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
 
-            <div class="box-card">
-              <div class="card-body">
-                <h6>Formação <i class="fas fa-edit edit-icon"></i></h6>
+              <!-- Card Formação -->
+              <div class="box-card">
+                <div class="card-body">
+                  <h6>Formação <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                </div>
               </div>
-            </div>
 
-            <div class="box-card">
-              <div class="card-body">
-                <h6>Skills <i class="fas fa-edit edit-icon"></i></h6>
+              <!-- Card Skills -->
+              <div class="box-card">
+                <div class="card-body">
+                  <h6>Skills <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                </div>
               </div>
-            </div>
 
-            <div class="box-card">
-              <div class="card-body">
-                <h6>Idioma <i class="fas fa-edit edit-icon"></i></h6>
+              <!-- Card Idioma -->
+              <div class="box-card">
+                <div class="card-body">
+                  <h6>Idioma <i class="fa-regular fa-pen-to-square edit-icon"></i></h6>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </div>
@@ -70,11 +75,13 @@ export default {
         state: "",
         city: "",
       },
+      experiences: [],
       token: localStorage.getItem("authToken") || "",
     };
   },
   created() {
     this.fetchUserProfile();
+    this.fetchProfessionalExperiences();
   },
   methods: {
     showToast(type, message) {
@@ -111,40 +118,27 @@ export default {
       }
     },
 
-    async updateUsuario() {
+    async fetchProfessionalExperiences() {
       try {
-        const id = this.usuario.id || localStorage.getItem("candidateId");
-
-        const payload = {
-          name_candidate: this.usuario.name,
-          email: this.usuario.email,
-          cep: this.usuario.cep,
-          address: this.usuario.address,
-          state: this.usuario.state,
-          city: this.usuario.city,
-        };
-
-        const response = await HttpService.put(`/candidate/update/${id}`, payload, {
+        const response = await HttpService.get(`/professional-experiences`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json",
           },
         });
 
         if (response.status === 200) {
-          this.showToast("success", "Currículo atualizado com sucesso!");
+          this.experiences = response.data.professionalExperience || [];
         } else {
-          this.showToast("error", "Erro ao atualizar o currículo.");
+          console.warn("Nenhuma experiência profissional encontrada.");
         }
       } catch (error) {
-        console.error("Erro ao atualizar o currículo:", error);
-        this.showToast("error", "Erro ao atualizar o currículo.");
+        console.error("Erro ao buscar experiências profissionais:", error);
       }
-    },
+    }
+
   },
 };
 </script>
-
 
 <style scoped>
 body {
@@ -197,40 +191,13 @@ body {
   border-bottom: 1px solid #e5e9f2;
 }
 
-.save {
-  margin-top: 20px;
+.box-card ul {
+  padding-left: 20px;
 }
 
-.genero-options {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.form-check {
-  margin-right: 15px;
-}
-
-.form-check:last-child {
-  margin-right: 0;
-}
-
-.form-group {
-  margin-bottom: 30px;
-}
-
-.disabled-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-.skill-badge {
-  color: #504e4e;
-  background-color: transparent;
-  border: 1px solid #cfcccc;
-}
-
-.upload {
-  margin-bottom: 20px;
+.box-card li {
+  list-style-type: disc;
+  margin-bottom: 10px;
 }
 
 .edit-icon {
@@ -240,7 +207,6 @@ body {
   color: #007bff;
   transition: color 0.3s;
 }
-
 
 .edit-icon:hover {
   color: #0056b3;

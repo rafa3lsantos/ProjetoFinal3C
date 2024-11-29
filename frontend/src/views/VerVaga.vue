@@ -69,7 +69,6 @@
     </div>
 </template>
 
-
 <script>
 import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
@@ -97,20 +96,12 @@ export default {
                     },
                 });
 
+                console.log(response.data); // Verifique o que está sendo retornado pela API
 
                 if (response.status === 200 && response.data.jobs) {
                     const vagaData = response.data.jobs;
                     this.vaga = {
-                        ...this.vaga,
-                        title: vagaData.title || '',
-                        work_model: vagaData.work_model || '',
-                        job_type: vagaData.job_type || '',
-                        jobs_state: vagaData.jobs_state || '',
-                        jobs_city: vagaData.jobs_city || '',
-                        jobs_description: vagaData.jobs_description || '',
-                        jobs_status: vagaData.jobs_status || '',
-                        recruiter_id: vagaData.recruiter_id || '',
-                        company_id: vagaData.company_id || '',
+                        ...vagaData, // Atualiza toda a vaga diretamente
                     };
                 } else {
                     alert('Erro ao carregar a vaga. Verifique a resposta da API.');
@@ -120,6 +111,7 @@ export default {
                 alert('Erro ao carregar a vaga. Tente novamente.');
             }
         },
+
         getModeloLabel(work_model) {
             const models = {
                 presential: 'Presencial',
@@ -151,6 +143,36 @@ export default {
         formattedDescription(description) {
             return description ? description.replace(/\n/g, "<br>") : '';
         },
+
+        async candidatar() {
+            try {
+                console.log('ID da vaga antes de candidatar:', this.vaga.id);
+
+                if (!this.vaga.id) {
+                    alert('ID da vaga não está disponível.');
+                    return;
+                }
+
+                const response = await HttpService.post('/applications/applyToJob', {
+                    job_id: this.vaga.id
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.status === 201) {
+                    alert(response.data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao candidatar-se:', error);
+                alert('Erro ao se candidatar. Tente novamente.');
+            }
+        }
+
+
+
     },
     mounted() {
         this.fetchVaga();

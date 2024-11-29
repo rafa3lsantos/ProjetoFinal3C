@@ -16,7 +16,7 @@ class ProfessionalExperienceController extends Controller
             'company' => 'required|string',
             'position' => 'required|string',
             'start_date_work' => 'required|date',
-            'end_date_work' => 'nullable|date', 
+            'end_date_work' => 'nullable|date',
             'is_currently_working' => 'required|boolean',
             'description_ativities' => 'nullable|string',
         ]);
@@ -86,17 +86,29 @@ class ProfessionalExperienceController extends Controller
         ]);
     }
 
-    public function show()
+    public function index()
     {
-
         $candidate = Auth::user();
 
-        if (!$candidate->professionalExperience) {
-            return response()->json(['error' => 'Professional experience not registered'], 401);
+        if (!$candidate) {
+            return response()->json([
+                'error' => 'Usuário não autenticado.',
+            ], 401);
         }
 
+        $experiences = $candidate->professionalExperience->map(function ($experience) {
+            return [
+                'id' => $experience->id,
+                'job_title' => $experience->position,
+                'company_name' => $experience->company,
+                'start_date' => $experience->start_date_work,
+                'end_date' => $experience->end_date_work,
+                'description' => $experience->description_ativities,
+            ];
+        });
+
         return response()->json([
-            'professionalExperience' => $candidate->professionalExperience
-        ]);
+            'professionalExperiences' => $experiences,
+        ], 200);
     }
 }

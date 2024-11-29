@@ -82,6 +82,12 @@
                                             <button @click="goBack" class="btn btn-secondary w-20">Voltar</button>
                                             <button type="submit" class="salvar btn btn-primary w-20">Salvar
                                                 Informações</button>
+
+                                            <button @click="viewCandidates(vaga.id)"
+                                                class="candidatos btn btn-secondary w-20">
+                                                Ver candidatos
+                                            </button>
+
                                         </div>
                                     </div>
                                 </form>
@@ -215,6 +221,10 @@ export default {
         goBack() {
             this.$router.push('/minhas-vagas');
         },
+        viewCandidates(vagaId) {
+
+            this.$router.push({ name: 'ver-candidatos', params: { id: vagaId } });
+        },
     },
 
     mounted() {
@@ -277,5 +287,9 @@ textarea.form-control {
     .form-group label {
         font-size: 0.9rem;
     }
+}
+
+.candidatos {
+    margin-left: 400px;
 }
 </style>

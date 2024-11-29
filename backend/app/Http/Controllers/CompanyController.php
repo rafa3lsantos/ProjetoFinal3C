@@ -14,7 +14,7 @@ class CompanyController extends Controller
     {
         $arrayRequest = $request->validate([
             'company_name' => 'required|string|max:255',
-            'company_cnpj' => 'required|string|max:14|unique:companies',
+            'company_cnpj' => 'required|string|max:18|unique:companies',
             'company_phone' => 'nullable|string|max:255',
             'email' => 'required|email|unique:companies',
             'password' => 'required|string|min:8',

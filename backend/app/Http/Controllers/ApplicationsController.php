@@ -63,8 +63,9 @@ class ApplicationsController extends Controller
             ], 404);
         }
 
+
         $candidateApplications = Applications::where('job_id', $jobId)
-            ->with('candidate:id,name_candidate,email') 
+            ->with('candidate')
             ->get();
 
         if ($candidateApplications->isEmpty()) {
@@ -73,6 +74,7 @@ class ApplicationsController extends Controller
             ], 404);
         }
 
+
         $candidates = $candidateApplications->pluck('candidate');
 
         return response()->json([
@@ -80,5 +82,4 @@ class ApplicationsController extends Controller
             'candidates' => $candidates,
         ], 200);
     }
-
 }
