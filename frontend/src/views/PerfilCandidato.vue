@@ -309,6 +309,7 @@ body {
     background: #F0F8FF;
 }
 
+
 .card {
     margin-bottom: 1.5rem;
     box-shadow: 0 1px 15px 1px rgba(52, 40, 104, .08);

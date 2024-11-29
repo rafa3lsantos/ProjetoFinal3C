@@ -140,7 +140,7 @@ export default {
 
                 this.$nextTick(() => {
 
-                    this.$router.push('/curriculo-inicio');
+                    this.$router.push('/home-candidato');
                 });
 
             } catch (error) {
