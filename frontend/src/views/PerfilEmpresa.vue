@@ -182,7 +182,7 @@ export default {
                     return;
                 }
 
-                // Se a imagem for alterada, envia para o backend
+
                 if (this.empresa.company_photo_file) {
                     const formData = new FormData();
                     formData.append('image', this.empresa.company_photo_file);

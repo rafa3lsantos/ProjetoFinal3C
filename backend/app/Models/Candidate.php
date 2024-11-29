@@ -13,42 +13,50 @@ class Candidate extends Authenticatable
     protected $fillable = [
         'name_candidate',
         'email',
-        'new_email',
         'password',
-        'new_password',
-        'about_candidate',
         'cpf',
-        'birthdate',
         'gender',
+        'birthdate',
         'phone',
-        'photo',
         'cep',
         'address',
         'state',
         'city',
+        'about_candidate',
+        'photo',
+        'soft_skills',
+        'hard_skills',
+        'language',
+        'level',
+        'formation',
+        'institution',
+        'experience',
+        'degree',
+        'status',
+        'course',
+        'start_date_course',
+        'end_date_course',
+        'certificate_type',
+        'certificate_title',
+        'certificate_description',
+        'certificate_institution',
+        'company',
+        'position',
+        'is_currently_working',
+        'start_date_work',
+        'end_date_work',
+        'description_ativities',
     ];
 
-    public function professionalExperiences()
-    {
-        return $this->hasMany(ProfessionalExperience::class);
-    }
-
-    public function formations()
-    {
-        return $this->hasMany(Formation::class);
-    }
-
-    public function languages()
-    {
-        return $this->hasMany(Languages::class);
-    }
-
-    public function certificates()
-    {
-        return $this->hasMany(Certificate::class);
-    }
-
-    public function skills()
-    {
-        return $this->hasMany(Skills::class);
-    }}
+    protected $casts = [
+        'soft_skills' => 'array',
+        'hard_skills' => 'array',
+        'language' => 'string',
+        'start_date_course' => 'date',
+        'end_date_course' => 'date',
+        'start_date_work' => 'date',
+        'end_date_work' => 'date',
+        'is_currently_working' => 'boolean',
+        'birthdate' => 'date',
+    ];
+}

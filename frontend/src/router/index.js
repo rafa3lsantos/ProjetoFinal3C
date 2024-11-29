@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store/index.js';
-import Curriculo from '../views/UpdateCurriculoCandidato.vue';
+import Curriculo from '../views/CurriculoCandidato.vue';
 import HomeCandidato from '../views/HomeCandidato.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';

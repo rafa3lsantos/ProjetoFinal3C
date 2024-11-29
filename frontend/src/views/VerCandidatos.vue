@@ -39,6 +39,7 @@
                                             alt="Avatar" class="img-fluid rounded-circle"
                                             style="width: 100px; height: 100px; object-fit: cover; margin-top: 20px;" />
 
+
                                         <h5 class="mt-3">{{ candidate.name_candidate }}</h5>
                                         <p>{{ candidate.cpf }}</p>
                                     </div>
@@ -61,7 +62,7 @@
                                             <div class="row pt-1">
                                                 <div class="col-6 mb-3">
                                                     <h6>Gênero</h6>
-                                                    <p class="text-muted">{{candidate.gender }}</p>
+                                                    <p class="text-muted">{{ candidate.gender }}</p>
 
                                                 </div>
                                                 <div class="col-6 mb-3">
@@ -69,7 +70,8 @@
                                                     <p class="text-muted">{{ formatDate(candidate.birthdate) }}</p>
                                                 </div>
 
-                                                <button class="btn btn-secondary w-30" @click="verCurriculo(candidate)">Ver Currículo</button>
+                                                <button class="btn btn-secondary w-30"
+                                                    @click="verCurriculo(candidate)">Ver Currículo</button>
                                             </div>
                                         </div>
                                     </div>
@@ -80,9 +82,47 @@
                 </div>
             </section>
         </div>
+
+        <!-- Modal -->
+        <div v-if="showModal" class="modal-backdrop" @click.self="closeModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ selectedCandidate?.name_candidate }}</h5>
+                    <button type="button" class="close" @click="closeModal">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6>Informações Gerais</h6>
+                    <p><strong>Email:</strong> {{ selectedCandidate?.email }}</p>
+                    <p><strong>Telefone:</strong> {{ selectedCandidate?.phone || 'Não informado' }}</p>
+                    <p><strong>Gênero:</strong> {{ translateGender(selectedCandidate?.gender) }}</p>
+                    <p><strong>Data de Nascimento:</strong> {{ formatDate(selectedCandidate?.birthdate) }}</p>
+                    <p><strong>CPF:</strong> {{ selectedCandidate?.cpf }}</p>
+
+                    <h6>Endereço</h6>
+                    <p><strong>CEP:</strong> {{ selectedCandidate?.cep || 'Não informado' }}</p>
+                    <p><strong>Endereço:</strong> {{ selectedCandidate?.address || 'Não informado' }}</p>
+                    <p><strong>Cidade:</strong> {{ selectedCandidate?.city || 'Não informado' }}</p>
+                    <p><strong>Estado:</strong> {{ selectedCandidate?.state || 'Não informado' }}</p>
+
+                    <h6>Formação</h6>
+                    <p><strong>Instituição:</strong> {{ selectedCandidate?.institution || 'Não informado' }}</p>
+                    <p><strong>Curso:</strong> {{ selectedCandidate?.course || 'Não informado' }}</p>
+                    <p><strong>Status:</strong> {{ selectedCandidate?.status || 'Não informado' }}</p>
+
+                    <h6>Experiência</h6>
+                    <p><strong>Empresa:</strong> {{ selectedCandidate?.company || 'Não informado' }}</p>
+                    <p><strong>Cargo:</strong> {{ selectedCandidate?.position || 'Não informado' }}</p>
+                    <p><strong>Descrição:</strong> {{ selectedCandidate?.description_ativities || 'Não informado' }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @click="closeModal">Fechar</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
-
 
 <script>
 import NavbarRecrutador from "@/components/NavbarRecrutador.vue";
@@ -98,6 +138,8 @@ export default {
             searchTerm: "",
             defaultPhoto: "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
             isLoading: false,
+            showModal: false,
+            selectedCandidate: null,
         };
     },
     created() {
@@ -122,9 +164,6 @@ export default {
                 if (response.status === 200) {
                     this.candidates = response.data.candidates;
                     this.filteredCandidates = [...this.candidates];
-
-
-                    console.log("Candidatos recebidos:", this.candidates);
                 }
             } catch (error) {
                 console.error("Erro ao carregar os candidatos:", error);
@@ -132,30 +171,37 @@ export default {
         },
 
         applyFilters() {
+
             this.filteredCandidates = this.candidates.filter((candidate) =>
-                candidate.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                candidate.name_candidate.toLowerCase().includes(this.searchTerm.toLowerCase())
             );
         },
 
         translateGender(gender) {
             const genderMap = {
-                male: "Masculino",
-                female: "Feminino",
-                "non-binary": "Não binário",
-                other: "Outro",
-                "prefer not to say": "Prefiro não dizer",
-                Masculino: "Masculino",
-                Feminino: "Feminino"
+                masculino: "Masculino",
+                feminino: "Feminino",
+                "nao-binario": "Não Binário",
+                outro: "Outro",
             };
             return genderMap[gender] || "Não informado";
         },
 
-
         formatDate(date) {
-            if (!date) return 'Não informado';
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Date(date).toLocaleDateString('pt-BR', options);
-        }
+            if (!date) return "Não informado";
+            const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+            return new Date(date).toLocaleDateString("pt-BR", options);
+        },
+
+        verCurriculo(candidate) {
+            this.selectedCandidate = candidate;
+            this.showModal = true;
+        },
+
+        closeModal() {
+            this.showModal = false;
+            this.selectedCandidate = null;
+        },
     },
 };
 </script>
@@ -180,5 +226,46 @@ export default {
 
 .espaco {
     margin-top: 30px;
+}
+
+/* Modal Styles */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 600px;
+    max-width: 90%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.modal-header,
+.modal-body,
+.modal-footer {
+    padding: 16px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-footer {
+    border-top: 1px solid #e5e5e5;
+    text-align: right;
 }
 </style>
