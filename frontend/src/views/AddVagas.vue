@@ -104,6 +104,8 @@
 import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: { NavbarRecrutador },
@@ -137,6 +139,20 @@ export default {
         ...mapGetters(['getRecruiterId', 'getCompanyId'])
     },
     methods: {
+        showToast(type, message) {
+            let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColor,
+                color: 'white',
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
         async createJob() {
             if (!this.validateFields()) return;
 
@@ -152,23 +168,25 @@ export default {
                 });
 
                 if (response.status === 201) {
-                    alert('Vaga criada com sucesso!');
+                    this.showToast('success', 'Vaga criada com sucesso!');
                     this.clearForm();
                 } else {
-                    alert('Erro ao criar a vaga. Tente novamente.');
+                    this.showToast('error', 'Erro ao criar a vaga. Tente novamente.');
                 }
             } catch (error) {
                 console.error('Erro ao criar vaga:', error);
-                alert('Erro ao criar a vaga.');
+                this.showToast('error', 'Erro ao criar a vaga.');
             }
         },
+
         validateFields() {
             if (!this.vaga.title || !this.vaga.work_model || !this.vaga.job_type || !this.vaga.jobs_state || !this.vaga.jobs_city || !this.vaga.jobs_description) {
-                alert('Preencha todos os campos!');
+                this.showToast('error', 'Preencha todos os campos!');
                 return false;
             }
             return true;
         },
+
         clearForm() {
             this.vaga = {
                 title: '',
@@ -182,6 +200,7 @@ export default {
     }
 };
 </script>
+
 
 
 <style scoped>

@@ -53,6 +53,8 @@
 import Navbar from "@/components/Navbar.vue";
 import HttpService from "../services/HttpService";
 import { mapGetters } from "vuex";
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';  // Estilo do Toastify
 
 export default {
     components: {
@@ -96,16 +98,36 @@ export default {
                     );
 
                     if (response.status === 200) {
-                        alert("Data de nascimento atualizada com sucesso.");
+                        Toastify({
+                            text: "Data de nascimento atualizada com sucesso.",
+                            backgroundColor: "green",
+                            position: "center", // Centraliza na tela
+                            duration: 3000,
+                        }).showToast();
                     } else {
-                        alert("Erro ao atualizar a data de nascimento.");
+                        Toastify({
+                            text: "Erro ao atualizar a data de nascimento.",
+                            backgroundColor: "red",
+                            position: "center", // Centraliza na tela
+                            duration: 3000,
+                        }).showToast();
                     }
                 } catch (error) {
                     console.error("Erro ao atualizar data de nascimento:", error);
-                    alert("Erro ao salvar os dados.");
+                    Toastify({
+                        text: "Erro ao salvar os dados.",
+                        backgroundColor: "red",
+                        position: "center", // Centraliza na tela
+                        duration: 3000,
+                    }).showToast();
                 }
             } else {
-                alert("Por favor, preencha todos os campos obrigatórios.");
+                Toastify({
+                    text: "Por favor, preencha todos os campos obrigatórios.",
+                    backgroundColor: "orange",
+                    position: "center", // Centraliza na tela
+                    duration: 3000,
+                }).showToast();
             }
         },
         async fetchUserProfile() {
@@ -124,6 +146,12 @@ export default {
                 this.usuario.birthdate = user.birthdate || "";
             } catch (error) {
                 console.error("Erro ao carregar o perfil do usuário:", error);
+                Toastify({
+                    text: "Erro ao carregar o perfil.",
+                    backgroundColor: "red",
+                    position: "center", // Centraliza na tela
+                    duration: 3000,
+                }).showToast();
             }
         },
     },
@@ -133,8 +161,6 @@ export default {
     },
 };
 </script>
-
-
 
 <style scoped>
 body {
