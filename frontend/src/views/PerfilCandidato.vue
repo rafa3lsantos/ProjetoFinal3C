@@ -56,7 +56,8 @@
                                         <div class="form-group">
                                             <label for="phone">Telefone</label>
                                             <input type="text" class="form-control" id="phone" v-model="usuario.phone"
-                                                placeholder="Informe seu Telefone" />
+                                                placeholder="Informe seu Telefone" @input="formatPhone"
+                                                maxlength="15" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -232,9 +233,12 @@ export default {
             }
         },
 
-
-
-
+        formatPhone(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            this.usuario.phone = input.substring(0, 15);
+        },
 
         triggerFileInput() {
             this.$refs.fileInput.click();

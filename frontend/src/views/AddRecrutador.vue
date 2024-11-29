@@ -45,12 +45,12 @@
                                         <div class="form-group">
                                             <label for="recruiter_cpf">CPF</label>
                                             <input type="text" v-model="recruiter_cpf" class="form-control"
-                                                placeholder="000.000.000-00" />
+                                                placeholder="000.000.000-00" @input="formatCPF" maxlength="14" />
                                         </div>
                                         <div class="form-group">
                                             <label for="recruiter_phone">Telefone</label>
                                             <input type="text" v-model="recruiter_phone" class="form-control"
-                                                placeholder="(XX) XXXXX-XXXX" />
+                                                placeholder="(XX) XXXXX-XXXX" @input="formatPhone" maxlength="15" />
                                         </div>
                                         <div class="form-group">
                                             <label>Gênero</label>
@@ -171,10 +171,23 @@ export default {
                 alert('Erro no servidor. Tente novamente mais tarde!');
             }
         },
+
+        formatCPF(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            this.recruiter_cpf = input.substring(0, 14);
+        },
+
+        formatPhone(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            this.recruiter_phone = input.substring(0, 15);
+        },
     },
 };
 </script>
-
 
 <style scoped>
 body {

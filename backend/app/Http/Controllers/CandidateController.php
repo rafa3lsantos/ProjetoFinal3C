@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CandidateController extends Controller
 {
-    /**
-     * Registro de um novo candidato.
-     */
     public function store(Request $request)
     {
         $rules = [
@@ -25,7 +22,6 @@ class CandidateController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        // Upload de foto, se fornecida
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = date('YmdHis') . '_' . $file->getClientOriginalName();
@@ -58,10 +54,10 @@ class CandidateController extends Controller
             ], 401);
         }
 
-        // Carregar o currículo associado ao candidato
+
         $curriculum = $candidate->curriculum;
 
-        // Gerar o token
+
         $token = $candidate->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -75,9 +71,6 @@ class CandidateController extends Controller
     }
 
 
-    /**
-     * Logout do candidato.
-     */
     public function logout()
     {
         $user = Auth::guard('candidate')->user();
@@ -90,9 +83,6 @@ class CandidateController extends Controller
         return response()->json(['message' => 'Usuário não autenticado.'], 401);
     }
 
-    /**
-     * Visualizar informações do perfil do candidato autenticado.
-     */
     public function show($id)
     {
         $candidate = Candidate::find($id);
@@ -106,10 +96,6 @@ class CandidateController extends Controller
             'candidate' => $candidate,
         ], 200);
     }
-
-    /**
-     * Atualizar informações do candidato.
-     */
     public function updateCandidate(Request $request)
     {
         $candidate = Auth::user();
@@ -122,7 +108,7 @@ class CandidateController extends Controller
             'name_candidate' => 'sometimes|string|min:3|max:255',
             'gender' => 'sometimes|string|in:masculino,feminino,nao-binario,outro',
             'birthdate' => 'sometimes|date',
-            'phone' => 'sometimes|string|min:11|max:14|unique:candidates,phone,' . $candidate->id,
+            'phone' => 'sometimes|string|min:11|max:15|unique:candidates,phone,' . $candidate->id,
             'cep' => 'sometimes|string|min:8|max:9',
             'address' => 'sometimes|string|min:3|max:255',
             'state' => 'sometimes|string|min:2|max:255',

@@ -57,8 +57,8 @@
                                         <div class="form-group">
                                             <label for="phone">Telefone</label>
                                             <input type="text" class="form-control" id="phone"
-                                                v-model="recruiter.recruiter_phone"
-                                                placeholder="Informe seu Telefone" />
+                                                v-model="recruiter.recruiter_phone" placeholder="Informe seu Telefone"
+                                                @input="formatPhone" maxlength="15" />
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -222,6 +222,13 @@ export default {
             } catch (error) {
                 console.error('Erro ao carregar o perfil do usuário:', error);
             }
+        },
+
+        formatPhone(event) {
+            let input = event.target.value;
+            input = input.replace(/\D/g, '');
+            input = input.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            this.recruiter.recruiter_phone = input.substring(0, 15);
         },
 
 
