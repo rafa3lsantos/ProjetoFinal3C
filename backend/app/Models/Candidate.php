@@ -28,11 +28,6 @@ class Candidate extends Authenticatable
         'city',
     ];
 
-    public function curriculum()
-    {
-        return $this->hasOne(Curriculum::class);
-    }
-
     public function professionalExperiences()
     {
         return $this->hasMany(ProfessionalExperience::class);
@@ -43,4 +38,17 @@ class Candidate extends Authenticatable
         return $this->hasMany(Formation::class);
     }
 
-}
+    public function languages()
+    {
+        return $this->hasMany(Languages::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    public function skills()
+    {
+        return $this->hasMany(Skills::class);
+    }}

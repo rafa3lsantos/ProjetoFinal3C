@@ -25,11 +25,6 @@ class Formation extends Model
         'candidate_id',
     ];
 
-    public function curriculum()
-    {
-        return $this->belongsTo(Curriculum::class);
-    }
-
     public function candidate()
     {
         return $this->belongsTo(Candidate::class);
