@@ -86,6 +86,8 @@
 import NavbarEmpresa from '@/components/NavbarEmpresa.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: {
@@ -98,9 +100,9 @@ export default {
                 company_name: '',
                 company_sector: '',
                 about_company: '',
-                company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'
+                company_photo: 'https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg',
+                company_photo_file: null, // Campo para armazenar o arquivo de imagem
             },
-            profileImagePreview: '',
             errors: {},
             token: localStorage.getItem('authToken') || '',
         };
@@ -112,10 +114,28 @@ export default {
         ...mapGetters(['getCompanyId']),
     },
     methods: {
+        showToast(type, message) {
+            let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColor,
+                color: 'white',
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
         onImageChange(event) {
             const file = event.target.files[0];
-            console.log(file);
             if (file) {
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!validImageTypes.includes(file.type)) {
+                    this.showToast('error', 'Por favor, envie uma imagem válida.');
+                    return;
+                }
                 this.empresa.company_photo_file = file;
                 const reader = new FileReader();
                 reader.onload = () => {
@@ -124,7 +144,6 @@ export default {
                 reader.readAsDataURL(file);
             }
         },
-
 
         validateFields() {
             this.errors = {};
@@ -137,18 +156,15 @@ export default {
             if (!this.empresa.about_company) {
                 this.errors.about_company = "O sobre da empresa é obrigatório.";
             }
-
             return Object.keys(this.errors).length === 0;
         },
+
         async sendUpdateRequest() {
-
             try {
-
                 if (!this.token) {
-                    alert('Usuário não autenticado!');
+                    this.showToast('error', 'Usuário não autenticado!');
                     return;
                 }
-
 
                 const updateResponse = await HttpService.put(
                     `/company/update/${this.getCompanyId}`,
@@ -162,12 +178,12 @@ export default {
                 );
 
                 if (updateResponse.status !== 200) {
-                    alert('Erro ao atualizar as informações do candidato.');
+                    this.showToast('error', 'Erro ao atualizar as informações da empresa.');
                     return;
                 }
 
-
-                if (this.empresa.company_photo) {
+                // Se a imagem for alterada, envia para o backend
+                if (this.empresa.company_photo_file) {
                     const formData = new FormData();
                     formData.append('image', this.empresa.company_photo_file);
 
@@ -183,18 +199,17 @@ export default {
                     );
 
                     if (uploadResponse.status !== 200) {
-                        alert('Erro ao fazer upload da imagem de perfil.');
+                        this.showToast('error', 'Erro ao fazer upload da imagem de perfil.');
                         return;
                     }
                 }
 
-                alert('Informações da conta atualizadas com sucesso.');
+                this.showToast('success', 'Informações da conta atualizadas com sucesso.');
             } catch (error) {
                 console.error("Erro ao atualizar conta:", error);
-                alert('Erro ao atualizar informações da conta.');
+                this.showToast('error', 'Erro ao atualizar informações da conta.');
             }
         },
-
 
         async updateConta() {
             if (this.validateFields()) {
@@ -217,11 +232,11 @@ export default {
                 this.empresa.about_company = company.about_company || '';
 
                 if (company.company_photo) {
-                    console.log(company.company_photo);
                     this.empresa.company_photo = `http://127.0.0.1:8000/storage/${company.company_photo}`;
                 }
             } catch (error) {
                 console.error('Erro ao carregar o perfil da empresa:', error);
+                this.showToast('error', 'Erro ao carregar o perfil da empresa.');
             }
         },
 

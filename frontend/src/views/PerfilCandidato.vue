@@ -90,6 +90,8 @@
 import Navbar from '@/components/Navbar.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: {
@@ -124,9 +126,22 @@ export default {
         ...mapGetters(['getCandidateId'])
     },
     methods: {
+        showToast(type, message) {
+            let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColor,
+                color: 'white',
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
         onImageChange(event) {
             const file = event.target.files[0];
-            console.log(file);
             if (file) {
                 this.usuario.perfilPictureFile = file;
                 const reader = new FileReader();
@@ -150,12 +165,10 @@ export default {
 
         async sendUpdateRequest() {
             try {
-
                 if (!this.token) {
-                    alert('Usuário não autenticado!');
+                    this.showToast('error', 'Usuário não autenticado!');
                     return;
                 }
-
 
                 const updateResponse = await HttpService.put(
                     `/candidate/update/${this.getCandidateId}`,
@@ -169,10 +182,9 @@ export default {
                 );
 
                 if (updateResponse.status !== 200) {
-                    alert('Erro ao atualizar as informações do candidato.');
+                    this.showToast('error', 'Erro ao atualizar as informações do candidato.');
                     return;
                 }
-
 
                 if (this.usuario.perfilPictureFile) {
                     const formData = new FormData();
@@ -190,24 +202,24 @@ export default {
                     );
 
                     if (uploadResponse.status !== 200) {
-                        alert('Erro ao fazer upload da imagem de perfil.');
+                        this.showToast('error', 'Erro ao fazer upload da imagem de perfil.');
                         return;
                     }
                 }
 
-                alert('Informações da conta atualizadas com sucesso.');
+                this.showToast('success', 'Informações da conta atualizadas com sucesso.');
             } catch (error) {
                 console.error("Erro ao atualizar conta:", error);
-                alert('Erro ao atualizar informações da conta.');
+                this.showToast('error', 'Erro ao atualizar informações da conta.');
             }
         },
-
 
         async updateConta() {
             if (this.validateFields()) {
                 await this.sendUpdateRequest();
             }
         },
+
         async fetchUserProfile() {
             try {
                 const response = await HttpService.get(`/candidate/show/${this.getCandidateId}`, {
@@ -221,12 +233,8 @@ export default {
                 this.usuario.gender = user.gender || '';
                 this.usuario.about_candidate = user.about_candidate || '';
 
-
                 if (user.photo) {
-                    console.log(user.photo);
                     this.usuario.perfilPicture = `http://127.0.0.1:8000/storage/${user.photo}`;
-                } else {
-                    this.usuario.perfilPicture = this.usuario.perfilPicture;
                 }
             } catch (error) {
                 console.error('Erro ao carregar o perfil do usuário:', error);

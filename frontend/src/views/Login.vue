@@ -1,5 +1,6 @@
 <template>
     <div>
+        <link rel="stylesheet" href="node_modules/toastify-js/src/toastify.css">
         <section class="vh-100" style="background-color: #cfcccc;">
             <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -59,6 +60,8 @@
 
 <script>
 import HttpService from '../services/HttpService';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     data() {
@@ -68,9 +71,36 @@ export default {
         };
     },
     methods: {
+ 
+        showSuccessToast() {
+            Toastify({
+                text: "Login realizado com sucesso!",
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#28a745",
+                color: "white",
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
+
+        showErrorToast() {
+            Toastify({
+                text: "Ocorreu um erro!",
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#dc3545",
+                color: "white",
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
         async login() {
             if (!this.email || !this.password) {
-                alert('Por favor, preencha ambos os campos de email e senha.');
+                this.showErrorToast();
                 return;
             }
 
@@ -86,7 +116,7 @@ export default {
                     recruiterId: recruiterResponse.data.recruiter_id,
                     companyId: recruiterResponse.data.company_id,
                 });
-                alert('Login realizado com sucesso!');
+                this.showSuccessToast();
                 this.$router.push('/home-recrutador');
             } catch (error) {
                 console.error(error);
@@ -96,16 +126,13 @@ export default {
                         password: this.password,
                     });
 
-                    console.log(candidateResponse);
-
                     this.$store.dispatch('login', {
                         token: candidateResponse.data.token,
                         role: 'candidato',
                         candidateId: candidateResponse.data.candidate_id,
                         curriculumId: candidateResponse.data.curriculum_id,
-                        
                     });
-                    alert('Login realizado com sucesso!');
+                    this.showSuccessToast();
                     this.$router.push('/home-candidato');
                 } catch (error) {
                     console.error(error);
@@ -120,11 +147,11 @@ export default {
                             role: 'empresa',
                             companyId: companyResponse.data.company_id,
                         });
-                        alert('Login realizado com sucesso!');
+                        this.showSuccessToast();
                         this.$router.push('/home-empresa');
                     } catch (error) {
                         console.error(error);
-                        alert('Erro ao tentar realizar o login. Tente novamente.');
+                        this.showErrorToast();
                     }
                 }
             }
@@ -171,5 +198,28 @@ export default {
     position: relative;
     height: 80px;
     line-height: 80px;
+}
+
+.toastify-toast {
+    border-radius: 12px;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    padding: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-align: center;
+}
+
+.toastify-toast.success {
+    background-color: #28a745;
+}
+
+.toastify-toast.error {
+    background-color: #dc3545;
+}
+
+.toastify-close {
+    color: white;
+    font-size: 18px;
 }
 </style>

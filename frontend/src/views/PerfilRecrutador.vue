@@ -14,10 +14,8 @@
                                 class="list-group-item list-group-item-action">Conta</router-link>
                             <router-link to="/add-vaga" class="list-group-item list-group-item-action">Adicionar
                                 Vaga</router-link>
-
-                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">
-                                Minhas Vagas
-                            </router-link>
+                            <router-link to="/minhas-vagas" class="list-group-item list-group-item-action">Minhas
+                                Vagas</router-link>
                         </div>
                     </div>
                 </div>
@@ -70,10 +68,9 @@
                                                     ref="fileInput" />
                                                 <button type="button" class="btn btn-primary mt-3"
                                                     @click="triggerFileInput">Alterar Imagem</button>
-
                                             </div>
-                                            <small>Adicione uma foto de perfil. Se não selecionar,
-                                                será usada a imagem padrão.</small>
+                                            <small>Adicione uma foto de perfil. Se não selecionar, será usada a imagem
+                                                padrão.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -87,11 +84,12 @@
     </div>
 </template>
 
-
 <script>
 import NavbarRecrutador from '@/components/NavbarRecrutador.vue';
 import HttpService from '../services/HttpService';
 import { mapGetters } from 'vuex';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 export default {
     components: {
@@ -126,6 +124,20 @@ export default {
         ...mapGetters(['getRecruiterId'])
     },
     methods: {
+        showToast(type, message) {
+            let backgroundColor = type === 'success' ? '#28a745' : '#dc3545';
+            Toastify({
+                text: message,
+                duration: 1000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColor,
+                color: 'white',
+                close: true,
+                offset: { x: 50, y: 50 },
+            }).showToast();
+        },
+
         onImageChange(event) {
             const file = event.target.files[0];
             if (file) {
@@ -138,16 +150,12 @@ export default {
             }
         },
 
-
-
         async sendUpdateRequest() {
             try {
-
                 if (!this.token) {
-                    alert('Usuário não autenticado!');
+                    this.showToast('error', 'Usuário não autenticado!');
                     return;
                 }
-
 
                 const updateResponse = await HttpService.put(
                     `/recruiter/update/${this.getRecruiterId}`,
@@ -161,10 +169,9 @@ export default {
                 );
 
                 if (updateResponse.status !== 200) {
-                    alert('Erro ao atualizar as informações do candidato.');
+                    this.showToast('error', 'Erro ao atualizar as informações do recrutador.');
                     return;
                 }
-
 
                 if (this.recruiter.recruiter_photo_file) {
                     const formData = new FormData();
@@ -182,25 +189,22 @@ export default {
                     );
 
                     if (uploadResponse.status !== 200) {
-                        alert('Erro ao fazer upload da imagem de perfil.');
+                        this.showToast('error', 'Erro ao fazer upload da imagem de perfil.');
                         return;
                     }
                 }
 
-                alert('Informações da conta atualizadas com sucesso.');
+                this.showToast('success', 'Informações da conta atualizadas com sucesso.');
             } catch (error) {
                 console.error("Erro ao atualizar conta:", error);
-                alert('Erro ao atualizar informações da conta.');
+                this.showToast('error', 'Erro ao atualizar informações da conta.');
             }
         },
-
 
         async updateConta() {
             console.log("Botão de salvar clicado");
             await this.sendUpdateRequest();
-
         },
-
 
         async fetchRecruiter() {
             try {
@@ -220,7 +224,7 @@ export default {
                     this.recruiter.recruiter_photo = `http://127.0.0.1:8000/storage/${recruiter.recruiter_photo}`;
                 }
             } catch (error) {
-                console.error('Erro ao carregar o perfil do usuário:', error);
+                console.error('Erro ao carregar o perfil do recrutador:', error);
             }
         },
 
@@ -231,7 +235,6 @@ export default {
             this.recruiter.recruiter_phone = input.substring(0, 15);
         },
 
-
         triggerFileInput() {
             this.$refs.fileInput.click();
         }
@@ -241,6 +244,7 @@ export default {
     }
 };
 </script>
+
 
 
 <style scoped>
